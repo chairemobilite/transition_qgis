@@ -27,6 +27,10 @@ import os
 from qgis.PyQt import QtGui, QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal
 
+# import sys
+# sys.path.append('/home/mathilde/transition-python-lib')
+# from test_api import call_api
+
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'transition_qgis_dockwidget_base.ui'))
 
@@ -45,6 +49,42 @@ class TransitionDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
 
+        # Connect the buttons
+        self.pushButton.clicked.connect(self.on_pushButton_clicked)
+        self.resetButton.clicked.connect(self.on_resetButton_clicked)
+
+    def on_pushButton_clicked(self):
+        # Call the API
+        result = call_api()
+        self.plainTextEdit.setPlainText(result)
+        print("API called")
+        # Close the dialog
+        # self.close()
+
+    def on_resetButton_clicked(self):
+        self.plainTextEdit.clear()
+
     def closeEvent(self, event):
         self.closingPlugin.emit()
         event.accept()
+
+import requests
+
+def call_api() -> str:
+    url = 'http://localhost:8080/api/' 
+    try:
+        username = 'mathildebrosseau'
+        password = 'mathilde'
+
+        body = {
+            "usernameOrEmail": username,
+            "password": password
+        }
+        response = requests.post(url, json=body)
+        if response.status_code == 200:
+            return f"Request successfull: {response.text}"
+        else:
+            return f"Request unsuccessfull: {response.status_code} {response.text}"
+    except requests.RequestException as e:
+        return f"Error: {e}"
+

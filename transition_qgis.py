@@ -31,6 +31,11 @@ from .resources import *
 from .transition_qgis_dockwidget import TransitionDockWidget
 import os.path
 
+# import the call_api method in the file in /home/manel/transition-python-lib/test_api.py
+# import sys
+# sys.path.append('/home/mathilde/transition-python-lib')
+# from test_api import call_api
+
 
 class Transition:
     """QGIS Plugin Implementation."""

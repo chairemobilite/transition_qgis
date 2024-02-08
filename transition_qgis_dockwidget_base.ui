@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TransitionDockWidgetBase</class>
+ <widget class="QDockWidget" name="TransitionDockWidgetBase">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>254</width>
+    <height>796</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Transition</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="6" column="1">
+     <widget class="QgsFieldComboBox" name="mFieldComboBox"/>
+    </item>
+    <item row="1" column="1">
+     <widget class="QgsDateTimeEdit" name="mDateTimeEdit"/>
+    </item>
+    <item row="3" column="1">
+     <widget class="QTextEdit" name="textEdit"/>
+    </item>
+    <item row="7" column="1">
+     <widget class="QPushButton" name="pushButton">
+      <property name="text">
+       <string>PushButton</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Replace this QLabel
+with the desired
+plugin content.</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QSpinBox" name="spinBox"/>
+    </item>
+    <item row="4" column="1">
+     <widget class="QLineEdit" name="lineEdit"/>
+    </item>
+    <item row="2" column="1">
+     <widget class="QTimeEdit" name="timeEdit">
+      <property name="locale">
+       <locale language="French" country="Canada"/>
+      </property>
+      <property name="inputMethodHints">
+       <set>Qt::ImhPreferNumbers</set>
+      </property>
+      <property name="displayFormat">
+       <string>hh:mm</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QgsDateTimeEdit</class>
+   <extends>QDateTimeEdit</extends>
+   <header>qgsdatetimeedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QgsFieldComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qgsfieldcombobox.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

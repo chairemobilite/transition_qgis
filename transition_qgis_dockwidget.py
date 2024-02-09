@@ -24,13 +24,15 @@
 
 import os
 import sys
+import geojson
 
 from qgis.PyQt import QtGui, QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal
+from qgis.core import QgsVectorLayer, QgsProject
 
 from .import_path import return_lib_path
 sys.path.append(return_lib_path())
-from test_api import call_api
+from transition_api_lib import call_api, get_transition_paths
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'transition_qgis_dockwidget_base.ui'))
@@ -51,13 +53,30 @@ class TransitionDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.setupUi(self)
 
         # Connect the buttons
-        self.pushButton.clicked.connect(self.on_pushButton_clicked)
+        self.pushButton_1.clicked.connect(self.on_pathButton_clicked)
+        # self.pushButton_2.clicked.connect(self.on_pathButton_clicked)
         self.resetButton.clicked.connect(self.on_resetButton_clicked)
 
-    def on_pushButton_clicked(self):
+    def on_apiButton_clicked(self):
         # Call the API
         result = call_api()
+        print(result)
         self.plainTextEdit.setPlainText(result)
+        print("API called")
+
+    def on_pathButton_clicked(self):
+        # Call the API
+        self.plainTextEdit.setPlainText("Calling get paths")
+        geojson_data = get_transition_paths()
+        if geojson_data:
+            layer = QgsVectorLayer(geojson.dumps(geojson_data), "transition_paths", "ogr")
+            if not layer.isValid():
+                print("Layer failed to load!")
+                return
+            QgsProject.instance().addMapLayer(layer)
+        else:
+            print("Failed to get GeoJSON data")
+
         print("API called")
 
     def on_resetButton_clicked(self):

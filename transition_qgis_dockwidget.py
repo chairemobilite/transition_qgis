@@ -23,11 +23,11 @@
 """
 
 import os
+import sys
 
 from qgis.PyQt import QtGui, QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal
 
-import sys
 from .import_path import return_lib_path
 sys.path.append(return_lib_path())
 from test_api import call_api
@@ -59,8 +59,6 @@ class TransitionDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         result = call_api()
         self.plainTextEdit.setPlainText(result)
         print("API called")
-        # Close the dialog
-        # self.close()
 
     def on_resetButton_clicked(self):
         self.plainTextEdit.clear()

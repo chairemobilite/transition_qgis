@@ -31,10 +31,6 @@ from .resources import *
 from .transition_qgis_dockwidget import TransitionDockWidget
 import os.path
 
-# import the call_api method in the file in /home/manel/transition-python-lib/test_api.py
-# import sys
-# sys.path.append('/home/mathilde/transition-python-lib')
-# from test_api import call_api
 
 
 class Transition:
@@ -157,7 +153,8 @@ class Transition:
             action.setWhatsThis(whats_this)
 
         if add_to_toolbar:
-            self.toolbar.addAction(action)
+            # Adds plugin icon to Plugins toolbar
+            self.iface.addToolBarIcon(action)
 
         if add_to_menu:
             self.iface.addPluginToMenu(
@@ -175,7 +172,7 @@ class Transition:
         icon_path = ':/plugins/transition_qgis/icon.png'
         self.add_action(
             icon_path,
-            text=self.tr(u''),
+            text=self.tr(u'Transition'),
             callback=self.run,
             parent=self.iface.mainWindow())
 

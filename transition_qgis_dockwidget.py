@@ -27,9 +27,10 @@ import os
 from qgis.PyQt import QtGui, QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal
 
-# import sys
-# sys.path.append('/home/mathilde/transition-python-lib')
-# from test_api import call_api
+import sys
+from .import_path import return_lib_path
+sys.path.append(return_lib_path())
+from test_api import call_api
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'transition_qgis_dockwidget_base.ui'))
@@ -67,24 +68,4 @@ class TransitionDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
     def closeEvent(self, event):
         self.closingPlugin.emit()
         event.accept()
-
-import requests
-
-def call_api() -> str:
-    url = 'http://localhost:8080/api/' 
-    try:
-        username = 'mathildebrosseau'
-        password = 'mathilde'
-
-        body = {
-            "usernameOrEmail": username,
-            "password": password
-        }
-        response = requests.post(url, json=body)
-        if response.status_code == 200:
-            return f"Request successfull: {response.text}"
-        else:
-            return f"Request unsuccessfull: {response.status_code} {response.text}"
-    except requests.RequestException as e:
-        return f"Error: {e}"
 

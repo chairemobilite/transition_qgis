@@ -32,7 +32,7 @@ from qgis.core import QgsVectorLayer, QgsProject
 
 from .import_path import return_lib_path
 sys.path.append(return_lib_path())
-from transition_api_lib import call_api, get_transition_paths
+from transition_api_lib import call_api, get_transition_paths, get_transition_nodes, get_transition_scenarios, get_transition_routing_modes
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'transition_qgis_dockwidget_base.ui'))
@@ -54,7 +54,9 @@ class TransitionDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
         # Connect the buttons
         self.pushButton_1.clicked.connect(self.on_pathButton_clicked)
-        # self.pushButton_2.clicked.connect(self.on_pathButton_clicked)
+        self.pushButton_2.clicked.connect(self.on_scenarioButton_clicked)
+        self.pushButton_3.clicked.connect(self.on_routingButton_clicked)
+        self.pushButton_4.clicked.connect(self.on_nodeButton_clicked)
         self.resetButton.clicked.connect(self.on_resetButton_clicked)
 
     def on_apiButton_clicked(self):
@@ -66,7 +68,7 @@ class TransitionDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
     def on_pathButton_clicked(self):
         # Call the API
-        self.plainTextEdit.setPlainText("Calling get paths")
+        self.plainTextEdit.setPlainText("Getting the paths...")
         geojson_data = get_transition_paths()
         if geojson_data:
             layer = QgsVectorLayer(geojson.dumps(geojson_data), "transition_paths", "ogr")
@@ -76,6 +78,48 @@ class TransitionDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             QgsProject.instance().addMapLayer(layer)
         else:
             print("Failed to get GeoJSON data")
+
+        print("API called")
+    
+    def on_nodeButton_clicked(self):
+        # Call the API
+        self.plainTextEdit.setPlainText("Getting the nodes...")
+        geojson_data = get_transition_nodes()
+        if geojson_data:
+            layer = QgsVectorLayer(geojson.dumps(geojson_data), "transition_nodes", "ogr")
+            if not layer.isValid():
+                print("Layer failed to load!")
+                return
+            QgsProject.instance().addMapLayer(layer)
+        else:
+            print("Failed to get GeoJSON data")
+
+        print("API called")
+
+    def on_scenarioButton_clicked(self):
+        # Call the API
+        self.plainTextEdit.setPlainText("Getting the scenarios...")
+        result = get_transition_scenarios()
+        if result:
+            # not sure what to do with the result yet, just print it out for now
+            self.plainTextEdit.appendPlainText(result.text)
+        else:
+            print("Failed to get scenarios")
+
+        print("API called")
+
+    def on_routingButton_clicked(self):
+        # Call the API
+        self.plainTextEdit.setPlainText("Getting the routing modes ...")
+        routing_modes = get_transition_routing_modes()
+        #print type of routing_modes
+        print(routing_modes[0])
+        if routing_modes:
+            # print out the routing modes, we'll probably be using these in a drop down list but for now just print them out
+            for mode in routing_modes:
+                self.plainTextEdit.appendPlainText(mode)
+        else:
+            print("Failed to get routing modes")
 
         print("API called")
 

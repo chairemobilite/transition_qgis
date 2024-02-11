@@ -37,7 +37,6 @@ from transition_api_lib import call_api, get_transition_paths, get_transition_no
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'transition_qgis_dockwidget_base.ui'))
 
-
 class TransitionDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
     closingPlugin = pyqtSignal()
@@ -60,14 +59,12 @@ class TransitionDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.resetButton.clicked.connect(self.on_resetButton_clicked)
 
     def on_apiButton_clicked(self):
-        # Call the API
         result = call_api()
         print(result)
         self.plainTextEdit.setPlainText(result)
         print("API called")
 
     def on_pathButton_clicked(self):
-        # Call the API
         self.plainTextEdit.setPlainText("Getting the paths...")
         geojson_data = get_transition_paths()
         if geojson_data:
@@ -82,7 +79,6 @@ class TransitionDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         print("API called")
     
     def on_nodeButton_clicked(self):
-        # Call the API
         self.plainTextEdit.setPlainText("Getting the nodes...")
         geojson_data = get_transition_nodes()
         if geojson_data:
@@ -97,7 +93,6 @@ class TransitionDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         print("API called")
 
     def on_scenarioButton_clicked(self):
-        # Call the API
         self.plainTextEdit.setPlainText("Getting the scenarios...")
         result = get_transition_scenarios()
         if result:
@@ -109,11 +104,8 @@ class TransitionDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         print("API called")
 
     def on_routingButton_clicked(self):
-        # Call the API
         self.plainTextEdit.setPlainText("Getting the routing modes ...")
         routing_modes = get_transition_routing_modes()
-        #print type of routing_modes
-        print(routing_modes[0])
         if routing_modes:
             # print out the routing modes, we'll probably be using these in a drop down list but for now just print them out
             for mode in routing_modes:

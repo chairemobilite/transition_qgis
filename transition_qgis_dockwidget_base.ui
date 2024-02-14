@@ -75,19 +75,6 @@
     <string>Create new route</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="mapButton">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>140</y>
-     <width>171</width>
-     <height>61</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Choose map coord</string>
-   </property>
-  </widget>
  </widget>
  <resources/>
  <connections/>

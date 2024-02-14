@@ -27,6 +27,7 @@ import sys
 
 from qgis.PyQt import QtGui, QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal
+from .create_route import CreateRouteDialog
 
 from .import_path import return_lib_path
 sys.path.append(return_lib_path())
@@ -53,6 +54,7 @@ class TransitionDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # Connect the buttons
         self.pushButton.clicked.connect(self.on_pushButton_clicked)
         self.resetButton.clicked.connect(self.on_resetButton_clicked)
+        self.routeButton.clicked.connect(self.open_create_route_popup)
 
     def on_pushButton_clicked(self):
         # Call the API
@@ -62,6 +64,10 @@ class TransitionDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
     def on_resetButton_clicked(self):
         self.plainTextEdit.clear()
+
+    def open_create_route_popup(self):
+        popup = CreateRouteDialog(self)
+        popup.exec_()
 
     def closeEvent(self, event):
         self.closingPlugin.emit()

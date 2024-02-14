@@ -76,8 +76,8 @@ class CreateRouteDialog(QDialog):
         scenarioChoice = QComboBox()
         scenarioChoice.addItems(["scenario1", "scenario2"])
 
-        for label, field in zip([modeLabel, departureLabel, arrivalLabel, maxParcoursTimeLabel, minWaitTimeLabel, maxAccessTimeOrigDestLabel, maxTransferWaitTimeLabel], 
-                                [modeChoice, departureTime, arrivalTime, maxParcoursTimeChoice, minWaitTimeChoice, maxAccessTimeOrigDestChoice, maxTransferWaitTimeChoice]):
+        for label, field in zip([modeLabel, departureLabel, arrivalLabel, maxParcoursTimeLabel, minWaitTimeLabel, maxAccessTimeOrigDestLabel, maxTransferWaitTimeLabel, maxWaitTimeFisrstStopLabel, scenarioLabel], 
+                                [modeChoice, departureTime, arrivalTime, maxParcoursTimeChoice, minWaitTimeChoice, maxAccessTimeOrigDestChoice, maxTransferWaitTimeChoice, maxWaitTimeFisrstStopChoice, scenarioChoice]):
             row_layout = QHBoxLayout()
             row_layout.addWidget(label, stretch=3)  # 75% of the space
             row_layout.addWidget(field, stretch=1)  # 25% of the space
@@ -86,8 +86,8 @@ class CreateRouteDialog(QDialog):
         
         layout.addLayout(form_layout)
 
-        self.buttonCoord = QPushButton("Select coord", self)
-        layout.addWidget(self.buttonCoord)
+        # self.buttonCoord = QPushButton("Select coord", self)
+        # layout.addWidget(self.buttonCoord)
 
         self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         layout.addWidget(self.button_box)

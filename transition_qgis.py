@@ -23,28 +23,30 @@
 """
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt, pyqtSignal
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction
+from qgis.PyQt.QtWidgets import QAction, QDialog
 
 from qgis.gui import QgsMapToolEmitPoint, QgsRubberBand, QgsProjectionSelectionDialog
-from qgis.core import QgsUnitTypes, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsPointXY
-
+from qgis.core import QgsUnitTypes, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsPointXY, QgsVectorLayer, QgsProject
 # Initialize Qt resources from file resources.py
 from .resources import *
 
 # Import the code for the DockWidget
 from .transition_qgis_dockwidget import TransitionDockWidget
+from .create_login import Login
 from .coordinate_capture_map_tool import CoordinateCaptureMapTool
 import os.path
 
 import sys
+import geojson
+
 from .import_path import return_lib_path
 sys.path.append(return_lib_path())
-from transition_api_lib import call_api
+from transition_api_lib import Transition
 
 from .create_route import CreateRouteDialog
 
 
-class Transition:
+class TransitionWidget:
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):
@@ -81,9 +83,11 @@ class Transition:
         self.toolbar.setObjectName(u'Transition')
 
         #print "** INITIALIZING Transition"
-
         self.pluginIsActive = False
         self.dockwidget = None
+        self.loginPopup = None
+        self.validLogin = False
+        
         self.crs = QgsCoordinateReferenceSystem("EPSG:4326")
         self.transform = QgsCoordinateTransform()
         self.transform.setDestinationCrs(self.crs)
@@ -247,36 +251,68 @@ class Transition:
 
         if not self.pluginIsActive:
             self.pluginIsActive = True
+            print("Transition plugin is active")
+            if not self.validLogin:
+                self.loginPopup = Login()
+            
+            print("checking if login is valid")
+            if self.loginPopup.exec_() == QDialog.Accepted:
+                self.validLogin = True
+                print("Login successful")
 
             #print "** STARTING Transition"
+
 
             # dockwidget may not exist if:
             #    first run of plugin
             #    removed on close (see self.onClosePlugin method)
-            if self.dockwidget == None:
+            if self.dockwidget == None and self.validLogin:
+                print("Creating new dockwidget")
                 # Create the dockwidget (after translation) and keep reference
                 self.dockwidget = TransitionDockWidget()
                 createRouteForm = CreateRouteDialog()
                 self.dockwidget.verticalLayout.addWidget(createRouteForm)
 
                 
-                self.dockwidget.pushButton.clicked.connect(self.on_pushButton_clicked)
+                self.dockwidget.pathButton.clicked.connect(self.onPathButtonClicked)
+                self.dockwidget.nodeButton.clicked.connect(self.onNodeButtonClicked)
 
                 self.dockwidget.captureButtonFrom.clicked.connect(self.startCapturingFrom)
                 self.dockwidget.captureButtonTo.clicked.connect(self.startCapturingTo)
 
-            # connect to provide cleanup on closing of dockwidget
-            self.dockwidget.closingPlugin.connect(self.onClosePlugin)
+                # connect to provide cleanup on closing of dockwidget
+                self.dockwidget.closingPlugin.connect(self.onClosePlugin)
 
             # show the dockwidget
             # TODO: fix to allow choice of dock location
             self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
 
-    def on_pushButton_clicked(self):
-        # Call the API
-        result = call_api()
-        self.dockwidget.plainTextEdit.setPlainText(result)
+    def onPathButtonClicked(self):
+        self.dockwidget.plainTextEdit.setPlainText("Getting the paths...")
+        geojson_data = Transition.get_transition_paths()
+        if geojson_data:
+            layer = QgsVectorLayer(geojson.dumps(geojson_data), "transition_paths", "ogr")
+            if not layer.isValid():
+                print("Layer failed to load!")
+                return
+            QgsProject.instance().addMapLayer(layer)
+        else:
+            print("Failed to get GeoJSON data")
+        self.iface.actionPan().trigger()
+    
+    def onNodeButtonClicked(self):
+        self.dockwidget.plainTextEdit.setPlainText("Getting the nodes...")
+        geojson_data = Transition.get_transition_nodes()
+        if geojson_data:
+            layer = QgsVectorLayer(geojson.dumps(geojson_data), "transition_nodes", "ogr")
+            if not layer.isValid():
+                print("Layer failed to load!")
+                return
+            QgsProject.instance().addMapLayer(layer)
+        else:
+            print("Failed to get GeoJSON data")
+
         print("API called")
         self.iface.actionPan().trigger()
 

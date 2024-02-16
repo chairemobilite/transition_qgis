@@ -23,32 +23,19 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
      <string>Home</string>
     </attribute>
-    <widget class="QPushButton" name="pushButton">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>20</y>
-       <width>371</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Send API request</string>
-     </property>
-    </widget>
     <widget class="QPlainTextEdit" name="plainTextEdit">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>80</y>
+       <y>120</y>
        <width>371</width>
-       <height>671</height>
+       <height>631</height>
       </rect>
      </property>
     </widget>
@@ -63,6 +50,32 @@
      </property>
      <property name="text">
       <string>Reset</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="nodeButton">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>60</y>
+       <width>371</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Get Transition nodes</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pathButton">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>371</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Get Transition paths</string>
      </property>
     </widget>
    </widget>

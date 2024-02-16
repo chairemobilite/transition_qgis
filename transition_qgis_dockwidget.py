@@ -24,14 +24,12 @@
 
 import os
 import sys
+import geojson
 
 from qgis.PyQt import QtGui, QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal
-from .create_route import CreateRouteDialog
+from qgis.core import QgsVectorLayer, QgsProject
 
-from .import_path import return_lib_path
-sys.path.append(return_lib_path())
-from transition_api_lib import call_api
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(

@@ -30,9 +30,7 @@ from qgis.PyQt import QtGui, QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal
 from qgis.core import QgsVectorLayer, QgsProject
 
-from .import_path import return_lib_path
-sys.path.append(return_lib_path())
-from transition_api_lib import Transition
+
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'transition_qgis_dockwidget_base.ui'))
@@ -45,7 +43,6 @@ class TransitionDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
     def __init__(self, parent=None):
         """Constructor."""
         super(TransitionDockWidget, self).__init__(parent)
-        self.transition_lib = Transition()
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
         # self.<objectname>, and you can use autoconnect slots - see
@@ -54,62 +51,12 @@ class TransitionDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.setupUi(self)
 
         # Connect the buttons
-        self.pathsButton.clicked.connect(self.on_pathButton_clicked)
-        self.sceanriosButton.clicked.connect(self.on_scenarioButton_clicked)
-        self.routingButton.clicked.connect(self.on_routingButton_clicked)
-        self.nodesButton.clicked.connect(self.on_nodeButton_clicked)
         self.resetButton.clicked.connect(self.on_resetButton_clicked)
-
-
-    def on_pathButton_clicked(self):
-        self.plainTextEdit.setPlainText("Getting the paths...")
-        geojson_data = self.transition_lib.get_transition_paths()
-        if geojson_data:
-            layer = QgsVectorLayer(geojson.dumps(geojson_data), "transition_paths", "ogr")
-            if not layer.isValid():
-                print("Layer failed to load!")
-                return
-            QgsProject.instance().addMapLayer(layer)
-        else:
-            print("Failed to get GeoJSON data")
-
-    
-    def on_nodeButton_clicked(self):
-        self.plainTextEdit.setPlainText("Getting the nodes...")
-        geojson_data = self.transition_lib.get_transition_nodes()
-        if geojson_data:
-            layer = QgsVectorLayer(geojson.dumps(geojson_data), "transition_nodes", "ogr")
-            if not layer.isValid():
-                print("Layer failed to load!")
-                return
-            QgsProject.instance().addMapLayer(layer)
-        else:
-            print("Failed to get GeoJSON data")
-
-
-    def on_scenarioButton_clicked(self):
-        self.plainTextEdit.setPlainText("Getting the scenarios...")
-        result = self.transition_lib.get_transition_scenarios()
-        print(result)
-        if result:
-            for scenario in result:
-                self.plainTextEdit.appendPlainText(scenario)
-        else:
-            print("Failed to get scenarios")
-
-
-    def on_routingButton_clicked(self):
-        self.plainTextEdit.setPlainText("Getting the routing modes ...")
-        routing_modes = self.transition_lib.get_transition_routing_modes()
-        if routing_modes:
-            # print out the routing modes, we'll probably be using these in a drop down list but for now just print them out
-            for mode in routing_modes:
-                self.plainTextEdit.appendPlainText(mode)
-        else:
-            print("Failed to get routing modes")
+        #self.routeButton.clicked.connect()
 
     def on_resetButton_clicked(self):
         self.plainTextEdit.clear()
+
 
     def closeEvent(self, event):
         self.closingPlugin.emit()

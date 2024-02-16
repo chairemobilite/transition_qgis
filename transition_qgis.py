@@ -21,20 +21,32 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt
+from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt, pyqtSignal
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QDialog
+
+from qgis.gui import QgsMapToolEmitPoint, QgsRubberBand, QgsProjectionSelectionDialog
+from qgis.core import QgsUnitTypes, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsPointXY, QgsVectorLayer, QgsProject
 # Initialize Qt resources from file resources.py
 from .resources import *
 
 # Import the code for the DockWidget
 from .transition_qgis_dockwidget import TransitionDockWidget
 from .create_login import Login
+from .coordinate_capture_map_tool import CoordinateCaptureMapTool
 import os.path
 
+import sys
+import geojson
+
+from .import_path import return_lib_path
+sys.path.append(return_lib_path())
+from transition_api_lib import Transition
+
+from .create_route import CreateRouteDialog
 
 
-class Transition:
+class Transition_Widget:
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):
@@ -71,11 +83,30 @@ class Transition:
         self.toolbar.setObjectName(u'Transition')
 
         #print "** INITIALIZING Transition"
-
+        self.transition = Transition()
         self.pluginIsActive = False
         self.dockwidget = None
         self.loginPopup = None
         self.validLogin = False
+        
+        self.crs = QgsCoordinateReferenceSystem("EPSG:4326")
+        self.transform = QgsCoordinateTransform()
+        self.transform.setDestinationCrs(self.crs)
+        if self.crs.mapUnits() == QgsUnitTypes.DistanceDegrees:
+            self.userCrsDisplayPrecision = 5
+        else:
+            self.userCrsDisplayPrecision = 3
+        self.canvasCrsDisplayPrecision = None
+        self.iface.mapCanvas().destinationCrsChanged.connect(self.setSourceCrs)
+        self.setSourceCrs()
+
+        self.mapToolFrom = CoordinateCaptureMapTool(self.iface, self.iface.mapCanvas(), Qt.darkGreen, "Starting point")
+        self.mapToolFrom.mouseClicked.connect(self.mouseClickedFrom)
+        self.mapToolFrom.endSelection.connect(self.endCapture)
+
+        self.mapToolTo = CoordinateCaptureMapTool(self.iface, self.iface.mapCanvas(), Qt.blue, "Destination point")
+        self.mapToolTo.mouseClicked.connect(self.mouseClickedTo)
+        self.mapToolTo.endSelection.connect(self.endCapture)
 
 
     # noinspection PyMethodMayBeStatic
@@ -197,6 +228,8 @@ class Transition:
 
         self.pluginIsActive = False
 
+        self.mapToolFrom.deactivate()
+
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
@@ -210,6 +243,7 @@ class Transition:
             self.iface.removeToolBarIcon(action)
         # remove the toolbar
         del self.toolbar
+
 
     #--------------------------------------------------------------------------
 
@@ -237,11 +271,96 @@ class Transition:
                 print("Creating new dockwidget")
                 # Create the dockwidget (after translation) and keep reference
                 self.dockwidget = TransitionDockWidget()
+                createRouteForm = CreateRouteDialog()
+                self.dockwidget.verticalLayout.addWidget(createRouteForm)
+
+                
+                self.dockwidget.pathButton.clicked.connect(self.on_pathButton_clicked)
+                self.dockwidget.nodeButton.clicked.connect(self.on_nodeButton_clicked)
+
+                self.dockwidget.captureButtonFrom.clicked.connect(self.startCapturingFrom)
+                self.dockwidget.captureButtonTo.clicked.connect(self.startCapturingTo)
 
                 # connect to provide cleanup on closing of dockwidget
                 self.dockwidget.closingPlugin.connect(self.onClosePlugin)
 
-                # show the dockwidget
-                # TODO: fix to allow choice of dock location
-                self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
-                self.dockwidget.show()
+            # show the dockwidget
+            # TODO: fix to allow choice of dock location
+            self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
+            self.dockwidget.show()
+
+    def on_pushButton_clicked(self):
+        # Call the API
+        result = self.transition.call_api()
+        self.dockwidget.plainTextEdit.setPlainText(result)
+        print("API called")
+        self.iface.actionPan().trigger()
+
+    def on_pathButton_clicked(self):
+        self.dockwidget.plainTextEdit.setPlainText("Getting the paths...")
+        geojson_data = self.transition.get_transition_paths()
+        if geojson_data:
+            layer = QgsVectorLayer(geojson.dumps(geojson_data), "transition_paths", "ogr")
+            if not layer.isValid():
+                print("Layer failed to load!")
+                return
+            QgsProject.instance().addMapLayer(layer)
+        else:
+            print("Failed to get GeoJSON data")
+        self.iface.actionPan().trigger()
+    
+    def on_nodeButton_clicked(self):
+        self.dockwidget.plainTextEdit.setPlainText("Getting the nodes...")
+        geojson_data = self.transition.get_transition_nodes()
+        if geojson_data:
+            layer = QgsVectorLayer(geojson.dumps(geojson_data), "transition_nodes", "ogr")
+            if not layer.isValid():
+                print("Layer failed to load!")
+                return
+            QgsProject.instance().addMapLayer(layer)
+        else:
+            print("Failed to get GeoJSON data")
+
+        print("API called")
+        self.iface.actionPan().trigger()
+
+    def setCrs(self):
+        selector = QgsProjectionSelectionDialog(self.iface.mainWindow())
+        selector.setCrs(self.crs)
+        if selector.exec():
+            self.crs = selector.crs()
+            self.transform.setDestinationCrs(self.crs)
+            if self.crs.mapUnits() == QgsUnitTypes.DistanceDegrees:
+                self.userCrsDisplayPrecision = 5
+            else:
+                self.userCrsDisplayPrecision = 3
+
+    def setSourceCrs(self):
+        self.transform.setSourceCrs(self.iface.mapCanvas().mapSettings().destinationCrs())
+        if self.iface.mapCanvas().mapSettings().destinationCrs().mapUnits() == QgsUnitTypes.DistanceDegrees:
+            self.canvasCrsDisplayPrecision = 5
+        else:
+            self.canvasCrsDisplayPrecision = 3
+
+    def mouseClickedFrom(self, point: QgsPointXY):
+        userCrsPoint = self.transform.transform(point)
+        self.dockwidget.userCrsEditFrom.setText('{0:.{2}f},{1:.{2}f}'.format(userCrsPoint.x(),
+                                                                         userCrsPoint.y(),
+                                                                         self.userCrsDisplayPrecision))
+
+
+    def mouseClickedTo(self, point: QgsPointXY):
+        userCrsPoint = self.transform.transform(point)
+        self.dockwidget.userCrsEditTo.setTpathbuttonext('{0:.{2}f},{1:.{2}f}'.format(userCrsPoint.x(),
+                                                                         userCrsPoint.y(),
+                                                                         self.userCrsDisplayPrecision))
+
+    def startCapturingFrom(self):
+        self.iface.mapCanvas().setMapTool(self.mapToolFrom)
+
+    def startCapturingTo(self):
+        self.iface.mapCanvas().setMapTool(self.mapToolTo)
+
+    def endCapture(self):
+        self.iface.actionPan().trigger()
+        self.mapToolFrom.deactivate()

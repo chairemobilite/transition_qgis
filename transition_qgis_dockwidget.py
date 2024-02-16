@@ -32,7 +32,7 @@ from qgis.core import QgsVectorLayer, QgsProject
 
 from .import_path import return_lib_path
 sys.path.append(return_lib_path())
-from transition_api_lib import TransitionLib
+from transition_api_lib import Transition
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'transition_qgis_dockwidget_base.ui'))
@@ -45,7 +45,7 @@ class TransitionDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
     def __init__(self, parent=None):
         """Constructor."""
         super(TransitionDockWidget, self).__init__(parent)
-        self.transition_lib = TransitionLib()
+        self.transition_lib = Transition()
         # Set up the user interface from Designer.
         # After setupUI you can access any designer object by doing
         # self.<objectname>, and you can use autoconnect slots - see
@@ -90,9 +90,10 @@ class TransitionDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
     def on_scenarioButton_clicked(self):
         self.plainTextEdit.setPlainText("Getting the scenarios...")
         result = self.transition_lib.get_transition_scenarios()
+        print(result)
         if result:
-            # not sure what to do with the result yet, just print it out for now
-            self.plainTextEdit.appendPlainText(result.text)
+            for scenario in result:
+                self.plainTextEdit.appendPlainText(scenario)
         else:
             print("Failed to get scenarios")
 

@@ -9,7 +9,7 @@ from qgis.PyQt.QtWidgets import QApplication, QDialog, QFormLayout, QLabel, QLin
 
 from .import_path import return_lib_path
 sys.path.append(return_lib_path())
-from transition_api_lib import TransitionLib
+from transition_api_lib import Transition
 
 missing_credentials = "Please enter your username and password."
 invalid_credentials = "Bad username or password."
@@ -20,7 +20,7 @@ class Login(QDialog):
         super().__init__(parent)
         uic.loadUi(os.path.join(os.path.dirname(__file__), 'login_dialog.ui'), self)
         self.show()
-        self.transition_lib = TransitionLib()
+        self.transition_lib = Transition()
         self.usernameEdit.disconnect()
         self.passwordEdit.disconnect()
         self.usernameEdit.editingFinished.connect(self.on_usernameEdit_textChanged)

@@ -26,11 +26,11 @@
 
 # noinspection PyPep8Naming
 def classFactory(iface):  # pylint: disable=invalid-name
-    """Load Transition class from file Transition.
+    """Load Transition_Widget class from file Transition.
 
     :param iface: A QGIS interface instance.
     :type iface: QgsInterface
     """
     #
-    from .transition_qgis import Transition
-    return Transition(iface)
+    from .transition_qgis import Transition_Widget
+    return Transition_Widget(iface)

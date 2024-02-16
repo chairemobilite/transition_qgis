@@ -83,7 +83,6 @@ class Transition_Widget:
         self.toolbar.setObjectName(u'Transition')
 
         #print "** INITIALIZING Transition"
-        self.transition = Transition()
         self.pluginIsActive = False
         self.dockwidget = None
         self.loginPopup = None
@@ -289,16 +288,9 @@ class Transition_Widget:
             self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
 
-    def on_pushButton_clicked(self):
-        # Call the API
-        result = self.transition.call_api()
-        self.dockwidget.plainTextEdit.setPlainText(result)
-        print("API called")
-        self.iface.actionPan().trigger()
-
     def on_pathButton_clicked(self):
         self.dockwidget.plainTextEdit.setPlainText("Getting the paths...")
-        geojson_data = self.transition.get_transition_paths()
+        geojson_data = Transition.get_transition_paths()
         if geojson_data:
             layer = QgsVectorLayer(geojson.dumps(geojson_data), "transition_paths", "ogr")
             if not layer.isValid():
@@ -311,7 +303,7 @@ class Transition_Widget:
     
     def on_nodeButton_clicked(self):
         self.dockwidget.plainTextEdit.setPlainText("Getting the nodes...")
-        geojson_data = self.transition.get_transition_nodes()
+        geojson_data = Transition.get_transition_nodes()
         if geojson_data:
             layer = QgsVectorLayer(geojson.dumps(geojson_data), "transition_nodes", "ogr")
             if not layer.isValid():

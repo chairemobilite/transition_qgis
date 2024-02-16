@@ -10,7 +10,7 @@ from PyQt5.QtGui import QFontMetrics
 import sys
 from .import_path import return_lib_path
 sys.path.append(return_lib_path())
-from transition_api_lib import get_transition_scenarios, get_transition_routing_modes
+from transition_api_lib import Transition
 
 class CustomLabel(QLabel):
     def __init__(self, parent=None):
@@ -38,7 +38,7 @@ class CreateRouteDialog(QWidget):
 
         modeLabel = CustomLabel("Effectuer le calcul de chemin pour les modes suivants")
         modeChoice = QgsCheckableComboBox()
-        modes = get_transition_routing_modes()
+        modes = Transition.get_transition_routing_modes()
         print(modes)
         modeChoice.addItems(modes)
 
@@ -81,7 +81,7 @@ class CreateRouteDialog(QWidget):
 
         scenarioLabel = CustomLabel("Scénario")
         scenarioChoice = QComboBox()
-        scenarios = get_transition_scenarios()
+        scenarios = Transition.get_transition_scenarios()
         print(scenarios)
         scenarioChoice.addItems(scenarios)
 

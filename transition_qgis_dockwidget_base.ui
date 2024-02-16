@@ -30,9 +30,9 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>140</y>
+     <y>150</y>
      <width>431</width>
-     <height>571</height>
+     <height>561</height>
     </rect>
    </property>
   </widget>
@@ -49,11 +49,11 @@
     <string>Reset</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_1">
+  <widget class="QPushButton" name="pathsButton">
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>30</y>
+     <y>50</y>
      <width>211</width>
      <height>41</height>
     </rect>
@@ -62,11 +62,11 @@
     <string>Get Transition paths</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_2">
+  <widget class="QPushButton" name="sceanriosButton">
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>80</y>
+     <y>100</y>
      <width>211</width>
      <height>41</height>
     </rect>
@@ -75,11 +75,11 @@
     <string>Get Transition scenarios</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_3">
+  <widget class="QPushButton" name="routingButton">
    <property name="geometry">
     <rect>
      <x>250</x>
-     <y>80</y>
+     <y>100</y>
      <width>211</width>
      <height>41</height>
     </rect>
@@ -88,11 +88,11 @@
     <string>Get Transition routing modes</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_4">
+  <widget class="QPushButton" name="nodesButton">
    <property name="geometry">
     <rect>
      <x>250</x>
-     <y>30</y>
+     <y>50</y>
      <width>211</width>
      <height>41</height>
     </rect>

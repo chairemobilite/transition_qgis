@@ -46,7 +46,7 @@ from transition_api_lib import Transition
 from .create_route import CreateRouteDialog
 
 
-class Transition_Widget:
+class TransitionWidget:
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):
@@ -274,8 +274,8 @@ class Transition_Widget:
                 self.dockwidget.verticalLayout.addWidget(createRouteForm)
 
                 
-                self.dockwidget.pathButton.clicked.connect(self.on_pathButton_clicked)
-                self.dockwidget.nodeButton.clicked.connect(self.on_nodeButton_clicked)
+                self.dockwidget.pathButton.clicked.connect(self.onPathButtonClicked)
+                self.dockwidget.nodeButton.clicked.connect(self.onNodeButtonClicked)
 
                 self.dockwidget.captureButtonFrom.clicked.connect(self.startCapturingFrom)
                 self.dockwidget.captureButtonTo.clicked.connect(self.startCapturingTo)
@@ -288,7 +288,7 @@ class Transition_Widget:
             self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
 
-    def on_pathButton_clicked(self):
+    def onPathButtonClicked(self):
         self.dockwidget.plainTextEdit.setPlainText("Getting the paths...")
         geojson_data = Transition.get_transition_paths()
         if geojson_data:
@@ -301,7 +301,7 @@ class Transition_Widget:
             print("Failed to get GeoJSON data")
         self.iface.actionPan().trigger()
     
-    def on_nodeButton_clicked(self):
+    def onNodeButtonClicked(self):
         self.dockwidget.plainTextEdit.setPlainText("Getting the nodes...")
         geojson_data = Transition.get_transition_nodes()
         if geojson_data:
@@ -343,7 +343,7 @@ class Transition_Widget:
 
     def mouseClickedTo(self, point: QgsPointXY):
         userCrsPoint = self.transform.transform(point)
-        self.dockwidget.userCrsEditTo.setTpathbuttonext('{0:.{2}f},{1:.{2}f}'.format(userCrsPoint.x(),
+        self.dockwidget.userCrsEditTo.setText('{0:.{2}f},{1:.{2}f}'.format(userCrsPoint.x(),
                                                                          userCrsPoint.y(),
                                                                          self.userCrsDisplayPrecision))
 

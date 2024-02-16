@@ -20,27 +20,26 @@ class Login(QDialog):
         super().__init__(parent)
         uic.loadUi(os.path.join(os.path.dirname(__file__), 'login_dialog.ui'), self)
         self.show()
-        self.transition_lib = Transition()
         self.usernameEdit.disconnect()
         self.passwordEdit.disconnect()
-        self.usernameEdit.editingFinished.connect(self.on_usernameEdit_textChanged)
+        self.usernameEdit.editingFinished.connect(self.onUsernameEditTextChanged)
 
-        self.passwordEdit.editingFinished.connect(self.on_passwordEdit_textChanged)
+        self.passwordEdit.editingFinished.connect(self.onPasswordEditTextChanged)
 
         self.connectButton.clicked.connect(self.onConnectButtonClicked)
 
 
-    def on_usernameEdit_textChanged(self):
+    def onUsernameEditTextChanged(self):
         os.environ['TRANSITION_USERNAME'] = self.usernameEdit.text()
 
-    def on_passwordEdit_textChanged(self):
+    def onPasswordEditTextChanged(self):
         os.environ['TRANSITION_PASSWORD'] = self.passwordEdit.text()
 
 
     def onConnectButtonClicked(self):
         try:
             print("Connecting...")
-            result = self.transition_lib.call_api()
+            result = Transition.call_api()
             print(result)
             if result.status_code == 200:
                 print("Successfully connected to API")

@@ -31,7 +31,8 @@ from .create_route import CreateRouteDialog
 
 from .import_path import return_lib_path
 sys.path.append(return_lib_path())
-from test_api import call_api
+from transition_api_lib import call_api
+
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'transition_qgis_dockwidget_base.ui'))
@@ -52,22 +53,12 @@ class TransitionDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.setupUi(self)
 
         # Connect the buttons
-        self.pushButton.clicked.connect(self.on_pushButton_clicked)
         self.resetButton.clicked.connect(self.on_resetButton_clicked)
-        self.routeButton.clicked.connect(self.open_create_route_popup)
-
-    def on_pushButton_clicked(self):
-        # Call the API
-        result = call_api()
-        self.plainTextEdit.setPlainText(result)
-        print("API called")
+        #self.routeButton.clicked.connect()
 
     def on_resetButton_clicked(self):
         self.plainTextEdit.clear()
 
-    def open_create_route_popup(self):
-        popup = CreateRouteDialog(self)
-        popup.exec_()
 
     def closeEvent(self, event):
         self.closingPlugin.emit()

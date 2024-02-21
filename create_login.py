@@ -26,9 +26,10 @@ class Login(QDialog):
 
         self.usernameEdit.editingFinished.connect(self.onUsernameEditTextChanged)
         self.passwordEdit.editingFinished.connect(self.onPasswordEditTextChanged)
+        #self.connectButton.clicked.connect(self.onConnectButtonClicked)
 
-        self.connectButton.clicked.connect(self.onConnectButtonClicked)
-
+        self.buttonBox.accepted.connect(self.onConnectButtonClicked)
+        self.buttonBox.rejected.connect(self.reject)
 
     def onUsernameEditTextChanged(self):
         os.environ['TRANSITION_USERNAME'] = self.usernameEdit.text()
@@ -49,9 +50,7 @@ class Login(QDialog):
         except ValueError:
             QMessageBox.warning(self, "Missing credentials", "Please enter your username and password.")
 
-    # on exit, close the dialog
-    def closeEvent(self, event):
-        event.accept()
-
-
-        
+    # # on exit, close the dialog
+    # def closeEvent(self, event):
+    #     print(event)
+    #     event.accept()

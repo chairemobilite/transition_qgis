@@ -273,7 +273,6 @@ class TransitionWidget:
                 createRouteForm = CreateRouteDialog()
                 self.dockwidget.verticalLayout.addWidget(createRouteForm)
 
-                
                 self.dockwidget.pathButton.clicked.connect(self.onPathButtonClicked)
                 self.dockwidget.nodeButton.clicked.connect(self.onNodeButtonClicked)
 

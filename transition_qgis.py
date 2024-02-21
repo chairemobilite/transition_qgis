@@ -217,7 +217,9 @@ class TransitionWidget:
         #print "** CLOSING Transition"
 
         # disconnects
-        self.dockwidget.closingPlugin.disconnect(self.onClosePlugin)
+        if self.dockwidget is not None:
+            self.dockwidget.closingPlugin.disconnect(self.onClosePlugin)
+        print("closing")
 
         # remove this statement if dockwidget is to remain
         # for reuse if plugin is reopened
@@ -254,14 +256,15 @@ class TransitionWidget:
             print("Transition plugin is active")
             if not self.validLogin:
                 self.loginPopup = Login()
+
+            self.loginPopup.finished.connect(self.onLoginFinished)
+
+    def onLoginFinished(self, result):
+        if result == QDialog.Accepted:
+            print("Login successful")
+            self.validLogin = True
             
-            print("checking if login is valid")
-            if self.loginPopup.exec_() == QDialog.Accepted:
-                self.validLogin = True
-                print("Login successful")
-
             #print "** STARTING Transition"
-
 
             # dockwidget may not exist if:
             #    first run of plugin
@@ -273,7 +276,6 @@ class TransitionWidget:
                 createRouteForm = CreateRouteDialog()
                 self.dockwidget.verticalLayout.addWidget(createRouteForm)
 
-                
                 self.dockwidget.pathButton.clicked.connect(self.onPathButtonClicked)
                 self.dockwidget.nodeButton.clicked.connect(self.onNodeButtonClicked)
 
@@ -284,9 +286,17 @@ class TransitionWidget:
                 self.dockwidget.closingPlugin.connect(self.onClosePlugin)
 
             # show the dockwidget
-            # TODO: fix to allow choice of dock location
             self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
+
+        else:
+            print("Login canceled")
+            
+            # Close the plugin's dock widget if it was created
+            if self.dockwidget:
+                self.iface.removeDockWidget(self.dockwidget)
+                self.dockwidget.close()
+            self.onClosePlugin()            
 
     def onPathButtonClicked(self):
         self.dockwidget.plainTextEdit.setPlainText("Getting the paths...")

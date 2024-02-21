@@ -31,10 +31,8 @@ from qgis.PyQt.QtCore import pyqtSignal
 from qgis.core import QgsVectorLayer, QgsProject
 
 
-
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'transition_qgis_dockwidget_base.ui'))
-
 
 class TransitionDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
@@ -52,11 +50,9 @@ class TransitionDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
         # Connect the buttons
         self.resetButton.clicked.connect(self.on_resetButton_clicked)
-        #self.routeButton.clicked.connect()
 
     def on_resetButton_clicked(self):
         self.plainTextEdit.clear()
-
 
     def closeEvent(self, event):
         self.closingPlugin.emit()

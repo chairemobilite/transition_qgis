@@ -26,20 +26,15 @@ class CustomLabel(QLabel):
 class CreateRouteDialog(QWidget):
     def __init__(self, parent=None):
         super(CreateRouteDialog, self).__init__(parent)
-        #self.setupUi(self)
 
-        # self.setGeometry(0, 0, 650, 300)
-        # self.setWindowTitle("Create new route")
         layout = QVBoxLayout(self)
         form_layout = QFormLayout()
-        #form_layout.setVerticalSpacing(25)
         form_layout.setRowWrapPolicy(QFormLayout.WrapAllRows)
-        #print(form_layout.width())
 
+        # Create each field and corresponding label
         modeLabel = CustomLabel("Effectuer le calcul de chemin pour les modes suivants")
         modeChoice = QgsCheckableComboBox()
         modes = Transition.get_transition_routing_modes()
-        print(modes)
         modeChoice.addItems(modes)
 
         departureLabel = CustomLabel("Heure de départ [HH:MM]")
@@ -82,17 +77,16 @@ class CreateRouteDialog(QWidget):
         scenarioLabel = CustomLabel("Scénario")
         scenarioChoice = QComboBox()
         scenarios = Transition.get_transition_scenarios()
-        print(scenarios)
         scenarioChoice.addItems(scenarios)
 
+        # Add fields to form display
         for label, field in zip([modeLabel, departureLabel, arrivalLabel, maxParcoursTimeLabel, minWaitTimeLabel, maxAccessTimeOrigDestLabel, maxTransferWaitTimeLabel, maxWaitTimeFisrstStopLabel, scenarioLabel], 
                                 [modeChoice, departureTime, arrivalTime, maxParcoursTimeChoice, minWaitTimeChoice, maxAccessTimeOrigDestChoice, maxTransferWaitTimeChoice, maxWaitTimeFisrstStopChoice, scenarioChoice]):
             label.setWordWrap(True)
             row_layout = QHBoxLayout()
-            row_layout.addWidget(label, stretch=4)  # 75% of the space
-            row_layout.addWidget(field, stretch=2)  # 25% of the space
+            row_layout.addWidget(label, stretch=4)  # 66% of the space
+            row_layout.addWidget(field, stretch=2)  # 33% of the space
             form_layout.addRow(row_layout)
 
-        
         layout.addLayout(form_layout)
 

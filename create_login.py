@@ -20,14 +20,15 @@ class Login(QDialog):
         super().__init__(parent)
         uic.loadUi(os.path.join(os.path.dirname(__file__), 'login_dialog.ui'), self)
         self.show()
+
         self.usernameEdit.disconnect()
         self.passwordEdit.disconnect()
-        self.usernameEdit.editingFinished.connect(self.onUsernameEditTextChanged)
 
+        self.usernameEdit.editingFinished.connect(self.onUsernameEditTextChanged)
         self.passwordEdit.editingFinished.connect(self.onPasswordEditTextChanged)
 
-        self.connectButton.clicked.connect(self.onConnectButtonClicked)
-
+        self.buttonBox.accepted.connect(self.onConnectButtonClicked)
+        self.buttonBox.rejected.connect(self.reject)
 
     def onUsernameEditTextChanged(self):
         os.environ['TRANSITION_USERNAME'] = self.usernameEdit.text()
@@ -35,26 +36,16 @@ class Login(QDialog):
     def onPasswordEditTextChanged(self):
         os.environ['TRANSITION_PASSWORD'] = self.passwordEdit.text()
 
-
     def onConnectButtonClicked(self):
         try:
             print("Connecting...")
             result = Transition.call_api()
-            print(result)
             if result.status_code == 200:
                 print("Successfully connected to API")
-                # QMessageBox.information(self, "Login Success", "Successfully connected to API")
                 self.accept()
-
             else:
-                QMessageBox.warning(self, "Invalid loggin credentials", "Bad username or password.")
+                QMessageBox.warning(self, "Invalid login credentials", "Bad username or password.")
                 
         except ValueError:
             QMessageBox.warning(self, "Missing credentials", "Please enter your username and password.")
 
-    # on exit, close the dialog
-    def closeEvent(self, event):
-        event.accept()
-
-
-        

@@ -256,7 +256,6 @@ class TransitionWidget:
             print("Transition plugin is active")
             if not self.validLogin:
                 self.loginPopup = Login()
-            self.loginPopup.show()
 
             self.loginPopup.finished.connect(self.onLoginFinished)
 

@@ -38,6 +38,7 @@ import os.path
 
 import sys
 import geojson
+import configparser
 
 from .import_path import return_lib_path
 sys.path.append(return_lib_path())
@@ -254,40 +255,37 @@ class TransitionWidget:
         if not self.pluginIsActive:
             self.pluginIsActive = True
             print("Transition plugin is active")
-            if not self.validLogin:
-                self.loginPopup = Login()
 
-            self.loginPopup.finished.connect(self.onLoginFinished)
+            self.checkValidLogin()
+            print(f"Valid login: {self.validLogin}")
+                
+            if self.validLogin:
+                self.show_dockwidget()
+
+            else:
+                self.loginPopup = Login()
+                self.loginPopup.finished.connect(self.onLoginFinished)
+
+    def checkValidLogin(self):
+        config = configparser.ConfigParser()
+        self.config_path = os.path.join(os.path.dirname(__file__), 'config.ini')
+        if os.path.isfile(self.config_path):
+            config.read(self.config_path)
+            if config['credentials']['token']:
+                self.validLogin = True
+    
 
     def onLoginFinished(self, result):
         if result == QDialog.Accepted:
             print("Login successful")
             self.validLogin = True
+            self.show_dockwidget()
             
             #print "** STARTING Transition"
 
             # dockwidget may not exist if:
             #    first run of plugin
             #    removed on close (see self.onClosePlugin method)
-            if self.dockwidget == None and self.validLogin:
-                print("Creating new dockwidget")
-                # Create the dockwidget (after translation) and keep reference
-                self.dockwidget = TransitionDockWidget()
-                createRouteForm = CreateRouteDialog()
-                self.dockwidget.verticalLayout.addWidget(createRouteForm)
-
-                self.dockwidget.pathButton.clicked.connect(self.onPathButtonClicked)
-                self.dockwidget.nodeButton.clicked.connect(self.onNodeButtonClicked)
-
-                self.dockwidget.captureButtonFrom.clicked.connect(self.startCapturingFrom)
-                self.dockwidget.captureButtonTo.clicked.connect(self.startCapturingTo)
-
-                # connect to provide cleanup on closing of dockwidget
-                self.dockwidget.closingPlugin.connect(self.onClosePlugin)
-
-            # show the dockwidget
-            self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
-            self.dockwidget.show()
 
         else:
             print("Login canceled")
@@ -296,7 +294,28 @@ class TransitionWidget:
             if self.dockwidget:
                 self.iface.removeDockWidget(self.dockwidget)
                 self.dockwidget.close()
-            self.onClosePlugin()            
+            self.onClosePlugin()   
+
+    def show_dockwidget(self):
+        if self.dockwidget == None and self.validLogin:
+            print("Creating new dockwidget")
+            # Create the dockwidget (after translation) and keep reference
+            self.dockwidget = TransitionDockWidget()
+            createRouteForm = CreateRouteDialog()
+            self.dockwidget.verticalLayout.addWidget(createRouteForm)
+
+            self.dockwidget.pathButton.clicked.connect(self.onPathButtonClicked)
+            self.dockwidget.nodeButton.clicked.connect(self.onNodeButtonClicked)
+
+            self.dockwidget.captureButtonFrom.clicked.connect(self.startCapturingFrom)
+            self.dockwidget.captureButtonTo.clicked.connect(self.startCapturingTo)
+
+            # connect to provide cleanup on closing of dockwidget
+            self.dockwidget.closingPlugin.connect(self.onClosePlugin)
+
+        # show the dockwidget
+        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
+        self.dockwidget.show()         
 
     def onPathButtonClicked(self):
         self.dockwidget.plainTextEdit.setPlainText("Getting the paths...")

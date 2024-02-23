@@ -31,6 +31,9 @@ class Login(QDialog):
 
         self.buttonBox.accepted.connect(self.onConnectButtonClicked)
         self.buttonBox.rejected.connect(self.reject)
+        self.comboBox.addItems(self.config['URL'].keys())
+
+        self.comboBox.currentIndexChanged.connect(self.onComboBoxChanged)
 
         
     def loadConfig(self):
@@ -42,13 +45,14 @@ class Login(QDialog):
                 'token': ''
             }
             self.config['URL'] = {
-                'dev': 'http://localhost:8080/',
-                'prod': ''
+                'development': 'http://localhost:8080',
+                'production': ''
             }
             with open(self.config_path, 'w') as configfile:
                 self.config.write(configfile)
         else:
-            self.config.read('config.ini')
+            self.config.read(self.config_path)
+        
 
     def saveConfig(self):
         print("Saving config")
@@ -62,6 +66,10 @@ class Login(QDialog):
 
     def onPasswordEditTextChanged(self):
         os.environ['TRANSITION_PASSWORD'] = self.passwordEdit.text()
+
+    def onComboBoxChanged(self):
+        os.environ['TRANSITION_BASE_URL'] = self.config['URL'][self.comboBox.currentText()]
+        self.saveConfig()
 
     def onConnectButtonClicked(self):
         try:

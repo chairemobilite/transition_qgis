@@ -68,7 +68,7 @@ class TransitionWidget:
         locale_path = os.path.join(
             self.plugin_dir,
             'i18n',
-            'Transition_{}.qm'.format(locale))
+            'transition_qgis_{}.qm'.format(locale))
 
         if os.path.exists(locale_path):
             self.translator = QTranslator()

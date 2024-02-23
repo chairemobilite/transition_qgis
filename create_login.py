@@ -1,6 +1,5 @@
 import os
 import sys
-import configparser
 from tkinter import messagebox
 from qgis.PyQt import QtGui, QtWidgets, uic
 from PyQt5.QtWidgets import QWidget, QMessageBox
@@ -20,64 +19,22 @@ class Login(QDialog):
     def __init__(self, parent = None) -> None:
         super().__init__(parent)
         uic.loadUi(os.path.join(os.path.dirname(__file__), 'login_dialog.ui'), self)
-        self.loadConfig()
+        self.config = Transition.get_configurations()
         self.show()
-
-        self.usernameEdit.disconnect()
-        self.passwordEdit.disconnect()
-
-        self.usernameEdit.editingFinished.connect(self.onUsernameEditTextChanged)
-        self.passwordEdit.editingFinished.connect(self.onPasswordEditTextChanged)
 
         self.buttonBox.accepted.connect(self.onConnectButtonClicked)
         self.buttonBox.rejected.connect(self.reject)
         self.comboBox.addItems(self.config['URL'].keys())
 
-        self.comboBox.currentIndexChanged.connect(self.onComboBoxChanged)
-
-        
-    def loadConfig(self):
-        self.config = configparser.ConfigParser()
-        self.config_path = os.path.join(os.path.dirname(__file__), 'config.ini')
-        if not os.path.isfile(self.config_path):
-            self.config['credentials'] = {
-                'username': '',
-                'token': ''
-            }
-            self.config['URL'] = {
-                'development': 'http://localhost:8080',
-                'production': ''
-            }
-            with open(self.config_path, 'w') as configfile:
-                self.config.write(configfile)
-        else:
-            self.config.read(self.config_path)
-        
-
-    def saveConfig(self):
-        print("Saving config")
-        with open(self.config_path, 'w') as configfile:
-            self.config.write(configfile)
-
-    def onUsernameEditTextChanged(self):
-        os.environ['TRANSITION_USERNAME'] = self.usernameEdit.text()
-        self.config['credentials']['username'] = os.environ['TRANSITION_USERNAME']
-
-
-    def onPasswordEditTextChanged(self):
-        os.environ['TRANSITION_PASSWORD'] = self.passwordEdit.text()
-
-    def onComboBoxChanged(self):
-        os.environ['TRANSITION_BASE_URL'] = self.config['URL'][self.comboBox.currentText()]
-        self.saveConfig()
 
     def onConnectButtonClicked(self):
         try:
             print("Connecting...")
+            Transition.set_url(self.comboBox.currentText())
+            Transition.set_credentials(self.usernameEdit.text(), self.passwordEdit.text())
+
             result = Transition.get_token()
             if result.status_code == 200:
-                self.config['credentials']['token'] = result.text
-                self.saveConfig()
                 print("Successfully connected to API")
                 self.accept()
             else:

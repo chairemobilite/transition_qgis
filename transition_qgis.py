@@ -267,12 +267,9 @@ class TransitionWidget:
                 self.loginPopup.finished.connect(self.onLoginFinished)
 
     def checkValidLogin(self):
-        config = configparser.ConfigParser()
-        self.config_path = os.path.join(os.path.dirname(__file__), 'config.ini')
-        if os.path.isfile(self.config_path):
-            config.read(self.config_path)
-            if config['credentials']['token']:
-                self.validLogin = True
+        config = Transition.get_configurations()
+        if config['credentials']['token']:
+            self.validLogin = True
     
 
     def onLoginFinished(self, result):

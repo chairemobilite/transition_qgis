@@ -23,10 +23,10 @@
 """
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt, pyqtSignal
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction, QDialog
+from qgis.PyQt.QtWidgets import QAction, QDialog, QSpinBox
 
 from qgis.gui import QgsMapToolEmitPoint, QgsRubberBand, QgsProjectionSelectionDialog
-from qgis.core import QgsUnitTypes, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsPointXY, QgsVectorLayer, QgsProject
+from qgis.core import QgsUnitTypes, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsPointXY, QgsVectorLayer, QgsProject, QgsLayerTreeGroup
 # Initialize Qt resources from file resources.py
 from .resources import *
 
@@ -87,6 +87,7 @@ class TransitionWidget:
         self.pluginIsActive = False
         self.dockwidget = None
         self.loginPopup = None
+        self.transition_paths = None
         self.validLogin = False
         
         self.crs = QgsCoordinateReferenceSystem("EPSG:4326")
@@ -123,8 +124,7 @@ class TransitionWidget:
         """
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return QCoreApplication.translate('Transition', message)
-
-
+    
     def add_action(
         self,
         icon_path,
@@ -298,25 +298,33 @@ class TransitionWidget:
             print("Creating new dockwidget")
             # Create the dockwidget (after translation) and keep reference
             self.dockwidget = TransitionDockWidget()
-            createRouteForm = CreateRouteDialog()
-            self.dockwidget.verticalLayout.addWidget(createRouteForm)
+            self.createRouteForm = CreateRouteDialog()
+            self.dockwidget.verticalLayout.addWidget(self.createRouteForm)
+            # index = self.dockwidget.count() - 1
+            # self.routeWidget = createRouteForm.widget()
 
             self.dockwidget.pathButton.clicked.connect(self.onPathButtonClicked)
             self.dockwidget.nodeButton.clicked.connect(self.onNodeButtonClicked)
 
             self.dockwidget.captureButtonFrom.clicked.connect(self.startCapturingFrom)
             self.dockwidget.captureButtonTo.clicked.connect(self.startCapturingTo)
+            self.dockwidget.routeButton.clicked.connect(self.onNewRouteButtonClicked)
 
             # connect to provide cleanup on closing of dockwidget
             self.dockwidget.closingPlugin.connect(self.onClosePlugin)
 
         # show the dockwidget
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
-        self.dockwidget.show()         
+        self.dockwidget.show()   
+
+    def getPaths(self):
+        self.dockwidget.plainTextEdit.setPlainText("Getting the paths...")
+        transition_paths = Transition.get_transition_paths()
+        return transition_paths
 
     def onPathButtonClicked(self):
-        self.dockwidget.plainTextEdit.setPlainText("Getting the paths...")
-        geojson_data = Transition.get_transition_paths()
+        # self.dockwidget.plainTextEdit.setPlainText("Getting the paths...")
+        geojson_data = self.getPaths()
         if geojson_data:
             layer = QgsVectorLayer(geojson.dumps(geojson_data), "transition_paths", "ogr")
             if not layer.isValid():
@@ -341,6 +349,43 @@ class TransitionWidget:
 
         print("API called")
         self.iface.actionPan().trigger()
+
+    def onNewRouteButtonClicked(self):
+        originCoord = self.dockwidget.userCrsEditFrom.text()
+        destCoord = self.dockwidget.userCrsEditTo.text()
+        departureTime = self.createRouteForm.departureTime.time().hour() * 3600 + self.createRouteForm.departureTime.time().minute() * 60
+        arrivalTime = self.createRouteForm.arrivalTime.time().hour() * 3600 + self.createRouteForm.arrivalTime.time().minute() * 60
+        maxParcoursTime = self.createRouteForm.maxParcoursTimeChoice.value() * 60
+        minWaitTime = self.createRouteForm.minWaitTimeChoice.value() * 60
+        maxAccessTimeOrigDest = self.createRouteForm.maxAccessTimeOrigDestChoice.value() * 60
+        maxTransferWaitTime = self.createRouteForm.maxTransferWaitTimeChoice.value() * 60
+        maxWaitTimeFisrstStopChoice = self.createRouteForm.maxWaitTimeFisrstStopChoice.value() * 60
+        modes = self.createRouteForm.modeChoice.checkedItems()
+        scenarioId = self.createRouteForm.scenarios.json()['collection'][self.createRouteForm.scenarioChoice.currentIndex()]['id']
+
+        result = Transition.get_routing_result(modes, originCoord, destCoord, scenarioId, maxParcoursTime, minWaitTime,
+                                     maxTransferWaitTime, maxAccessTimeOrigDest, departureTime, arrivalTime, maxWaitTimeFisrstStopChoice,"true")
+        if result.status_code == 200 :
+            root = QgsProject.instance().layerTreeRoot()
+            group = root.addGroup("Routing results")
+            # loop through the range of the keys of the json object to get the paths of different routing modes
+            print(len(result.json()))
+            for key, value in result.json().items():  
+                geojsonPath = value["pathsGeojson"]
+                mode = key
+                for i in range(len(geojsonPath)):
+                    geojson_data = geojsonPath[i]
+                    layer = QgsVectorLayer(geojson.dumps(geojson_data), mode, "ogr")
+                    if not layer.isValid():
+                        print("Layer failed to load!")
+                        return
+                    QgsProject.instance().addMapLayer(layer, False)
+                    group.addLayer(layer)
+                            
+        else: print("Failed to get GeoJSON data")
+
+
+
 
     def setCrs(self):
         selector = QgsProjectionSelectionDialog(self.iface.mainWindow())

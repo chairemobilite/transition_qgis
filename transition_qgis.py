@@ -316,8 +316,21 @@ class TransitionWidget:
             self.dockwidget.pathButton.clicked.connect(self.onPathButtonClicked)
             self.dockwidget.nodeButton.clicked.connect(self.onNodeButtonClicked)
 
-            self.dockwidget.captureButtonFrom.clicked.connect(self.startCapturingFrom)
-            self.dockwidget.captureButtonTo.clicked.connect(self.startCapturingTo)
+            self.mapToolFrom = CoordinateCaptureMapTool(self.iface, self.iface.mapCanvas(), Qt.darkGreen, "Starting point")
+            self.mapToolFrom.mouseClicked.connect(lambda event: self.mouseClickedCapture(event, self.dockwidget.userCrsEditFrom))
+            self.mapToolFrom.endSelection.connect(self.stopCapturing)
+
+            self.mapToolTo = CoordinateCaptureMapTool(self.iface, self.iface.mapCanvas(), Qt.blue, "Destination point")
+            self.mapToolTo.mouseClicked.connect(lambda event: self.mouseClickedCapture(event, self.dockwidget.userCrsEditTo))
+            self.mapToolTo.endSelection.connect(self.stopCapturing)
+
+            self.mapToolAccessibility = CoordinateCaptureMapTool(self.iface, self.iface.mapCanvas(), Qt.blue, "Accessibility map center")
+            self.mapToolAccessibility.mouseClicked.connect(lambda event: self.mouseClickedCapture(event, self.dockwidget.userCrsEditAccessibility))
+            self.mapToolAccessibility.endSelection.connect(self.stopCapturing)
+
+            self.dockwidget.routeCaptureButtonFrom.clicked.connect(lambda: self.startCapturing(self.mapToolFrom))
+            self.dockwidget.routeCaptureButtonTo.clicked.connect(lambda: self.startCapturing(self.mapToolTo))
+            self.dockwidget.accessibilityCaptureButton.clicked.connect(lambda: self.startCapturing(self.mapToolAccessibility))
 
             # connect to provide cleanup on closing of dockwidget
             self.dockwidget.closingPlugin.connect(self.onClosePlugin)
@@ -372,25 +385,22 @@ class TransitionWidget:
         else:
             self.canvasCrsDisplayPrecision = 3
 
-    def mouseClickedFrom(self, point: QgsPointXY):
+    def mouseClickedCapture(self, point: QgsPointXY, displayField):
         userCrsPoint = self.transform.transform(point)
-        self.dockwidget.userCrsEditFrom.setText('{0:.{2}f},{1:.{2}f}'.format(userCrsPoint.x(),
+        displayField.setText('{0:.{2}f},{1:.{2}f}'.format(userCrsPoint.x(),
                                                                          userCrsPoint.y(),
                                                                          self.userCrsDisplayPrecision))
 
 
-    def mouseClickedTo(self, point: QgsPointXY):
-        userCrsPoint = self.transform.transform(point)
-        self.dockwidget.userCrsEditTo.setText('{0:.{2}f},{1:.{2}f}'.format(userCrsPoint.x(),
-                                                                         userCrsPoint.y(),
-                                                                         self.userCrsDisplayPrecision))
+    # def mouseClickedTo(self, point: QgsPointXY):
+    #     userCrsPoint = self.transform.transform(point)
+    #     self.dockwidget.userCrsEditTo.setText('{0:.{2}f},{1:.{2}f}'.format(userCrsPoint.x(),
+    #                                                                      userCrsPoint.y(),
+    #                                                                      self.userCrsDisplayPrecision))
 
-    def startCapturingFrom(self):
-        self.iface.mapCanvas().setMapTool(self.mapToolFrom)
+    def startCapturing(self, mapTool):
+        self.iface.mapCanvas().setMapTool(mapTool)
 
-    def startCapturingTo(self):
-        self.iface.mapCanvas().setMapTool(self.mapToolTo)
-
-    def endCapture(self):
+    def stopCapturing(self):
         self.iface.actionPan().trigger()
         self.mapToolFrom.deactivate()

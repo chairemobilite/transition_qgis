@@ -45,6 +45,7 @@ sys.path.append(return_lib_path())
 from transition_api_lib import Transition
 
 from .create_route import CreateRouteDialog
+from .create_accessibility import CreateAccessibilityDialog
 
 
 class TransitionWidget:
@@ -99,15 +100,6 @@ class TransitionWidget:
         self.canvasCrsDisplayPrecision = None
         self.iface.mapCanvas().destinationCrsChanged.connect(self.setSourceCrs)
         self.setSourceCrs()
-
-        self.mapToolFrom = CoordinateCaptureMapTool(self.iface, self.iface.mapCanvas(), Qt.darkGreen, "Starting point")
-        self.mapToolFrom.mouseClicked.connect(self.mouseClickedFrom)
-        self.mapToolFrom.endSelection.connect(self.endCapture)
-
-        self.mapToolTo = CoordinateCaptureMapTool(self.iface, self.iface.mapCanvas(), Qt.blue, "Destination point")
-        self.mapToolTo.mouseClicked.connect(self.mouseClickedTo)
-        self.mapToolTo.endSelection.connect(self.endCapture)
-
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -283,6 +275,24 @@ class TransitionWidget:
             # dockwidget may not exist if:
             #    first run of plugin
             #    removed on close (see self.onClosePlugin method)
+            if self.dockwidget == None and self.validLogin:
+                print("Creating new dockwidget")
+                # Create the dockwidget (after translation) and keep reference
+                self.dockwidget = TransitionDockWidget()
+                createRouteForm = CreateRouteDialog()
+                self.dockwidget.routeVerticalLayout.addWidget(createRouteForm)
+                createAccessibilityForm = CreateAccessibilityDialog()
+                self.dockwidget.accessibilityVerticalLayout.addWidget(createAccessibilityForm)
+
+                self.dockwidget.pathButton.clicked.connect(self.onPathButtonClicked)
+                self.dockwidget.nodeButton.clicked.connect(self.onNodeButtonClicked)
+
+                # connect to provide cleanup on closing of dockwidget
+                self.dockwidget.closingPlugin.connect(self.onClosePlugin)
+
+            # show the dockwidget
+            self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
+            self.dockwidget.show()
 
         else:
             print("Login canceled")
@@ -299,7 +309,9 @@ class TransitionWidget:
             # Create the dockwidget (after translation) and keep reference
             self.dockwidget = TransitionDockWidget()
             createRouteForm = CreateRouteDialog()
-            self.dockwidget.verticalLayout.addWidget(createRouteForm)
+            self.dockwidget.routeVerticalLayout.addWidget(createRouteForm)
+            createAccessibilityForm = CreateAccessibilityDialog()
+            self.dockwidget.accessibilityVerticalLayout.addWidget(createAccessibilityForm)
 
             self.dockwidget.pathButton.clicked.connect(self.onPathButtonClicked)
             self.dockwidget.nodeButton.clicked.connect(self.onNodeButtonClicked)

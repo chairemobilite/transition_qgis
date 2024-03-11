@@ -40,10 +40,6 @@ class CreateAccessibilityDialog(QWidget):
         departureTime.setDisplayFormat("hh:mm")
         departureTime.setTime(QTime(8, 00))
 
-        arrivalLabel = CustomLabel(self.tr("Arrival time"))
-        arrivalTime = QTimeEdit()
-        arrivalTime.setDisplayFormat("hh:mm")
-
         nPolygonsLabel = CustomLabel(self.tr("Number of polygons to calculate"))
         nPolygons = QSpinBox()
         nPolygons.setMinimum(1)
@@ -102,8 +98,8 @@ class CreateAccessibilityDialog(QWidget):
         walkingSpeed.setValue(5)
 
         # Add fields to form display
-        for label, field in zip([departureOrArrivalLabel, arrivalLabel, nPolygonsLabel, deltaLabel, deltaIntervalLabel, scenarioLabel, placeNameLabel, maxTotalTravelTimeLabel, minWaitTimeLabel, maxAccessTimeOrigDestLabel, maxTransferWaitTimeLabel, maxFirstWaitTimeLabel, walkingSpeedLabel], 
-                                [departureOrArrivalChoice, arrivalTime, nPolygons, delta, deltaInterval, scenarioChoice, placeName, maxTotalTravelTime, minWaitTime, maxAccessTimeOrigDest, maxTransferWaitTime, maxFirstWaitTime, walkingSpeed]):
+        for label, field in zip([departureOrArrivalLabel, departureLabel, nPolygonsLabel, deltaLabel, deltaIntervalLabel, scenarioLabel, placeNameLabel, maxTotalTravelTimeLabel, minWaitTimeLabel, maxAccessTimeOrigDestLabel, maxTransferWaitTimeLabel, maxFirstWaitTimeLabel, walkingSpeedLabel], 
+                                [departureOrArrivalChoice, departureTime, nPolygons, delta, deltaInterval, scenarioChoice, placeName, maxTotalTravelTime, minWaitTime, maxAccessTimeOrigDest, maxTransferWaitTime, maxFirstWaitTime, walkingSpeed]):
             label.setWordWrap(True)
             row_layout = QHBoxLayout()
             row_layout.addWidget(label, stretch=4)  # 66% of the space

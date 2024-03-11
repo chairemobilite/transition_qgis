@@ -162,7 +162,7 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>490</y>
+       <y>530</y>
        <width>161</width>
        <height>31</height>
       </rect>
@@ -174,9 +174,9 @@
     <widget class="QPushButton" name="accessibilityButton">
      <property name="geometry">
       <rect>
-       <x>80</x>
-       <y>540</y>
-       <width>211</width>
+       <x>50</x>
+       <y>580</y>
+       <width>271</width>
        <height>61</height>
       </rect>
      </property>
@@ -188,7 +188,7 @@
      <property name="geometry">
       <rect>
        <x>190</x>
-       <y>490</y>
+       <y>530</y>
        <width>181</width>
        <height>31</height>
       </rect>
@@ -200,7 +200,7 @@
        <x>10</x>
        <y>10</y>
        <width>371</width>
-       <height>461</height>
+       <height>501</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="accessibilityVerticalLayout"/>

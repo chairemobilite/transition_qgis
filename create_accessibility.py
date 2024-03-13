@@ -23,83 +23,84 @@ class CustomLabel(QLabel):
         minSize.setHeight(minSize.height() + 30)
         return minSize
     
-class CreateAccessibilityDialog(QWidget):
+class CreateAccessibilityForm(QWidget):
     def __init__(self, parent=None):
-        super(CreateAccessibilityDialog, self).__init__(parent)
+        super(CreateAccessibilityForm, self).__init__(parent)
 
         layout = QVBoxLayout(self)
         form_layout = QFormLayout()
         form_layout.setRowWrapPolicy(QFormLayout.WrapAllRows)
 
-        departureOrArrivalLabel = CustomLabel(self.tr("Time to use"))
-        departureOrArrivalChoice = QComboBox()
-        departureOrArrivalChoice.addItems(['Departure', 'Arrival'])
+        self.departureOrArrivalLabel = CustomLabel(self.tr("Time to use"))
+        self.departureOrArrivalChoice = QComboBox()
+        self.departureOrArrivalChoice.addItems(['Departure', 'Arrival'])
 
-        departureLabel = CustomLabel(self.tr("Departure or arrival time"))
-        departureTime = QTimeEdit()
-        departureTime.setDisplayFormat("hh:mm")
-        departureTime.setTime(QTime(8, 00))
+        self.departureOrArrivalTimeLabel = CustomLabel(self.tr("Departure or arrival time"))
+        self.departureOrArrivalTime = QTimeEdit()
+        self.departureOrArrivalTime.setDisplayFormat("hh:mm")
+        self.departureOrArrivalTime.setTime(QTime(8, 00))
 
-        nPolygonsLabel = CustomLabel(self.tr("Number of polygons to calculate"))
-        nPolygons = QSpinBox()
-        nPolygons.setMinimum(1)
-        nPolygons.setValue(3)
-        nPolygons.setToolTip(self.tr("A total duration of 60 minutes with a number of polygons of 3 implies that we will obtain three polygons: accessibility at 20 minutes, 40 minutes and 60 minutes."))
+        self.nPolygonsLabel = CustomLabel(self.tr("Number of polygons to calculate"))
+        self.nPolygons = QSpinBox()
+        self.nPolygons.setMinimum(1)
+        self.nPolygons.setValue(3)
+        self.nPolygons.setToolTip(self.tr("A total duration of 60 minutes with a number of polygons of 3 implies that we will obtain three polygons: accessibility at 20 minutes, 40 minutes and 60 minutes."))
 
-        deltaLabel = CustomLabel(self.tr("Delta (minutes)"))
-        delta = QSpinBox()
-        delta.setValue(15)
-        delta.setMinimum(1)
+        self.deltaLabel = CustomLabel(self.tr("Delta (minutes)"))
+        self.delta = QSpinBox()
+        self.delta.setValue(15)
+        self.delta.setMinimum(1)
 
-        deltaIntervalLabel = CustomLabel(self.tr("Delta interval (minutes)"))
-        deltaInterval = QSpinBox()
-        deltaInterval.setValue(5)
-        deltaInterval.setMinimum(1)
-        deltaInterval.setToolTip(self.tr("A delta of 15 minutes with an interval of 5 minutes implies that the polygon area will be averaged over polygons obtained 15 minutes before, 10 minutes before, 5 minutes before, at specified time, 5 minutes after, 10 minutes after and 15 minutes after the specified departure or arrival time."))
+        self.deltaIntervalLabel = CustomLabel(self.tr("Delta interval (minutes)"))
+        self.deltaInterval = QSpinBox()
+        self.deltaInterval.setValue(5)
+        self.deltaInterval.setMinimum(1)
+        self.deltaInterval.setToolTip(self.tr("A delta of 15 minutes with an interval of 5 minutes implies that the polygon area will be averaged over polygons obtained 15 minutes before, 10 minutes before, 5 minutes before, at specified time, 5 minutes after, 10 minutes after and 15 minutes after the specified departure or arrival time."))
 
-        scenarioLabel = CustomLabel(self.tr("Scenario"))
-        scenarioChoice = QComboBox()
-        scenarios = Transition.get_transition_scenarios()
-        scenarioChoice.addItems(scenarios)
+        self.scenarioLabel = CustomLabel(self.tr("Scenario"))
+        self.scenarioChoice = QComboBox()
+        self.scenarios = Transition.get_transition_scenarios()
+        self.scenariosNames = [entry['name'] for entry in self.scenarios.json()['collection']]
+        self.scenarioChoice.addItems(self.scenariosNames)
 
-        placeNameLabel = CustomLabel(self.tr("Place name"))
-        placeName = QLineEdit()
+        self.placeNameLabel = CustomLabel(self.tr("Place name"))
+        self.placeName = QLineEdit()
 
-        maxTotalTravelTimeLabel = CustomLabel(self.tr("Maximum total travel time including access and egress (minutes)"))
-        maxTotalTravelTime = QSpinBox()
-        maxTotalTravelTime.setValue(30)
+        self.maxTotalTravelTimeLabel = CustomLabel(self.tr("Maximum total travel time including access and egress (minutes)"))
+        self.maxTotalTravelTime = QSpinBox()
+        self.maxTotalTravelTime.setValue(30)
 
-        minWaitTimeLabel = CustomLabel(self.tr("Minimum waiting time (minutes)"))
-        minWaitTime = QSpinBox()
-        minWaitTime.setMinimum(1)
-        minWaitTime.setValue(3)
-        minWaitTime.setToolTip(self.tr("To account for timetable uncertainty, this value should be greater or equal to 1 minute. Suggested value: 3 minutes"))
+        self.minWaitTimeLabel = CustomLabel(self.tr("Minimum waiting time (minutes)"))
+        self.minWaitTime = QSpinBox()
+        self.minWaitTime.setMinimum(1)
+        self.minWaitTime.setValue(3)
+        self.minWaitTime.setToolTip(self.tr("To account for timetable uncertainty, this value should be greater or equal to 1 minute. Suggested value: 3 minutes"))
 
-        maxAccessTimeOrigDestLabel = CustomLabel(self.tr("Maximum access and egress travel time (minutes)"))
-        maxAccessTimeOrigDest = QSpinBox()
-        maxAccessTimeOrigDest.setValue(15)
-        maxAccessTimeOrigDest.setMaximum(20)
-        maxAccessTimeOrigDest.setToolTip(self.tr("To avoid long calculation time, this value has a maximum of 20 minutes."))
+        self.maxAccessTimeOrigDestLabel = CustomLabel(self.tr("Maximum access and egress travel time (minutes)"))
+        self.maxAccessTimeOrigDest = QSpinBox()
+        self.maxAccessTimeOrigDest.setValue(15)
+        self.maxAccessTimeOrigDest.setMaximum(20)
+        self.maxAccessTimeOrigDest.setToolTip(self.tr("To avoid long calculation time, this value has a maximum of 20 minutes."))
 
-        maxTransferWaitTimeLabel = CustomLabel(self.tr("Maximum access travel time when transferring (minutes)"))
-        maxTransferWaitTime = QSpinBox()
-        maxTransferWaitTime.setValue(10)
-        maxTransferWaitTime.setMaximum(20)
-        maxTransferWaitTime.setToolTip(self.tr("To avoid long calculation time, this value has a maximum of 20 minutes."))
+        self.maxTransferWaitTimeLabel = CustomLabel(self.tr("Maximum access travel time when transferring (minutes)"))
+        self.maxTransferWaitTime = QSpinBox()
+        self.maxTransferWaitTime.setValue(10)
+        self.maxTransferWaitTime.setMaximum(20)
+        self.maxTransferWaitTime.setToolTip(self.tr("To avoid long calculation time, this value has a maximum of 20 minutes."))
 
-        maxFirstWaitTimeLabel = CustomLabel(self.tr("Maximum first waiting time (minutes)"))
-        maxFirstWaitTime = QSpinBox()
-        maxFirstWaitTime.setValue(0)
-        maxFirstWaitTime.setToolTip(self.tr("If waiting time at first stop is greater than this value for a line, ignore the departure of this line at this stop"))
+        self.maxFirstWaitTimeLabel = CustomLabel(self.tr("Maximum first waiting time (minutes)"))
+        self.maxFirstWaitTime = QSpinBox()
+        self.maxFirstWaitTime.setValue(0)
+        self.maxFirstWaitTime.setToolTip(self.tr("If waiting time at first stop is greater than this value for a line, ignore the departure of this line at this stop"))
 
-        walkingSpeedLabel = CustomLabel(self.tr("Walking speed (km/h)"))
-        walkingSpeed = QSpinBox()
-        walkingSpeed.setMinimum(1)
-        walkingSpeed.setValue(5)
+        self.walkingSpeedLabel = CustomLabel(self.tr("Walking speed (km/h)"))
+        self.walkingSpeed = QSpinBox()
+        self.walkingSpeed.setMinimum(1)
+        self.walkingSpeed.setValue(5)
 
         # Add fields to form display
-        for label, field in zip([departureOrArrivalLabel, departureLabel, nPolygonsLabel, deltaLabel, deltaIntervalLabel, scenarioLabel, placeNameLabel, maxTotalTravelTimeLabel, minWaitTimeLabel, maxAccessTimeOrigDestLabel, maxTransferWaitTimeLabel, maxFirstWaitTimeLabel, walkingSpeedLabel], 
-                                [departureOrArrivalChoice, departureTime, nPolygons, delta, deltaInterval, scenarioChoice, placeName, maxTotalTravelTime, minWaitTime, maxAccessTimeOrigDest, maxTransferWaitTime, maxFirstWaitTime, walkingSpeed]):
+        for label, field in zip([self.departureOrArrivalLabel, self.departureOrArrivalTimeLabel, self.nPolygonsLabel, self.deltaLabel, self.deltaIntervalLabel, self.scenarioLabel, self.placeNameLabel, self.maxTotalTravelTimeLabel, self.minWaitTimeLabel, self.maxAccessTimeOrigDestLabel, self.maxTransferWaitTimeLabel, self.maxFirstWaitTimeLabel, self.walkingSpeedLabel], 
+                                [self.departureOrArrivalChoice, self.departureOrArrivalTime, self.nPolygons, self.delta, self.deltaInterval, self.scenarioChoice, self.placeName, self.maxTotalTravelTime, self.minWaitTime, self.maxAccessTimeOrigDest, self.maxTransferWaitTime, self.maxFirstWaitTime, self.walkingSpeed]):
             label.setWordWrap(True)
             row_layout = QHBoxLayout()
             row_layout.addWidget(label, stretch=4)  # 66% of the space

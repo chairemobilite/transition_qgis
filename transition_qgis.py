@@ -45,7 +45,7 @@ sys.path.append(return_lib_path())
 from transition_api_lib import Transition
 
 from .create_route import CreateRouteDialog
-from .create_accessibility import CreateAccessibilityDialog
+from .create_accessibility import CreateAccessibilityForm
 
 
 class TransitionWidget:
@@ -310,8 +310,8 @@ class TransitionWidget:
             self.dockwidget = TransitionDockWidget()
             createRouteForm = CreateRouteDialog()
             self.dockwidget.routeVerticalLayout.addWidget(createRouteForm)
-            createAccessibilityForm = CreateAccessibilityDialog()
-            self.dockwidget.accessibilityVerticalLayout.addWidget(createAccessibilityForm)
+            self.createAccessibilityForm = CreateAccessibilityForm()
+            self.dockwidget.accessibilityVerticalLayout.addWidget(self.createAccessibilityForm)
 
             self.dockwidget.pathButton.clicked.connect(self.onPathButtonClicked)
             self.dockwidget.nodeButton.clicked.connect(self.onNodeButtonClicked)

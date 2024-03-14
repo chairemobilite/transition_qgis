@@ -75,7 +75,7 @@ class CreateRouteDialog(QWidget):
 
         scenarioLabel = CustomLabel(self.tr("Scenario"))
         scenarioChoice = QComboBox()
-        scenarios = Transition.get_transition_scenarios()
+        scenarios = [entry['name'] for entry in Transition.get_transition_scenarios().json()['collection']]
         scenarioChoice.addItems(scenarios)
 
         # Add fields to form display

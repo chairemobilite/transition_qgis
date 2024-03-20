@@ -70,8 +70,8 @@ class CoordinateCaptureMapTool(QgsMapToolEmitPoint):
             self.mouseClicked.emit(originalPoint)
 
     def canvasReleaseEvent(self, e):
-        if e.button() == Qt.RightButton:
-            self.endSelection.emit()
+        #if e.button() == Qt.RightButton:
+        self.endSelection.emit()
 
     def deactivate(self):
         # Deactivate only if there is an active layer

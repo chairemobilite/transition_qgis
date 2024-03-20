@@ -27,7 +27,7 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QDialog
 
 from qgis.gui import QgsMapToolEmitPoint, QgsRubberBand, QgsProjectionSelectionDialog
-from qgis.core import QgsUnitTypes, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsPointXY, QgsVectorLayer, QgsProject, QgsWkbTypes
+from qgis.core import QgsUnitTypes, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsPointXY, QgsVectorLayer, QgsProject, Qgis
 # Initialize Qt resources from file resources.py
 from .resources import *
 
@@ -90,7 +90,7 @@ class TransitionWidget:
         self.dockwidget = None
         self.loginPopup = None
         self.validLogin = False
-        
+
         self.crs = QgsCoordinateReferenceSystem("EPSG:4326")
         self.transform = QgsCoordinateTransform()
         self.transform.setDestinationCrs(self.crs)
@@ -251,7 +251,7 @@ class TransitionWidget:
 
             self.checkValidLogin()
             print(f"Valid login: {self.validLogin}")
-                
+
             if self.validLogin:
                 self.show_dockwidget()
 
@@ -263,14 +263,14 @@ class TransitionWidget:
         config = Transition.get_configurations()
         if config['credentials']['token']:
             self.validLogin = True
-    
+
 
     def onLoginFinished(self, result):
         if result == QDialog.Accepted:
             print("Login successful")
             self.validLogin = True
             self.show_dockwidget()
-            
+
             #print "** STARTING Transition"
 
             # dockwidget may not exist if:
@@ -279,18 +279,14 @@ class TransitionWidget:
             if self.dockwidget == None and self.validLogin:
                 self.show_dockwidget()
 
-            # show the dockwidget
-            self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
-            self.dockwidget.show()
-
         else:
             print("Login canceled")
-            
+
             # Close the plugin's dock widget if it was created
             if self.dockwidget:
                 self.iface.removeDockWidget(self.dockwidget)
                 self.dockwidget.close()
-            self.onClosePlugin()   
+            self.onClosePlugin()
 
     def show_dockwidget(self):
         if self.dockwidget == None and self.validLogin:
@@ -299,7 +295,7 @@ class TransitionWidget:
             self.dockwidget = TransitionDockWidget()
 
             self.selectedCoors = { 'routeOriginPoint': None, 'routeDestinationPoint': None, 'accessibilityMapPoint': None }
-            
+
             createRouteForm = CreateRouteDialog()
             self.dockwidget.routeVerticalLayout.addWidget(createRouteForm)
             self.createAccessibilityForm = CreateAccessibilityForm()
@@ -328,9 +324,13 @@ class TransitionWidget:
             # connect to provide cleanup on closing of dockwidget
             self.dockwidget.closingPlugin.connect(self.onClosePlugin)
 
+            # Determine the order in which the layers are shown on the map (point, line, polygon)
+            QgsProject.instance().layerTreeRegistryBridge().setLayerInsertionMethod(Qgis.LayerTreeInsertionMethod.OptimalInInsertionGroup)
+
+
         # show the dockwidget
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
-        self.dockwidget.show()         
+        self.dockwidget.show()
 
     def onPathButtonClicked(self):
         self.dockwidget.plainTextEdit.setPlainText("Getting the paths...")
@@ -345,7 +345,7 @@ class TransitionWidget:
         else:
             print("Failed to get GeoJSON data")
         self.iface.actionPan().trigger()
-    
+
     def onNodeButtonClicked(self):
         self.dockwidget.plainTextEdit.setPlainText("Getting the nodes...")
         geojson_data = Transition.get_transition_nodes()
@@ -360,7 +360,7 @@ class TransitionWidget:
 
         print("API called")
         self.iface.actionPan().trigger()
-    
+
     def onAccessibilityButtonClicked(self):
         geojson_data = Transition.get_accessibility_map(
             with_geometry=True,
@@ -377,26 +377,28 @@ class TransitionWidget:
             max_transfer_travel_time_minutes=self.createAccessibilityForm.maxTransferWaitTime.value(),
             max_first_waiting_time_minutes=self.createAccessibilityForm.maxFirstWaitTime.value(),
             walking_speed_kmh=self.createAccessibilityForm.walkingSpeed.value(),
-            coord_latitude=self.selectedCoors['accessibilityMapPoint'].x(),
-            coord_longitude=self.selectedCoors['accessibilityMapPoint'].y()
+            coord_latitude=self.selectedCoors['accessibilityMapPoint'].y(),
+            coord_longitude=self.selectedCoors['accessibilityMapPoint'].x()
         )
 
-        # Specify the layer options
-        options = 'MULTIPOLYGON'  # Geometry type as 'MULTIPOLYGON'
-
-        # Load the GeoJSON data as a vector layer
-        #layer = QgsVectorLayer(geojson_str, layer_name, 'ogr', options=options)
-        geojson_data = Transition.get_transition_nodes()
-        #print(geojson_data['geojson'])
         if geojson_data:
-            layer = QgsVectorLayer(geojson.dumps(geojson_data), "Accessibility map", "ogr", options=options)
+            # Remove the existing "Accessibility map" layer if it exists
+            existing_layers = QgsProject.instance().mapLayersByName("Accessibility map")
+            if existing_layers:
+                QgsProject.instance().removeMapLayer(existing_layers[0].id())
+
+            # Add the new "Accessibility map" layer
+            layer = QgsVectorLayer(geojson_data, "Accessibility map", "ogr")
+            QgsProject.instance().addMapLayer(layer)
             if not layer.isValid():
                 print("Layer failed to load!")
                 return
-            
-            QgsProject.instance().addMapLayer(layer)
-       
-        else: print("Failed to get GeoJSON data")
+
+            # Set layer opacity to 60%
+            single_symbol_renderer = layer.renderer()
+            symbol = single_symbol_renderer.symbol()
+            symbol.setOpacity(0.6)
+            layer.triggerRepaint()
 
     def setCrs(self):
         selector = QgsProjectionSelectionDialog(self.iface.mainWindow())
@@ -427,5 +429,6 @@ class TransitionWidget:
         self.iface.mapCanvas().setMapTool(mapTool)
 
     def stopCapturing(self):
+        # Set mouse cursor back to pan mode
         self.iface.actionPan().trigger()
         self.mapToolFrom.deactivate()

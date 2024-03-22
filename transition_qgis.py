@@ -21,12 +21,13 @@
  *                                                                         *
  ***************************************************************************/
 """
+import json
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt, pyqtSignal
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QDialog
 
 from qgis.gui import QgsMapToolEmitPoint, QgsRubberBand, QgsProjectionSelectionDialog
-from qgis.core import QgsUnitTypes, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsPointXY, QgsVectorLayer, QgsProject
+from qgis.core import QgsUnitTypes, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsPointXY, QgsVectorLayer, QgsProject, Qgis
 # Initialize Qt resources from file resources.py
 from .resources import *
 
@@ -45,6 +46,7 @@ sys.path.append(return_lib_path())
 from transition_api_lib import Transition
 
 from .create_route import CreateRouteDialog
+from .create_accessibility import CreateAccessibilityForm
 
 
 class TransitionWidget:
@@ -88,7 +90,7 @@ class TransitionWidget:
         self.dockwidget = None
         self.loginPopup = None
         self.validLogin = False
-        
+
         self.crs = QgsCoordinateReferenceSystem("EPSG:4326")
         self.transform = QgsCoordinateTransform()
         self.transform.setDestinationCrs(self.crs)
@@ -99,15 +101,6 @@ class TransitionWidget:
         self.canvasCrsDisplayPrecision = None
         self.iface.mapCanvas().destinationCrsChanged.connect(self.setSourceCrs)
         self.setSourceCrs()
-
-        self.mapToolFrom = CoordinateCaptureMapTool(self.iface, self.iface.mapCanvas(), Qt.darkGreen, "Starting point")
-        self.mapToolFrom.mouseClicked.connect(self.mouseClickedFrom)
-        self.mapToolFrom.endSelection.connect(self.endCapture)
-
-        self.mapToolTo = CoordinateCaptureMapTool(self.iface, self.iface.mapCanvas(), Qt.blue, "Destination point")
-        self.mapToolTo.mouseClicked.connect(self.mouseClickedTo)
-        self.mapToolTo.endSelection.connect(self.endCapture)
-
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -258,7 +251,7 @@ class TransitionWidget:
 
             self.checkValidLogin()
             print(f"Valid login: {self.validLogin}")
-                
+
             if self.validLogin:
                 self.show_dockwidget()
 
@@ -270,49 +263,74 @@ class TransitionWidget:
         config = Transition.get_configurations()
         if config['credentials']['token']:
             self.validLogin = True
-    
+
 
     def onLoginFinished(self, result):
         if result == QDialog.Accepted:
             print("Login successful")
             self.validLogin = True
             self.show_dockwidget()
-            
+
             #print "** STARTING Transition"
 
             # dockwidget may not exist if:
             #    first run of plugin
             #    removed on close (see self.onClosePlugin method)
+            if self.dockwidget == None and self.validLogin:
+                self.show_dockwidget()
 
         else:
             print("Login canceled")
-            
+
             # Close the plugin's dock widget if it was created
             if self.dockwidget:
                 self.iface.removeDockWidget(self.dockwidget)
                 self.dockwidget.close()
-            self.onClosePlugin()   
+            self.onClosePlugin()
 
     def show_dockwidget(self):
         if self.dockwidget == None and self.validLogin:
             print("Creating new dockwidget")
             # Create the dockwidget (after translation) and keep reference
             self.dockwidget = TransitionDockWidget()
+
+            self.selectedCoors = { 'routeOriginPoint': None, 'routeDestinationPoint': None, 'accessibilityMapPoint': None }
+
             createRouteForm = CreateRouteDialog()
-            self.dockwidget.verticalLayout.addWidget(createRouteForm)
+            self.dockwidget.routeVerticalLayout.addWidget(createRouteForm)
+            self.createAccessibilityForm = CreateAccessibilityForm()
+            self.dockwidget.accessibilityVerticalLayout.addWidget(self.createAccessibilityForm)
 
             self.dockwidget.pathButton.clicked.connect(self.onPathButtonClicked)
             self.dockwidget.nodeButton.clicked.connect(self.onNodeButtonClicked)
+            self.dockwidget.accessibilityButton.clicked.connect(self.onAccessibilityButtonClicked)
 
-            self.dockwidget.captureButtonFrom.clicked.connect(self.startCapturingFrom)
-            self.dockwidget.captureButtonTo.clicked.connect(self.startCapturingTo)
+            self.mapToolFrom = CoordinateCaptureMapTool(self.iface, self.iface.mapCanvas(), Qt.darkGreen, "Starting point")
+            self.mapToolFrom.mouseClicked.connect(lambda event: self.mouseClickedCapture(event, self.dockwidget.userCrsEditFrom, 'routeOriginPoint'))
+            self.mapToolFrom.endSelection.connect(self.stopCapturing)
+
+            self.mapToolTo = CoordinateCaptureMapTool(self.iface, self.iface.mapCanvas(), Qt.blue, "Destination point")
+            self.mapToolTo.mouseClicked.connect(lambda event: self.mouseClickedCapture(event, self.dockwidget.userCrsEditTo, 'routeDestinationPoint'))
+            self.mapToolTo.endSelection.connect(self.stopCapturing)
+
+            self.mapToolAccessibility = CoordinateCaptureMapTool(self.iface, self.iface.mapCanvas(), Qt.blue, "Accessibility map center")
+            self.mapToolAccessibility.mouseClicked.connect(lambda event: self.mouseClickedCapture(event, self.dockwidget.userCrsEditAccessibility, 'accessibilityMapPoint'))
+            self.mapToolAccessibility.endSelection.connect(self.stopCapturing)
+
+            self.dockwidget.routeCaptureButtonFrom.clicked.connect(lambda: self.startCapturing(self.mapToolFrom))
+            self.dockwidget.routeCaptureButtonTo.clicked.connect(lambda: self.startCapturing(self.mapToolTo))
+            self.dockwidget.accessibilityCaptureButton.clicked.connect(lambda: self.startCapturing(self.mapToolAccessibility))
 
             # connect to provide cleanup on closing of dockwidget
             self.dockwidget.closingPlugin.connect(self.onClosePlugin)
 
+            # Determine the order in which the layers are shown on the map (point, line, polygon)
+            QgsProject.instance().layerTreeRegistryBridge().setLayerInsertionMethod(Qgis.LayerTreeInsertionMethod.OptimalInInsertionGroup)
+
+
         # show the dockwidget
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
-        self.dockwidget.show()         
+        self.dockwidget.show()
 
     def onPathButtonClicked(self):
         self.dockwidget.plainTextEdit.setPlainText("Getting the paths...")
@@ -326,7 +344,7 @@ class TransitionWidget:
         else:
             print("Failed to get GeoJSON data")
         self.iface.actionPan().trigger()
-    
+
     def onNodeButtonClicked(self):
         self.dockwidget.plainTextEdit.setPlainText("Getting the nodes...")
         geojson_data = Transition.get_transition_nodes()
@@ -341,6 +359,45 @@ class TransitionWidget:
 
         print("API called")
         self.iface.actionPan().trigger()
+
+    def onAccessibilityButtonClicked(self):
+        geojson_data = Transition.get_accessibility_map(
+            with_geojson=True,
+            departure_or_arrival_choice=self.createAccessibilityForm.departureOrArrivalChoice.currentText(),
+            departure_or_arrival_time=self.createAccessibilityForm.departureOrArrivalTime.time().toPyTime(),
+            n_polygons=self.createAccessibilityForm.nPolygons.value(),
+            delta_minutes=self.createAccessibilityForm.delta.value(),
+            delta_interval_minutes=self.createAccessibilityForm.deltaInterval.value(),
+            scenario_id=self.createAccessibilityForm.scenarios.json()['collection'][self.createAccessibilityForm.scenarioChoice.currentIndex()]['id'],
+            place_name=self.createAccessibilityForm.placeName.text(),
+            max_total_travel_time_minutes=self.createAccessibilityForm.maxTotalTravelTime.value(),
+            min_waiting_time_minutes=self.createAccessibilityForm.minWaitTime.value(),
+            max_access_egress_travel_time_minutes=self.createAccessibilityForm.maxAccessTimeOrigDest.value(),
+            max_transfer_travel_time_minutes=self.createAccessibilityForm.maxTransferWaitTime.value(),
+            max_first_waiting_time_minutes=self.createAccessibilityForm.maxFirstWaitTime.value(),
+            walking_speed_kmh=self.createAccessibilityForm.walkingSpeed.value(),
+            coord_latitude=self.selectedCoors['accessibilityMapPoint'].y(),
+            coord_longitude=self.selectedCoors['accessibilityMapPoint'].x()
+        )
+
+        if geojson_data:
+            # Remove the existing "Accessibility map" layer if it exists
+            existing_layers = QgsProject.instance().mapLayersByName("Accessibility map")
+            if existing_layers:
+                QgsProject.instance().removeMapLayer(existing_layers[0].id())
+
+            # Add the new "Accessibility map" layer
+            layer = QgsVectorLayer(geojson_data, "Accessibility map", "ogr")
+            QgsProject.instance().addMapLayer(layer)
+            if not layer.isValid():
+                print("Layer failed to load!")
+                return
+
+            # Set layer opacity to 60%
+            single_symbol_renderer = layer.renderer()
+            symbol = single_symbol_renderer.symbol()
+            symbol.setOpacity(0.6)
+            layer.triggerRepaint()
 
     def setCrs(self):
         selector = QgsProjectionSelectionDialog(self.iface.mainWindow())
@@ -360,25 +417,17 @@ class TransitionWidget:
         else:
             self.canvasCrsDisplayPrecision = 3
 
-    def mouseClickedFrom(self, point: QgsPointXY):
+    def mouseClickedCapture(self, point: QgsPointXY, displayField, selectedCoordKey):
         userCrsPoint = self.transform.transform(point)
-        self.dockwidget.userCrsEditFrom.setText('{0:.{2}f},{1:.{2}f}'.format(userCrsPoint.x(),
-                                                                         userCrsPoint.y(),
-                                                                         self.userCrsDisplayPrecision))
+        displayField.setText('{0:.{2}f},{1:.{2}f}'.format(userCrsPoint.x(),
+                                                          userCrsPoint.y(),
+                                                          self.userCrsDisplayPrecision))
+        self.selectedCoors[selectedCoordKey] = userCrsPoint
 
+    def startCapturing(self, mapTool):
+        self.iface.mapCanvas().setMapTool(mapTool)
 
-    def mouseClickedTo(self, point: QgsPointXY):
-        userCrsPoint = self.transform.transform(point)
-        self.dockwidget.userCrsEditTo.setText('{0:.{2}f},{1:.{2}f}'.format(userCrsPoint.x(),
-                                                                         userCrsPoint.y(),
-                                                                         self.userCrsDisplayPrecision))
-
-    def startCapturingFrom(self):
-        self.iface.mapCanvas().setMapTool(self.mapToolFrom)
-
-    def startCapturingTo(self):
-        self.iface.mapCanvas().setMapTool(self.mapToolTo)
-
-    def endCapture(self):
+    def stopCapturing(self):
+        # Set mouse cursor back to pan mode
         self.iface.actionPan().trigger()
         self.mapToolFrom.deactivate()

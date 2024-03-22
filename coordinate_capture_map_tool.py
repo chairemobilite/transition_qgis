@@ -41,6 +41,11 @@ class CoordinateCaptureMapTool(QgsMapToolEmitPoint):
         self.rubberBand.setWidth(1)
         self.setCursor(QgsApplication.getThemeCursor(QgsApplication.Cursor.CrossHair))
 
+        # Remove layers with the same layer name if some exist
+        existing_layers = QgsProject.instance().mapLayersByName(self.layerName)
+        for existing_layer in existing_layers:
+            QgsProject.instance().removeMapLayer(existing_layer.id())
+
     def canvasPressEvent(self, e):
         if e.button() == Qt.LeftButton:
             if not self.layer:
@@ -56,22 +61,21 @@ class CoordinateCaptureMapTool(QgsMapToolEmitPoint):
                 self.layer.updateExtents()
                 QgsProject.instance().addMapLayer(self.layer)
             else:
-                # get the existing feature
+                # Set the geometry of the existing feature to the new point
                 feat = next(self.layer.getFeatures())
-                # set the geometry of the existing feature to the new point
                 point = QgsPointXY(self.mapCanvas.getCoordinateTransform().toMapCoordinates(e.x(), e.y()))
                 feat.setGeometry(QgsGeometry.fromPointXY(point))
+
                 # update the layer's data provider with the updated feature
                 self.layer.dataProvider().changeGeometryValues({feat.id(): QgsGeometry.fromPointXY(point)})
                 self.layer.triggerRepaint()
-
 
             originalPoint = QgsPointXY(self.mapCanvas.getCoordinateTransform().toMapCoordinates(e.x(), e.y()))
             self.mouseClicked.emit(originalPoint)
 
     def canvasReleaseEvent(self, e):
-        if e.button() == Qt.RightButton:
-            self.endSelection.emit()
+        #if e.button() == Qt.RightButton:
+        self.endSelection.emit()
 
     def deactivate(self):
         # Deactivate only if there is an active layer

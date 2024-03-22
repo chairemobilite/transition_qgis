@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -96,7 +96,7 @@
       <string>Create new route</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="captureButtonFrom">
+    <widget class="QPushButton" name="routeCaptureButtonFrom">
      <property name="geometry">
       <rect>
        <x>20</x>
@@ -129,7 +129,7 @@
       </rect>
      </property>
     </widget>
-    <widget class="QPushButton" name="captureButtonTo">
+    <widget class="QPushButton" name="routeCaptureButtonTo">
      <property name="geometry">
       <rect>
        <x>20</x>
@@ -151,7 +151,59 @@
        <height>381</height>
       </rect>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout"/>
+     <layout class="QVBoxLayout" name="routeVerticalLayout"/>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_3">
+    <attribute name="title">
+     <string>Create access. map</string>
+    </attribute>
+    <widget class="QPushButton" name="accessibilityCaptureButton">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>530</y>
+       <width>161</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Capture coord</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="accessibilityButton">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>580</y>
+       <width>271</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Create new accessibility map</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="userCrsEditAccessibility">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>530</y>
+       <width>181</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QWidget" name="verticalLayoutWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>371</width>
+       <height>501</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="accessibilityVerticalLayout"/>
     </widget>
    </widget>
   </widget>

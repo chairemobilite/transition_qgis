@@ -4,7 +4,7 @@
 
 [general]
 name=Transition
-qgisMinimumVersion=3.0
+qgisMinimumVersion=3.30
 description=truc
 version=0.1
 author=Transition

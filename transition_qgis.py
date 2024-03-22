@@ -293,25 +293,19 @@ class TransitionWidget:
             print("Creating new dockwidget")
             # Create the dockwidget (after translation) and keep reference
             self.dockwidget = TransitionDockWidget()
+
+            self.selectedCoords = { 'routeOriginPoint': None, 'routeDestinationPoint': None, 'accessibilityMapPoint': None }
+
             self.createRouteForm = CreateRouteDialog()
-            self.dockwidget.verticalLayout.addWidget(self.createRouteForm)
-            # index = self.dockwidget.count() - 1
-            # self.routeWidget = createRouteForm.widget()
-
-            self.selectedCoors = { 'routeOriginPoint': None, 'routeDestinationPoint': None, 'accessibilityMapPoint': None }
-
-            createRouteForm = CreateRouteDialog()
-            self.dockwidget.routeVerticalLayout.addWidget(createRouteForm)
+            self.dockwidget.routeVerticalLayout.addWidget(self.createRouteForm)
             self.createAccessibilityForm = CreateAccessibilityForm()
             self.dockwidget.accessibilityVerticalLayout.addWidget(self.createAccessibilityForm)
 
             self.dockwidget.pathButton.clicked.connect(self.onPathButtonClicked)
             self.dockwidget.nodeButton.clicked.connect(self.onNodeButtonClicked)
             self.dockwidget.accessibilityButton.clicked.connect(self.onAccessibilityButtonClicked)
-
-            self.dockwidget.captureButtonFrom.clicked.connect(self.startCapturingFrom)
-            self.dockwidget.captureButtonTo.clicked.connect(self.startCapturingTo)
             self.dockwidget.routeButton.clicked.connect(self.onNewRouteButtonClicked)
+            
             self.mapToolFrom = CoordinateCaptureMapTool(self.iface, self.iface.mapCanvas(), Qt.darkGreen, "Starting point")
             self.mapToolFrom.mouseClicked.connect(lambda event: self.mouseClickedCapture(event, self.dockwidget.userCrsEditFrom, 'routeOriginPoint'))
             self.mapToolFrom.endSelection.connect(self.stopCapturing)
@@ -340,7 +334,6 @@ class TransitionWidget:
         self.dockwidget.show()
 
     def onPathButtonClicked(self):
-        # self.dockwidget.plainTextEdit.setPlainText("Getting the paths...")
         self.dockwidget.plainTextEdit.setPlainText("Getting the paths...")
         geojson_data = Transition.get_transition_paths()
         if geojson_data:
@@ -369,8 +362,8 @@ class TransitionWidget:
         self.iface.actionPan().trigger()
 
     def onNewRouteButtonClicked(self):
-        originCoord = self.dockwidget.userCrsEditFrom.text().split(",")
-        destCoord = self.dockwidget.userCrsEditTo.text().split(",")
+        originCoord = [self.selectedCoords['routeOriginPoint'].x(), self.selectedCoords['routeOriginPoint'].y()]
+        destCoord = [self.selectedCoords['routeDestinationPoint'].x(), self.selectedCoords['routeDestinationPoint'].y()]
         departureOrArrivalChoice = self.createRouteForm.departureOrArrivalChoice.currentText()
         departureOrArrivalTime = self.createRouteForm.departureOrArrivalTime.time().toPyTime()
         maxParcoursTime = self.createRouteForm.maxParcoursTimeChoice.value()
@@ -394,10 +387,12 @@ class TransitionWidget:
                                                max_first_waiting_time=maxWaitTimeFisrstStopChoice,
                                                with_geojson=True)
         if result.status_code == 200 :
+            # Remove the existing "Routing results" group if it exists
             existing_group = QgsProject.instance().layerTreeRoot().findGroup("Routing results")
             if existing_group:
                 QgsProject.instance().layerTreeRoot().removeChildNode(existing_group)
             
+            # Create a new group layer for the routing results, it will contain all the routing modes in separate layers
             root = QgsProject.instance().layerTreeRoot()
             group = root.addGroup("Routing results")
             for key, value in result.json().items():  
@@ -429,8 +424,8 @@ class TransitionWidget:
             max_transfer_travel_time_minutes=self.createAccessibilityForm.maxTransferWaitTime.value(),
             max_first_waiting_time_minutes=self.createAccessibilityForm.maxFirstWaitTime.value(),
             walking_speed_kmh=self.createAccessibilityForm.walkingSpeed.value(),
-            coord_latitude=self.selectedCoors['accessibilityMapPoint'].y(),
-            coord_longitude=self.selectedCoors['accessibilityMapPoint'].x()
+            coord_latitude=self.selectedCoords['accessibilityMapPoint'].y(),
+            coord_longitude=self.selectedCoords['accessibilityMapPoint'].x()
         )
 
         if geojson_data:
@@ -475,7 +470,7 @@ class TransitionWidget:
         displayField.setText('{0:.{2}f},{1:.{2}f}'.format(userCrsPoint.x(),
                                                           userCrsPoint.y(),
                                                           self.userCrsDisplayPrecision))
-        self.selectedCoors[selectedCoordKey] = userCrsPoint
+        self.selectedCoords[selectedCoordKey] = userCrsPoint
 
     def startCapturing(self, mapTool):
         self.iface.mapCanvas().setMapTool(mapTool)

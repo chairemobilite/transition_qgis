@@ -73,10 +73,11 @@ class CreateRouteDialog(QWidget):
         self.maxWaitTimeFisrstStopChoice.setValue(5)
         self.maxWaitTimeFisrstStopChoice.setToolTip(self.tr("If waiting time at first stop is greater than this value for a line, ignore the departure of this line at this stop"))
 
-        scenarioLabel = CustomLabel(self.tr("Scenario"))
-        scenarioChoice = QComboBox()
-        scenarios = [entry['name'] for entry in Transition.get_transition_scenarios().json()['collection']]
-        scenarioChoice.addItems(scenarios)
+        self.scenarioLabel = CustomLabel(self.tr("Scenario"))
+        self.scenarioChoice = QComboBox()
+        self.scenarios = Transition.get_transition_scenarios()
+        self.scenariosNames = [entry['name'] for entry in self.scenarios.json()['collection']]
+        self.scenarioChoice.addItems(self.scenariosNames)
 
         # Add fields to form display
         for label, field in zip([self.modeLabel, self.departureOrArrivalLabel, self.departureOrArrivalLabel, self.maxParcoursTimeLabel, self.minWaitTimeLabel, self.maxAccessTimeOrigDestLabel, self.maxTransferWaitTimeLabel, self.maxWaitTimeFisrstStopLabel, self.scenarioLabel], 

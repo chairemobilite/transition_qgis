@@ -10,16 +10,16 @@
     </message>
     <message>
         <location filename="../create_route.py" line="39"/>
-        <source>Departure time</source>
-        <translation>Heure de départ [HH:MM]</translation>
+        <source>Time to use</source>
+        <translation>Heure à utiliser</translation>
     </message>
     <message>
-        <location filename="../create_route.py" line="44"/>
-        <source>Arrival time</source>
-        <translation>Heure d&apos;arrivée [HH:MM]</translation>
+        <location filename="../create_route.py" line="43"/>
+        <source>Departure or arrival time</source>
+        <translation>Heure de départ ou d&apos;arrivée [HH:MM]</translation>
     </message>
     <message>
-        <location filename="../create_route.py" line="49"/>
+        <location filename="../create_route.py" line="48"/>
         <source>Maximum total travel time including access and egress (minutes)</source>
         <translation>Temps de parcours maximal incluant les accès (minutes)</translation>
     </message>

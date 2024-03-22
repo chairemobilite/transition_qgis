@@ -353,23 +353,35 @@ class TransitionWidget:
     def onNewRouteButtonClicked(self):
         originCoord = self.dockwidget.userCrsEditFrom.text()
         destCoord = self.dockwidget.userCrsEditTo.text()
-        departureTime = self.createRouteForm.departureTime.time().hour() * 3600 + self.createRouteForm.departureTime.time().minute() * 60
-        arrivalTime = self.createRouteForm.arrivalTime.time().hour() * 3600 + self.createRouteForm.arrivalTime.time().minute() * 60
-        maxParcoursTime = self.createRouteForm.maxParcoursTimeChoice.value() * 60
-        minWaitTime = self.createRouteForm.minWaitTimeChoice.value() * 60
-        maxAccessTimeOrigDest = self.createRouteForm.maxAccessTimeOrigDestChoice.value() * 60
-        maxTransferWaitTime = self.createRouteForm.maxTransferWaitTimeChoice.value() * 60
-        maxWaitTimeFisrstStopChoice = self.createRouteForm.maxWaitTimeFisrstStopChoice.value() * 60
+        departureOrArrivalChoice = self.createRouteForm.departureOrArrivalChoice.currentText()
+        departureOrArrivalTime = self.createRouteForm.departureOrArrivalTime.time().toPyTime()
+        maxParcoursTime = self.createRouteForm.maxParcoursTimeChoice.value()
+        minWaitTime = self.createRouteForm.minWaitTimeChoice.value()
+        maxAccessTimeOrigDest = self.createRouteForm.maxAccessTimeOrigDestChoice.value()
+        maxTransferWaitTime = self.createRouteForm.maxTransferWaitTimeChoice.value()
+        maxWaitTimeFisrstStopChoice = self.createRouteForm.maxWaitTimeFisrstStopChoice.value()
         modes = self.createRouteForm.modeChoice.checkedItems()
         scenarioId = self.createRouteForm.scenarios.json()['collection'][self.createRouteForm.scenarioChoice.currentIndex()]['id']
 
-        result = Transition.get_routing_result(modes, originCoord, destCoord, scenarioId, maxParcoursTime, minWaitTime,
-                                     maxTransferWaitTime, maxAccessTimeOrigDest, departureTime, arrivalTime, maxWaitTimeFisrstStopChoice,"true")
+        result = Transition.get_routing_result(modes=modes, 
+                                               origin=originCoord, 
+                                               destination=destCoord, 
+                                               scenario_id=scenarioId, 
+                                               max_travel_time=maxParcoursTime, 
+                                               min_waiting_time=minWaitTime,
+                                               max_transfer_time=maxTransferWaitTime, 
+                                               max_access_time=maxAccessTimeOrigDest, 
+                                               departure_or_arrival_time=departureOrArrivalTime, 
+                                               departure_or_arrival_label=departureOrArrivalChoice, 
+                                               max_first_waiting_time=maxWaitTimeFisrstStopChoice,
+                                               with_geojson="true")
         if result.status_code == 200 :
+            existing_group = QgsProject.instance().layerTreeRoot().findGroup("Routing results")
+            if existing_group:
+                QgsProject.instance().layerTreeRoot().removeChildNode(existing_group)
+            
             root = QgsProject.instance().layerTreeRoot()
             group = root.addGroup("Routing results")
-            # loop through the range of the keys of the json object to get the paths of different routing modes
-            print(len(result.json()))
             for key, value in result.json().items():  
                 geojsonPath = value["pathsGeojson"]
                 mode = key

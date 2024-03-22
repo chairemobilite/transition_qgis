@@ -396,9 +396,6 @@ class TransitionWidget:
                             
         else: print("Failed to get GeoJSON data")
 
-
-
-
     def setCrs(self):
         selector = QgsProjectionSelectionDialog(self.iface.mainWindow())
         selector.setCrs(self.crs)

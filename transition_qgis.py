@@ -351,8 +351,8 @@ class TransitionWidget:
         self.iface.actionPan().trigger()
 
     def onNewRouteButtonClicked(self):
-        originCoord = self.dockwidget.userCrsEditFrom.text()
-        destCoord = self.dockwidget.userCrsEditTo.text()
+        originCoord = self.dockwidget.userCrsEditFrom.text().split(",")
+        destCoord = self.dockwidget.userCrsEditTo.text().split(",")
         departureOrArrivalChoice = self.createRouteForm.departureOrArrivalChoice.currentText()
         departureOrArrivalTime = self.createRouteForm.departureOrArrivalTime.time().toPyTime()
         maxParcoursTime = self.createRouteForm.maxParcoursTimeChoice.value()

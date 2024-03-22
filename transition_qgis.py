@@ -335,7 +335,6 @@ class TransitionWidget:
     def onPathButtonClicked(self):
         self.dockwidget.plainTextEdit.setPlainText("Getting the paths...")
         geojson_data = Transition.get_transition_paths()
-        print(geojson_data)
         if geojson_data:
             layer = QgsVectorLayer(geojson.dumps(geojson_data), "transition_paths", "ogr")
             if not layer.isValid():
@@ -363,7 +362,7 @@ class TransitionWidget:
 
     def onAccessibilityButtonClicked(self):
         geojson_data = Transition.get_accessibility_map(
-            with_geometry=True,
+            with_geojson=True,
             departure_or_arrival_choice=self.createAccessibilityForm.departureOrArrivalChoice.currentText(),
             departure_or_arrival_time=self.createAccessibilityForm.departureOrArrivalTime.time().toPyTime(),
             n_polygons=self.createAccessibilityForm.nPolygons.value(),

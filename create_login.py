@@ -31,9 +31,9 @@ class Login(QDialog):
         try:
             print("Connecting...")
             Transition.set_url(self.comboBox.currentText())
-            Transition.set_credentials(self.usernameEdit.text(), self.passwordEdit.text())
+            Transition.set_username(self.usernameEdit.text())
 
-            result = Transition.get_token()
+            result = Transition.get_token(self.usernameEdit.text(), self.passwordEdit.text())
             if result.status_code == 200:
                 print("Successfully connected to API")
                 self.accept()

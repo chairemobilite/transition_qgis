@@ -24,10 +24,10 @@
 import json
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt, pyqtSignal
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction, QDialog
+from qgis.PyQt.QtWidgets import QAction, QDialog, QSpinBox
 
 from qgis.gui import QgsMapToolEmitPoint, QgsRubberBand, QgsProjectionSelectionDialog
-from qgis.core import QgsUnitTypes, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsPointXY, QgsVectorLayer, QgsProject, Qgis
+from qgis.core import QgsUnitTypes, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsPointXY, QgsVectorLayer, QgsProject, QgsLayerTreeGroup, Qgis
 # Initialize Qt resources from file resources.py
 from .resources import *
 
@@ -89,6 +89,7 @@ class TransitionWidget:
         self.pluginIsActive = False
         self.dockwidget = None
         self.loginPopup = None
+        self.transition_paths = None
         self.validLogin = False
 
         self.crs = QgsCoordinateReferenceSystem("EPSG:4326")
@@ -116,8 +117,7 @@ class TransitionWidget:
         """
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return QCoreApplication.translate('Transition', message)
-
-
+    
     def add_action(
         self,
         icon_path,
@@ -294,17 +294,18 @@ class TransitionWidget:
             # Create the dockwidget (after translation) and keep reference
             self.dockwidget = TransitionDockWidget()
 
-            self.selectedCoors = { 'routeOriginPoint': None, 'routeDestinationPoint': None, 'accessibilityMapPoint': None }
+            self.selectedCoords = { 'routeOriginPoint': None, 'routeDestinationPoint': None, 'accessibilityMapPoint': None }
 
-            createRouteForm = CreateRouteDialog()
-            self.dockwidget.routeVerticalLayout.addWidget(createRouteForm)
+            self.createRouteForm = CreateRouteDialog()
+            self.dockwidget.routeVerticalLayout.addWidget(self.createRouteForm)
             self.createAccessibilityForm = CreateAccessibilityForm()
             self.dockwidget.accessibilityVerticalLayout.addWidget(self.createAccessibilityForm)
 
             self.dockwidget.pathButton.clicked.connect(self.onPathButtonClicked)
             self.dockwidget.nodeButton.clicked.connect(self.onNodeButtonClicked)
             self.dockwidget.accessibilityButton.clicked.connect(self.onAccessibilityButtonClicked)
-
+            self.dockwidget.routeButton.clicked.connect(self.onNewRouteButtonClicked)
+            
             self.mapToolFrom = CoordinateCaptureMapTool(self.iface, self.iface.mapCanvas(), Qt.darkGreen, "Starting point")
             self.mapToolFrom.mouseClicked.connect(lambda event: self.mouseClickedCapture(event, self.dockwidget.userCrsEditFrom, 'routeOriginPoint'))
             self.mapToolFrom.endSelection.connect(self.stopCapturing)
@@ -360,6 +361,53 @@ class TransitionWidget:
         print("API called")
         self.iface.actionPan().trigger()
 
+    def onNewRouteButtonClicked(self):
+        originCoord = [self.selectedCoords['routeOriginPoint'].x(), self.selectedCoords['routeOriginPoint'].y()]
+        destCoord = [self.selectedCoords['routeDestinationPoint'].x(), self.selectedCoords['routeDestinationPoint'].y()]
+        departureOrArrivalChoice = self.createRouteForm.departureOrArrivalChoice.currentText()
+        departureOrArrivalTime = self.createRouteForm.departureOrArrivalTime.time().toPyTime()
+        maxParcoursTime = self.createRouteForm.maxParcoursTimeChoice.value()
+        minWaitTime = self.createRouteForm.minWaitTimeChoice.value()
+        maxAccessTimeOrigDest = self.createRouteForm.maxAccessTimeOrigDestChoice.value()
+        maxTransferWaitTime = self.createRouteForm.maxTransferWaitTimeChoice.value()
+        maxWaitTimeFisrstStopChoice = self.createRouteForm.maxWaitTimeFisrstStopChoice.value()
+        modes = self.createRouteForm.modeChoice.checkedItems()
+        scenarioId = self.createRouteForm.scenarios.json()['collection'][self.createRouteForm.scenarioChoice.currentIndex()]['id']
+
+        result = Transition.get_routing_result(modes=modes, 
+                                               origin=originCoord, 
+                                               destination=destCoord, 
+                                               scenario_id=scenarioId, 
+                                               max_travel_time=maxParcoursTime, 
+                                               min_waiting_time=minWaitTime,
+                                               max_transfer_time=maxTransferWaitTime, 
+                                               max_access_time=maxAccessTimeOrigDest, 
+                                               departure_or_arrival_time=departureOrArrivalTime, 
+                                               departure_or_arrival_label=departureOrArrivalChoice, 
+                                               max_first_waiting_time=maxWaitTimeFisrstStopChoice,
+                                               with_geojson=True)
+        if result.status_code == 200 :
+            # Remove the existing "Routing results" group if it exists
+            existing_group = QgsProject.instance().layerTreeRoot().findGroup("Routing results")
+            if existing_group:
+                QgsProject.instance().layerTreeRoot().removeChildNode(existing_group)
+            
+            # Create a new group layer for the routing results, it will contain all the routing modes in separate layers
+            root = QgsProject.instance().layerTreeRoot()
+            group = root.addGroup("Routing results")
+            for key, value in result.json().items():  
+                geojsonPath = value["pathsGeojson"]
+                mode = key
+                for i in range(len(geojsonPath)):
+                    geojson_data = geojsonPath[i]
+                    layer = QgsVectorLayer(geojson.dumps(geojson_data), mode, "ogr")
+                    if not layer.isValid():
+                        print("Layer failed to load!")
+                        return
+                    QgsProject.instance().addMapLayer(layer, False)
+                    group.addLayer(layer)
+                            
+        else: print("Failed to get GeoJSON data")
     def onAccessibilityButtonClicked(self):
         geojson_data = Transition.get_accessibility_map(
             with_geojson=True,
@@ -376,8 +424,8 @@ class TransitionWidget:
             max_transfer_travel_time_minutes=self.createAccessibilityForm.maxTransferWaitTime.value(),
             max_first_waiting_time_minutes=self.createAccessibilityForm.maxFirstWaitTime.value(),
             walking_speed_kmh=self.createAccessibilityForm.walkingSpeed.value(),
-            coord_latitude=self.selectedCoors['accessibilityMapPoint'].y(),
-            coord_longitude=self.selectedCoors['accessibilityMapPoint'].x()
+            coord_latitude=self.selectedCoords['accessibilityMapPoint'].y(),
+            coord_longitude=self.selectedCoords['accessibilityMapPoint'].x()
         )
 
         if geojson_data:
@@ -422,7 +470,7 @@ class TransitionWidget:
         displayField.setText('{0:.{2}f},{1:.{2}f}'.format(userCrsPoint.x(),
                                                           userCrsPoint.y(),
                                                           self.userCrsDisplayPrecision))
-        self.selectedCoors[selectedCoordKey] = userCrsPoint
+        self.selectedCoords[selectedCoordKey] = userCrsPoint
 
     def startCapturing(self, mapTool):
         self.iface.mapCanvas().setMapTool(mapTool)

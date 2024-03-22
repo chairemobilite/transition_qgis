@@ -374,7 +374,7 @@ class TransitionWidget:
                                                departure_or_arrival_time=departureOrArrivalTime, 
                                                departure_or_arrival_label=departureOrArrivalChoice, 
                                                max_first_waiting_time=maxWaitTimeFisrstStopChoice,
-                                               with_geojson="true")
+                                               with_geojson=True)
         if result.status_code == 200 :
             existing_group = QgsProject.instance().layerTreeRoot().findGroup("Routing results")
             if existing_group:

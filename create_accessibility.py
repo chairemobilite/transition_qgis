@@ -1,7 +1,7 @@
 import os
 
 from qgis.core import *
-from qgis.PyQt.QtWidgets import QApplication, QDialog, QWidget, QFormLayout, QLabel, QLineEdit, QSpinBox, QVBoxLayout, QHBoxLayout, QComboBox, QTimeEdit, QPushButton, QDialogButtonBox
+from qgis.PyQt.QtWidgets import QApplication, QDialog, QWidget, QFormLayout, QLabel, QLineEdit, QSpinBox, QVBoxLayout, QHBoxLayout, QComboBox, QTimeEdit, QPushButton, QDialogButtonBox, QRadioButton
 from qgis.PyQt import QtGui, QtWidgets, uic
 from qgis.gui import QgsCheckableComboBox, QgsMapToolEmitPoint, QgsMapTool
 from PyQt5.QtCore import QTime, Qt
@@ -32,8 +32,16 @@ class CreateAccessibilityForm(QWidget):
         form_layout.setRowWrapPolicy(QFormLayout.WrapAllRows)
 
         self.departureOrArrivalLabel = CustomLabel(self.tr("Time to use"))
-        self.departureOrArrivalChoice = QComboBox()
-        self.departureOrArrivalChoice.addItems(['Departure', 'Arrival'])
+        self.departureRadioButton = QRadioButton("Departure")
+        self.departureRadioButton.setChecked(True)
+        self.arrivalRadioButton = QRadioButton("Arrival")
+
+        self.radioButtonsLayout = QHBoxLayout()
+        self.radioButtonsLayout.addWidget(self.departureRadioButton)
+        self.radioButtonsLayout.addWidget(self.arrivalRadioButton)
+
+        self.radioButtonsWidget = QWidget()
+        self.radioButtonsWidget.setLayout(self.radioButtonsLayout) 
 
         self.departureOrArrivalTimeLabel = CustomLabel(self.tr("Departure or arrival time"))
         self.departureOrArrivalTime = QTimeEdit()
@@ -100,7 +108,7 @@ class CreateAccessibilityForm(QWidget):
 
         # Add fields to form display
         for label, field in zip([self.departureOrArrivalLabel, self.departureOrArrivalTimeLabel, self.nPolygonsLabel, self.deltaLabel, self.deltaIntervalLabel, self.scenarioLabel, self.placeNameLabel, self.maxTotalTravelTimeLabel, self.minWaitTimeLabel, self.maxAccessTimeOrigDestLabel, self.maxTransferWaitTimeLabel, self.maxFirstWaitTimeLabel, self.walkingSpeedLabel], 
-                                [self.departureOrArrivalChoice, self.departureOrArrivalTime, self.nPolygons, self.delta, self.deltaInterval, self.scenarioChoice, self.placeName, self.maxTotalTravelTime, self.minWaitTime, self.maxAccessTimeOrigDest, self.maxTransferWaitTime, self.maxFirstWaitTime, self.walkingSpeed]):
+                                [self.radioButtonsWidget, self.departureOrArrivalTime, self.nPolygons, self.delta, self.deltaInterval, self.scenarioChoice, self.placeName, self.maxTotalTravelTime, self.minWaitTime, self.maxAccessTimeOrigDest, self.maxTransferWaitTime, self.maxFirstWaitTime, self.walkingSpeed]):
             label.setWordWrap(True)
             row_layout = QHBoxLayout()
             row_layout.addWidget(label, stretch=4)  # 66% of the space

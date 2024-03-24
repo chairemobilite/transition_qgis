@@ -1,7 +1,7 @@
 import os
 
 from qgis.core import *
-from qgis.PyQt.QtWidgets import QApplication, QDialog, QWidget, QFormLayout, QLabel, QLineEdit, QSpinBox, QVBoxLayout, QHBoxLayout, QComboBox, QTimeEdit, QPushButton, QDialogButtonBox
+from qgis.PyQt.QtWidgets import QApplication, QDialog, QWidget, QFormLayout, QLabel, QLineEdit, QSpinBox, QVBoxLayout, QHBoxLayout, QComboBox, QTimeEdit, QPushButton, QDialogButtonBox, QRadioButton
 from qgis.PyQt import QtGui, QtWidgets, uic
 from qgis.gui import QgsCheckableComboBox, QgsMapToolEmitPoint, QgsMapTool
 from PyQt5.QtCore import QTime, Qt
@@ -37,10 +37,20 @@ class CreateRouteDialog(QWidget):
         self.modeChoice.addItems(self.modes)
 
         self.departureOrArrivalLabel = CustomLabel(self.tr("Time to use"))
-        self.departureOrArrivalChoice = QComboBox()
-        self.departureOrArrivalChoice.addItems(['Departure', 'Arrival'])
+        self.departureRadioButton = QRadioButton("Departure")
+        self.departureRadioButton.setChecked(True)
+        self.arrivalRadioButton = QRadioButton("Arrival")
 
-        self.departureOrArrivalLabel = CustomLabel(self.tr("Departure or arrival time"))
+        self.radioButtonsLayout = QHBoxLayout()
+        self.radioButtonsLayout.addWidget(self.departureRadioButton)
+        self.radioButtonsLayout.addWidget(self.arrivalRadioButton)
+
+        self.radioButtonsWidget = QWidget()
+        self.radioButtonsWidget.setLayout(self.radioButtonsLayout) 
+
+
+
+        self.departureOrArrivalTimeLabel = CustomLabel(self.tr("Departure or arrival time"))
         self.departureOrArrivalTime = QTimeEdit()
         self.departureOrArrivalTime.setDisplayFormat("hh:mm")
         self.departureOrArrivalTime.setTime(QTime(8, 00))
@@ -80,8 +90,8 @@ class CreateRouteDialog(QWidget):
         self.scenarioChoice.addItems(self.scenariosNames)
 
         # Add fields to form display
-        for label, field in zip([self.modeLabel, self.departureOrArrivalLabel, self.departureOrArrivalLabel, self.maxParcoursTimeLabel, self.minWaitTimeLabel, self.maxAccessTimeOrigDestLabel, self.maxTransferWaitTimeLabel, self.maxWaitTimeFisrstStopLabel, self.scenarioLabel], 
-                                [self.modeChoice, self.departureOrArrivalChoice, self.departureOrArrivalTime, self.maxParcoursTimeChoice, self.minWaitTimeChoice, self.maxAccessTimeOrigDestChoice, self.maxTransferWaitTimeChoice, self.maxWaitTimeFisrstStopChoice, self.scenarioChoice]):
+        for label, field in zip([self.modeLabel, self.departureOrArrivalLabel,self.departureOrArrivalTimeLabel, self.maxParcoursTimeLabel, self.minWaitTimeLabel, self.maxAccessTimeOrigDestLabel, self.maxTransferWaitTimeLabel, self.maxWaitTimeFisrstStopLabel, self.scenarioLabel], 
+                                [self.modeChoice, self.radioButtonsWidget, self.departureOrArrivalTime, self.maxParcoursTimeChoice, self.minWaitTimeChoice, self.maxAccessTimeOrigDestChoice, self.maxTransferWaitTimeChoice, self.maxWaitTimeFisrstStopChoice, self.scenarioChoice]):
             label.setWordWrap(True)
             row_layout = QHBoxLayout()
             row_layout.addWidget(label, stretch=4)  # 66% of the space

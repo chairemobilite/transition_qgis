@@ -370,7 +370,7 @@ class TransitionWidget:
             return
         originCoord = [self.selectedCoords['routeOriginPoint'].x(), self.selectedCoords['routeOriginPoint'].y()]
         destCoord = [self.selectedCoords['routeDestinationPoint'].x(), self.selectedCoords['routeDestinationPoint'].y()]
-        departureOrArrivalChoice = self.createRouteForm.departureOrArrivalChoice.currentText()
+        departureOrArrivalChoice = "Departure" if self.createRouteForm.departureRadioButton.isChecked() else "Arrival"
         departureOrArrivalTime = self.createRouteForm.departureOrArrivalTime.time().toPyTime()
         maxParcoursTime = self.createRouteForm.maxParcoursTimeChoice.value()
         minWaitTime = self.createRouteForm.minWaitTimeChoice.value()
@@ -414,7 +414,7 @@ class TransitionWidget:
     def onAccessibilityButtonClicked(self):
         geojson_data = Transition.get_accessibility_map(
             with_geojson=True,
-            departure_or_arrival_choice=self.createAccessibilityForm.departureOrArrivalChoice.currentText(),
+            departure_or_arrival_choice="Departure" if self.createAccessibilityForm.departureRadioButton.isChecked() else "Arrival",
             departure_or_arrival_time=self.createAccessibilityForm.departureOrArrivalTime.time().toPyTime(),
             n_polygons=self.createAccessibilityForm.nPolygons.value(),
             delta_minutes=self.createAccessibilityForm.delta.value(),

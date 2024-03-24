@@ -33,7 +33,7 @@ class CreateRouteDialog(QWidget):
 
         self.modeLabel = CustomLabel(self.tr("Calculate for the following modes"))
         self.modeChoice = QgsCheckableComboBox()
-        self.modes = Transition.get_transition_routing_modes()
+        self.modes = Transition.get_routing_modes()
         self.modeChoice.addItems(self.modes)
 
         self.departureOrArrivalLabel = CustomLabel(self.tr("Time to use"))
@@ -75,7 +75,7 @@ class CreateRouteDialog(QWidget):
 
         self.scenarioLabel = CustomLabel(self.tr("Scenario"))
         self.scenarioChoice = QComboBox()
-        self.scenarios = Transition.get_transition_scenarios()
+        self.scenarios = Transition.get_scenarios()
         self.scenariosNames = [entry['name'] for entry in self.scenarios.json()['collection']]
         self.scenarioChoice.addItems(self.scenariosNames)
 

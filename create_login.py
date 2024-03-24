@@ -22,24 +22,25 @@ class Login(QDialog):
         self.config = Transition.get_configurations()
         self.show()
 
+        self.urlEdit.setText("http://localhost:8080")
+
         self.buttonBox.accepted.connect(self.onConnectButtonClicked)
         self.buttonBox.rejected.connect(self.reject)
-        self.comboBox.addItems(self.config['URL'].keys())
 
 
     def onConnectButtonClicked(self):
         try:
             print("Connecting...")
-            Transition.set_url(self.comboBox.currentText())
+            Transition.set_url(self.urlEdit.text())
             Transition.set_username(self.usernameEdit.text())
 
-            result = Transition.get_token(self.usernameEdit.text(), self.passwordEdit.text())
-            if result.status_code == 200:
-                print("Successfully connected to API")
-                self.accept()
-            else:
+            Transition.get_token(self.usernameEdit.text(), self.passwordEdit.text())
+            print("Successfully connected to API")
+            self.accept()
+
+        except Exception as e:
                 QMessageBox.warning(self, "Invalid login credentials", "Bad username or password.")
                 
-        except ValueError:
-            QMessageBox.warning(self, "Missing credentials", "Please enter your username and password.")
+        # except ValueError:
+        #     QMessageBox.warning(self, "Missing credentials", "Please enter your username and password.")
 

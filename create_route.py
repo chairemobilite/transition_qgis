@@ -37,9 +37,9 @@ class CreateRouteDialog(QWidget):
         self.modeChoice.addItems(self.modes)
 
         self.departureOrArrivalLabel = CustomLabel(self.tr("Time to use"))
-        self.departureRadioButton = QRadioButton("Departure")
+        self.departureRadioButton = QRadioButton(self.tr("Departure"))
         self.departureRadioButton.setChecked(True)
-        self.arrivalRadioButton = QRadioButton("Arrival")
+        self.arrivalRadioButton = QRadioButton(self.tr("Arrival"))
 
         self.radioButtonsLayout = QHBoxLayout()
         self.radioButtonsLayout.addWidget(self.departureRadioButton)
@@ -47,8 +47,6 @@ class CreateRouteDialog(QWidget):
 
         self.radioButtonsWidget = QWidget()
         self.radioButtonsWidget.setLayout(self.radioButtonsLayout) 
-
-
 
         self.departureOrArrivalTimeLabel = CustomLabel(self.tr("Departure or arrival time"))
         self.departureOrArrivalTime = QTimeEdit()

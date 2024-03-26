@@ -32,9 +32,9 @@ class CreateAccessibilityForm(QWidget):
         form_layout.setRowWrapPolicy(QFormLayout.WrapAllRows)
 
         self.departureOrArrivalLabel = CustomLabel(self.tr("Time to use"))
-        self.departureRadioButton = QRadioButton("Departure")
+        self.departureRadioButton = QRadioButton(self.tr("Departure"))
         self.departureRadioButton.setChecked(True)
-        self.arrivalRadioButton = QRadioButton("Arrival")
+        self.arrivalRadioButton = QRadioButton(self.tr("Arrival"))
 
         self.radioButtonsLayout = QHBoxLayout()
         self.radioButtonsLayout.addWidget(self.departureRadioButton)

@@ -41,6 +41,4 @@ class Login(QDialog):
         except Exception as e:
                 QMessageBox.warning(self, "Invalid login credentials", "Bad username or password.")
                 
-        # except ValueError:
-        #     QMessageBox.warning(self, "Missing credentials", "Please enter your username and password.")
 

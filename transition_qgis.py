@@ -25,6 +25,8 @@ import json
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt, pyqtSignal
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QDialog, QSpinBox
+from PyQt5.QtWidgets import QWidget, QMessageBox
+
 
 from qgis.gui import QgsMapToolEmitPoint, QgsRubberBand, QgsProjectionSelectionDialog
 from qgis.core import QgsUnitTypes, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsPointXY, QgsVectorLayer, QgsProject, QgsLayerTreeGroup, Qgis
@@ -335,7 +337,7 @@ class TransitionWidget:
 
     def onPathButtonClicked(self):
         self.dockwidget.plainTextEdit.setPlainText("Getting the paths...")
-        geojson_data = Transition.get_transition_paths()
+        geojson_data = Transition.get_paths()
         if geojson_data:
             layer = QgsVectorLayer(geojson.dumps(geojson_data), "transition_paths", "ogr")
             if not layer.isValid():
@@ -348,7 +350,7 @@ class TransitionWidget:
 
     def onNodeButtonClicked(self):
         self.dockwidget.plainTextEdit.setPlainText("Getting the nodes...")
-        geojson_data = Transition.get_transition_nodes()
+        geojson_data = Transition.get_nodes()
         if geojson_data:
             layer = QgsVectorLayer(geojson.dumps(geojson_data), "transition_nodes", "ogr")
             if not layer.isValid():
@@ -362,16 +364,19 @@ class TransitionWidget:
         self.iface.actionPan().trigger()
 
     def onNewRouteButtonClicked(self):
+        modes = self.createRouteForm.modeChoice.checkedItems()
+        if not modes:
+            QMessageBox.warning(self.dockwidget, "No modes selected", "Please select at least one mode.")
+            return
         originCoord = [self.selectedCoords['routeOriginPoint'].x(), self.selectedCoords['routeOriginPoint'].y()]
         destCoord = [self.selectedCoords['routeDestinationPoint'].x(), self.selectedCoords['routeDestinationPoint'].y()]
-        departureOrArrivalChoice = self.createRouteForm.departureOrArrivalChoice.currentText()
+        departureOrArrivalChoice = "Departure" if self.createRouteForm.departureRadioButton.isChecked() else "Arrival"
         departureOrArrivalTime = self.createRouteForm.departureOrArrivalTime.time().toPyTime()
         maxParcoursTime = self.createRouteForm.maxParcoursTimeChoice.value()
         minWaitTime = self.createRouteForm.minWaitTimeChoice.value()
         maxAccessTimeOrigDest = self.createRouteForm.maxAccessTimeOrigDestChoice.value()
         maxTransferWaitTime = self.createRouteForm.maxTransferWaitTimeChoice.value()
         maxWaitTimeFisrstStopChoice = self.createRouteForm.maxWaitTimeFisrstStopChoice.value()
-        modes = self.createRouteForm.modeChoice.checkedItems()
         scenarioId = self.createRouteForm.scenarios.json()['collection'][self.createRouteForm.scenarioChoice.currentIndex()]['id']
 
         result = Transition.get_routing_result(modes=modes, 
@@ -383,35 +388,33 @@ class TransitionWidget:
                                                max_transfer_time=maxTransferWaitTime, 
                                                max_access_time=maxAccessTimeOrigDest, 
                                                departure_or_arrival_time=departureOrArrivalTime, 
-                                               departure_or_arrival_label=departureOrArrivalChoice, 
+                                               departure_or_arrival_choice=departureOrArrivalChoice, 
                                                max_first_waiting_time=maxWaitTimeFisrstStopChoice,
                                                with_geojson=True)
-        if result.status_code == 200 :
-            # Remove the existing "Routing results" group if it exists
-            existing_group = QgsProject.instance().layerTreeRoot().findGroup("Routing results")
-            if existing_group:
-                QgsProject.instance().layerTreeRoot().removeChildNode(existing_group)
-            
-            # Create a new group layer for the routing results, it will contain all the routing modes in separate layers
-            root = QgsProject.instance().layerTreeRoot()
-            group = root.addGroup("Routing results")
-            for key, value in result.json().items():  
-                geojsonPath = value["pathsGeojson"]
-                mode = key
-                for i in range(len(geojsonPath)):
-                    geojson_data = geojsonPath[i]
-                    layer = QgsVectorLayer(geojson.dumps(geojson_data), mode, "ogr")
-                    if not layer.isValid():
-                        print("Layer failed to load!")
-                        return
-                    QgsProject.instance().addMapLayer(layer, False)
-                    group.addLayer(layer)
-                            
-        else: print("Failed to get GeoJSON data")
+        # Remove the existing "Routing results" group if it exists
+        existing_group = QgsProject.instance().layerTreeRoot().findGroup("Routing results")
+        if existing_group:
+            QgsProject.instance().layerTreeRoot().removeChildNode(existing_group)
+        
+        # Create a new group layer for the routing results, it will contain all the routing modes in separate layers
+        root = QgsProject.instance().layerTreeRoot()
+        group = root.addGroup("Routing results")
+        for key, value in result.items():  
+            geojsonPath = value["pathsGeojson"]
+            mode = key
+            for i in range(len(geojsonPath)):
+                geojson_data = geojsonPath[i]
+                layer = QgsVectorLayer(geojson.dumps(geojson_data), mode, "ogr")
+                if not layer.isValid():
+                    print("Layer failed to load!")
+                    return
+                QgsProject.instance().addMapLayer(layer, False)
+                group.addLayer(layer)
+
     def onAccessibilityButtonClicked(self):
         geojson_data = Transition.get_accessibility_map(
             with_geojson=True,
-            departure_or_arrival_choice=self.createAccessibilityForm.departureOrArrivalChoice.currentText(),
+            departure_or_arrival_choice="Departure" if self.createAccessibilityForm.departureRadioButton.isChecked() else "Arrival",
             departure_or_arrival_time=self.createAccessibilityForm.departureOrArrivalTime.time().toPyTime(),
             n_polygons=self.createAccessibilityForm.nPolygons.value(),
             delta_minutes=self.createAccessibilityForm.delta.value(),
@@ -427,6 +430,7 @@ class TransitionWidget:
             coord_latitude=self.selectedCoords['accessibilityMapPoint'].y(),
             coord_longitude=self.selectedCoords['accessibilityMapPoint'].x()
         )
+        geojson_data = geojson.dumps(geojson_data['polygons'])
 
         if geojson_data:
             # Remove the existing "Accessibility map" layer if it exists

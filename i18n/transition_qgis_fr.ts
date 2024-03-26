@@ -6,12 +6,22 @@
     <message>
         <location filename="../create_accessibility.py" line="34"/>
         <source>Time to use</source>
-        <translation>Heure à utiliser</translation>
+        <translation type="obsolete">Heure à utiliser</translation>
     </message>
     <message>
-        <location filename="../create_accessibility.py" line="38"/>
+        <location filename="../create_accessibility.py" line="35"/>
+        <source>Departure</source>
+        <translation type="obsolete">Départ</translation>
+    </message>
+    <message>
+        <location filename="../create_accessibility.py" line="37"/>
+        <source>Arrival</source>
+        <translation type="obsolete">Arrivée</translation>
+    </message>
+    <message>
+        <location filename="../create_accessibility.py" line="46"/>
         <source>Departure or arrival time</source>
-        <translation>Heure de départ ou d&apos;arrivée</translation>
+        <translation type="obsolete">Heure de départ ou d&apos;arrivée</translation>
     </message>
     <message>
         <location filename="../create_accessibility.py" line="43"/>
@@ -19,82 +29,185 @@
         <translation type="obsolete">Heure d&apos;arrivée [HH:MM]</translation>
     </message>
     <message>
-        <location filename="../create_accessibility.py" line="43"/>
+        <location filename="../create_accessibility.py" line="51"/>
+        <source>Number of polygons to calculate</source>
+        <translation type="obsolete">Nombre de polygones à calculer</translation>
+    </message>
+    <message>
+        <location filename="../create_accessibility.py" line="55"/>
+        <source>A total duration of 60 minutes with a number of polygons of 3 implies that we will obtain three polygons: accessibility at 20 minutes, 40 minutes and 60 minutes.</source>
+        <translation type="obsolete">Une durée de parcours de 60 minutes et un nombre de polygones de 3 implique que l&apos;on obtientra trois polygones: accès à 20 minutes, accès à 40 minutes et accès à 60 minutes.</translation>
+    </message>
+    <message>
+        <location filename="../create_accessibility.py" line="57"/>
+        <source>Delta (minutes)</source>
+        <translation type="obsolete">Delta (minutes)</translation>
+    </message>
+    <message>
+        <location filename="../create_accessibility.py" line="62"/>
+        <source>Delta interval (minutes)</source>
+        <translation type="obsolete">Intervalle du delta (minutes)</translation>
+    </message>
+    <message>
+        <location filename="../create_accessibility.py" line="66"/>
+        <source>A delta of 15 minutes with an interval of 5 minutes implies that the polygon area will be averaged over polygons obtained 15 minutes before, 10 minutes before, 5 minutes before, at specified time, 5 minutes after, 10 minutes after and 15 minutes after the specified departure or arrival time.</source>
+        <translation type="obsolete">Un delta de 15 minutes avec intervalle de 5 minutes implique que la surface du polygone sera une moyenne des polygones obtenus à 15 minutes avant, 10 minutes avant, 5 minutes avant, à l&apos;heure spécifiée, 5 minutes après, 10 minutes après et 15 minutes après l&apos;heure de départ ou d&apos;arrivée choisie.</translation>
+    </message>
+    <message>
+        <location filename="../create_accessibility.py" line="68"/>
+        <source>Scenario</source>
+        <translation type="obsolete">Scénario</translation>
+    </message>
+    <message>
+        <location filename="../create_accessibility.py" line="74"/>
+        <source>Place name</source>
+        <translation type="obsolete">Nom du lieu</translation>
+    </message>
+    <message>
+        <location filename="../create_accessibility.py" line="77"/>
+        <source>Maximum total travel time including access and egress (minutes)</source>
+        <translation type="obsolete">Temps de parcours maximal incluant les accès (minutes)</translation>
+    </message>
+    <message>
+        <location filename="../create_accessibility.py" line="81"/>
+        <source>Minimum waiting time (minutes)</source>
+        <translation type="obsolete">Temps minimum d&apos;attente (minutes)</translation>
+    </message>
+    <message>
+        <location filename="../create_accessibility.py" line="85"/>
+        <source>To account for timetable uncertainty, this value should be greater or equal to 1 minute. Suggested value: 3 minutes</source>
+        <translation type="obsolete">Pour tenir compte des incertitudes des horaires, cette valeur doit être de 1 minute ou plus. Valeur suggérée: 3 minutes</translation>
+    </message>
+    <message>
+        <location filename="../create_accessibility.py" line="87"/>
+        <source>Maximum access and egress travel time (minutes)</source>
+        <translation type="obsolete">Temps maximum d&apos;accès à l&apos;origine et à destination (minutes)</translation>
+    </message>
+    <message>
+        <location filename="../create_accessibility.py" line="91"/>
+        <source>To avoid long calculation time, this value has a maximum of 20 minutes.</source>
+        <translation type="obsolete">Pour éviter de longs temps de calcul, la valeur maximale est de 20 minutes.</translation>
+    </message>
+    <message>
+        <location filename="../create_accessibility.py" line="93"/>
+        <source>Maximum access travel time when transferring (minutes)</source>
+        <translation type="obsolete">Temps maximum d&apos;accès lors des transferts (minutes)</translation>
+    </message>
+    <message>
+        <location filename="../create_accessibility.py" line="99"/>
+        <source>Maximum first waiting time (minutes)</source>
+        <translation type="obsolete">Temps d&apos;attente maximal au premier arrêt (minutes)</translation>
+    </message>
+    <message>
+        <location filename="../create_accessibility.py" line="102"/>
+        <source>If waiting time at first stop is greater than this value for a line, ignore the departure of this line at this stop</source>
+        <translation type="obsolete">Si l&apos;attente au premier arrêt est plus grande que cette valeur pour une ligne, ignorer le départ de cette ligne à cet arrêt</translation>
+    </message>
+    <message>
+        <location filename="../create_accessibility.py" line="104"/>
+        <source>Walking speed (km/h)</source>
+        <translation type="obsolete">Vitesse de marche (km/h)</translation>
+    </message>
+</context>
+<context>
+    <name>CreateAccessibilityForm</name>
+    <message>
+        <location filename="../create_accessibility.py" line="34"/>
+        <source>Time to use</source>
+        <translation>Heure à utiliser</translation>
+    </message>
+    <message>
+        <location filename="../create_accessibility.py" line="35"/>
+        <source>Departure</source>
+        <translation>Départ</translation>
+    </message>
+    <message>
+        <location filename="../create_accessibility.py" line="37"/>
+        <source>Arrival</source>
+        <translation>Arrivée</translation>
+    </message>
+    <message>
+        <location filename="../create_accessibility.py" line="46"/>
+        <source>Departure or arrival time</source>
+        <translation>Heure de départ ou d&apos;arrivée</translation>
+    </message>
+    <message>
+        <location filename="../create_accessibility.py" line="51"/>
         <source>Number of polygons to calculate</source>
         <translation>Nombre de polygones à calculer</translation>
     </message>
     <message>
-        <location filename="../create_accessibility.py" line="47"/>
+        <location filename="../create_accessibility.py" line="55"/>
         <source>A total duration of 60 minutes with a number of polygons of 3 implies that we will obtain three polygons: accessibility at 20 minutes, 40 minutes and 60 minutes.</source>
         <translation>Une durée de parcours de 60 minutes et un nombre de polygones de 3 implique que l&apos;on obtientra trois polygones: accès à 20 minutes, accès à 40 minutes et accès à 60 minutes.</translation>
     </message>
     <message>
-        <location filename="../create_accessibility.py" line="49"/>
+        <location filename="../create_accessibility.py" line="57"/>
         <source>Delta (minutes)</source>
         <translation>Delta (minutes)</translation>
     </message>
     <message>
-        <location filename="../create_accessibility.py" line="54"/>
+        <location filename="../create_accessibility.py" line="62"/>
         <source>Delta interval (minutes)</source>
         <translation>Intervalle du delta (minutes)</translation>
     </message>
     <message>
-        <location filename="../create_accessibility.py" line="58"/>
+        <location filename="../create_accessibility.py" line="66"/>
         <source>A delta of 15 minutes with an interval of 5 minutes implies that the polygon area will be averaged over polygons obtained 15 minutes before, 10 minutes before, 5 minutes before, at specified time, 5 minutes after, 10 minutes after and 15 minutes after the specified departure or arrival time.</source>
         <translation>Un delta de 15 minutes avec intervalle de 5 minutes implique que la surface du polygone sera une moyenne des polygones obtenus à 15 minutes avant, 10 minutes avant, 5 minutes avant, à l&apos;heure spécifiée, 5 minutes après, 10 minutes après et 15 minutes après l&apos;heure de départ ou d&apos;arrivée choisie.</translation>
     </message>
     <message>
-        <location filename="../create_accessibility.py" line="60"/>
+        <location filename="../create_accessibility.py" line="68"/>
         <source>Scenario</source>
         <translation>Scénario</translation>
     </message>
     <message>
-        <location filename="../create_accessibility.py" line="65"/>
+        <location filename="../create_accessibility.py" line="74"/>
         <source>Place name</source>
         <translation>Nom du lieu</translation>
     </message>
     <message>
-        <location filename="../create_accessibility.py" line="68"/>
+        <location filename="../create_accessibility.py" line="77"/>
         <source>Maximum total travel time including access and egress (minutes)</source>
         <translation>Temps de parcours maximal incluant les accès (minutes)</translation>
     </message>
     <message>
-        <location filename="../create_accessibility.py" line="72"/>
+        <location filename="../create_accessibility.py" line="81"/>
         <source>Minimum waiting time (minutes)</source>
         <translation>Temps minimum d&apos;attente (minutes)</translation>
     </message>
     <message>
-        <location filename="../create_accessibility.py" line="76"/>
+        <location filename="../create_accessibility.py" line="85"/>
         <source>To account for timetable uncertainty, this value should be greater or equal to 1 minute. Suggested value: 3 minutes</source>
         <translation>Pour tenir compte des incertitudes des horaires, cette valeur doit être de 1 minute ou plus. Valeur suggérée: 3 minutes</translation>
     </message>
     <message>
-        <location filename="../create_accessibility.py" line="78"/>
+        <location filename="../create_accessibility.py" line="87"/>
         <source>Maximum access and egress travel time (minutes)</source>
         <translation>Temps maximum d&apos;accès à l&apos;origine et à destination (minutes)</translation>
     </message>
     <message>
-        <location filename="../create_accessibility.py" line="88"/>
+        <location filename="../create_accessibility.py" line="97"/>
         <source>To avoid long calculation time, this value has a maximum of 20 minutes.</source>
         <translation>Pour éviter de longs temps de calcul, la valeur maximale est de 20 minutes.</translation>
     </message>
     <message>
-        <location filename="../create_accessibility.py" line="84"/>
+        <location filename="../create_accessibility.py" line="93"/>
         <source>Maximum access travel time when transferring (minutes)</source>
         <translation>Temps maximum d&apos;accès lors des transferts (minutes)</translation>
     </message>
     <message>
-        <location filename="../create_accessibility.py" line="90"/>
+        <location filename="../create_accessibility.py" line="99"/>
         <source>Maximum first waiting time (minutes)</source>
         <translation>Temps d&apos;attente maximal au premier arrêt (minutes)</translation>
     </message>
     <message>
-        <location filename="../create_accessibility.py" line="93"/>
+        <location filename="../create_accessibility.py" line="102"/>
         <source>If waiting time at first stop is greater than this value for a line, ignore the departure of this line at this stop</source>
         <translation>Si l&apos;attente au premier arrêt est plus grande que cette valeur pour une ligne, ignorer le départ de cette ligne à cet arrêt</translation>
     </message>
     <message>
-        <location filename="../create_accessibility.py" line="95"/>
+        <location filename="../create_accessibility.py" line="104"/>
         <source>Walking speed (km/h)</source>
         <translation>Vitesse de marche (km/h)</translation>
     </message>
@@ -112,52 +225,62 @@
         <translation>Heure à utiliser</translation>
     </message>
     <message>
-        <location filename="../create_route.py" line="43"/>
+        <location filename="../create_route.py" line="40"/>
+        <source>Departure</source>
+        <translation>Départ</translation>
+    </message>
+    <message>
+        <location filename="../create_route.py" line="42"/>
+        <source>Arrival</source>
+        <translation>Arrivée</translation>
+    </message>
+    <message>
+        <location filename="../create_route.py" line="53"/>
         <source>Departure or arrival time</source>
         <translation>Heure de départ ou d&apos;arrivée [HH:MM]</translation>
     </message>
     <message>
-        <location filename="../create_route.py" line="48"/>
+        <location filename="../create_route.py" line="58"/>
         <source>Maximum total travel time including access and egress (minutes)</source>
         <translation>Temps de parcours maximal incluant les accès (minutes)</translation>
     </message>
     <message>
-        <location filename="../create_route.py" line="53"/>
+        <location filename="../create_route.py" line="63"/>
         <source>Minimum waiting time (minutes)</source>
         <translation>Temps minimum d&apos;attente (minutes)</translation>
     </message>
     <message>
-        <location filename="../create_route.py" line="57"/>
+        <location filename="../create_route.py" line="67"/>
         <source>To account for timetable uncertainty, this value should be greater or equal to 1 minute. Suggested value: 3 minutes</source>
         <translation>Pour tenir compte des incertitudes des horaires, cette valeur doit être de 1 minute ou plus. Valeur suggérée: 3 minutes</translation>
     </message>
     <message>
-        <location filename="../create_route.py" line="59"/>
+        <location filename="../create_route.py" line="69"/>
         <source>Maximum access and egress travel time (minutes)</source>
         <translation>Temps maximum d&apos;accès à l&apos;origine et à destination (minutes)</translation>
     </message>
     <message>
-        <location filename="../create_route.py" line="69"/>
+        <location filename="../create_route.py" line="79"/>
         <source>To avoid long calculation time, this value has a maximum of 20 minutes.</source>
         <translation>Pour éviter de longs temps de calcul, la valeur maximale est de 20 minutes.</translation>
     </message>
     <message>
-        <location filename="../create_route.py" line="65"/>
+        <location filename="../create_route.py" line="75"/>
         <source>Maximum access travel time when transferring (minutes)</source>
         <translation>Temps maximum d&apos;accès lors des transferts (minutes)</translation>
     </message>
     <message>
-        <location filename="../create_route.py" line="71"/>
+        <location filename="../create_route.py" line="81"/>
         <source>Maximum first waiting time (minutes)</source>
         <translation>Temps d&apos;attente maximal au premier arrêt (minutes)</translation>
     </message>
     <message>
-        <location filename="../create_route.py" line="74"/>
+        <location filename="../create_route.py" line="84"/>
         <source>If waiting time at first stop is greater than this value for a line, ignore the departure of this line at this stop</source>
         <translation>Si l&apos;attente au premier arrêt est plus grande que cette valeur pour une ligne, ignorer le départ de cette ligne à cet arrêt</translation>
     </message>
     <message>
-        <location filename="../create_route.py" line="76"/>
+        <location filename="../create_route.py" line="86"/>
         <source>Scenario</source>
         <translation>Scénario</translation>
     </message>
@@ -180,7 +303,7 @@
         <translation>Nom d&apos;utilisateur ou courriel</translation>
     </message>
     <message>
-        <location filename="../login_dialog.ui" line="107"/>
+        <location filename="../login_dialog.ui" line="97"/>
         <source>URL</source>
         <translation>URL</translation>
     </message>
@@ -264,12 +387,12 @@
 <context>
     <name>TransitionWidget</name>
     <message>
-        <location filename="../transition_qgis.py" line="234"/>
+        <location filename="../transition_qgis.py" line="237"/>
         <source>&amp;Transition</source>
         <translation>&amp;Transition</translation>
     </message>
     <message>
-        <location filename="../transition_qgis.py" line="199"/>
+        <location filename="../transition_qgis.py" line="202"/>
         <source>Transition</source>
         <translation>Transition</translation>
     </message>

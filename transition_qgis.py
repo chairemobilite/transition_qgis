@@ -21,7 +21,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-import json
+
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt, pyqtSignal
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QDialog, QSpinBox
@@ -330,126 +330,132 @@ class TransitionWidget:
             # Determine the order in which the layers are shown on the map (point, line, polygon)
             QgsProject.instance().layerTreeRegistryBridge().setLayerInsertionMethod(Qgis.LayerTreeInsertionMethod.OptimalInInsertionGroup)
 
-
         # show the dockwidget
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
         self.dockwidget.show()
 
     def onPathButtonClicked(self):
-        self.dockwidget.plainTextEdit.setPlainText("Getting the paths...")
-        geojson_data = Transition.get_paths()
-        if geojson_data:
+        try:
+            geojson_data = Transition.get_paths()
             layer = QgsVectorLayer(geojson.dumps(geojson_data), "transition_paths", "ogr")
+            
             if not layer.isValid():
-                print("Layer failed to load!")
-                return
+                raise Exception("Layer failed to load!")
+    
             QgsProject.instance().addMapLayer(layer)
-        else:
-            print("Failed to get GeoJSON data")
-        self.iface.actionPan().trigger()
+
+        except Exception as error:
+            self.iface.messageBar().pushCritical('Error', str(error))
+
 
     def onNodeButtonClicked(self):
-        self.dockwidget.plainTextEdit.setPlainText("Getting the nodes...")
-        geojson_data = Transition.get_nodes()
-        if geojson_data:
+        try:
+            geojson_data = Transition.get_nodes()
             layer = QgsVectorLayer(geojson.dumps(geojson_data), "transition_nodes", "ogr")
+            
             if not layer.isValid():
-                print("Layer failed to load!")
-                return
-            QgsProject.instance().addMapLayer(layer)
-        else:
-            print("Failed to get GeoJSON data")
+                raise Exception("Layer failed to load!")
 
-        print("API called")
-        self.iface.actionPan().trigger()
+            QgsProject.instance().addMapLayer(layer)
+
+        except Exception as error:
+            self.iface.messageBar().pushCritical('Error', str(error))
 
     def onNewRouteButtonClicked(self):
-        modes = self.createRouteForm.modeChoice.checkedItems()
-        if not modes:
-            QMessageBox.warning(self.dockwidget, "No modes selected", "Please select at least one mode.")
-            return
-        originCoord = [self.selectedCoords['routeOriginPoint'].x(), self.selectedCoords['routeOriginPoint'].y()]
-        destCoord = [self.selectedCoords['routeDestinationPoint'].x(), self.selectedCoords['routeDestinationPoint'].y()]
-        departureOrArrivalChoice = "Departure" if self.createRouteForm.departureRadioButton.isChecked() else "Arrival"
-        departureOrArrivalTime = self.createRouteForm.departureOrArrivalTime.time().toPyTime()
-        maxParcoursTime = self.createRouteForm.maxParcoursTimeChoice.value()
-        minWaitTime = self.createRouteForm.minWaitTimeChoice.value()
-        maxAccessTimeOrigDest = self.createRouteForm.maxAccessTimeOrigDestChoice.value()
-        maxTransferWaitTime = self.createRouteForm.maxTransferWaitTimeChoice.value()
-        maxWaitTimeFisrstStopChoice = self.createRouteForm.maxWaitTimeFisrstStopChoice.value()
-        scenarioId = self.createRouteForm.scenarios.json()['collection'][self.createRouteForm.scenarioChoice.currentIndex()]['id']
+        try:
+            modes = self.createRouteForm.modeChoice.checkedItems()
+            if not modes:
+                QMessageBox.warning(self.dockwidget, "No modes selected", "Please select at least one mode.")
+                return
+            
+            originCoord = [self.selectedCoords['routeOriginPoint'].x(), self.selectedCoords['routeOriginPoint'].y()]
+            destCoord = [self.selectedCoords['routeDestinationPoint'].x(), self.selectedCoords['routeDestinationPoint'].y()]
+            departureOrArrivalChoice = "Departure" if self.createRouteForm.departureRadioButton.isChecked() else "Arrival"
+            departureOrArrivalTime = self.createRouteForm.departureOrArrivalTime.time().toPyTime()
+            maxParcoursTime = self.createRouteForm.maxParcoursTimeChoice.value()
+            minWaitTime = self.createRouteForm.minWaitTimeChoice.value()
+            maxAccessTimeOrigDest = self.createRouteForm.maxAccessTimeOrigDestChoice.value()
+            maxTransferWaitTime = self.createRouteForm.maxTransferWaitTimeChoice.value()
+            maxWaitTimeFisrstStopChoice = self.createRouteForm.maxWaitTimeFisrstStopChoice.value()
+            scenarioId = self.createRouteForm.scenarios.json()['collection'][self.createRouteForm.scenarioChoice.currentIndex()]['id']
 
-        result = Transition.get_routing_result(modes=modes, 
-                                               origin=originCoord, 
-                                               destination=destCoord, 
-                                               scenario_id=scenarioId, 
-                                               max_travel_time=maxParcoursTime, 
-                                               min_waiting_time=minWaitTime,
-                                               max_transfer_time=maxTransferWaitTime, 
-                                               max_access_time=maxAccessTimeOrigDest, 
-                                               departure_or_arrival_time=departureOrArrivalTime, 
-                                               departure_or_arrival_choice=departureOrArrivalChoice, 
-                                               max_first_waiting_time=maxWaitTimeFisrstStopChoice,
-                                               with_geojson=True)
-        # Remove the existing "Routing results" group if it exists
-        existing_group = QgsProject.instance().layerTreeRoot().findGroup("Routing results")
-        if existing_group:
-            QgsProject.instance().layerTreeRoot().removeChildNode(existing_group)
-        
-        # Create a new group layer for the routing results, it will contain all the routing modes in separate layers
-        root = QgsProject.instance().layerTreeRoot()
-        group = root.addGroup("Routing results")
-        for key, value in result.items():  
-            geojsonPath = value["pathsGeojson"]
-            mode = key
-            for i in range(len(geojsonPath)):
-                geojson_data = geojsonPath[i]
-                layer = QgsVectorLayer(geojson.dumps(geojson_data), mode, "ogr")
-                if not layer.isValid():
-                    print("Layer failed to load!")
-                    return
-                QgsProject.instance().addMapLayer(layer, False)
-                group.addLayer(layer)
+            result = Transition.get_routing_result(modes=modes, 
+                                                origin=originCoord, 
+                                                destination=destCoord, 
+                                                scenario_id=scenarioId, 
+                                                max_travel_time=maxParcoursTime, 
+                                                min_waiting_time=minWaitTime,
+                                                max_transfer_time=maxTransferWaitTime, 
+                                                max_access_time=maxAccessTimeOrigDest, 
+                                                departure_or_arrival_time=departureOrArrivalTime, 
+                                                departure_or_arrival_choice=departureOrArrivalChoice, 
+                                                max_first_waiting_time=maxWaitTimeFisrstStopChoice,
+                                                with_geojson=True)
+            
+            # Remove the existing "Routing results" group if it exists
+            existing_group = QgsProject.instance().layerTreeRoot().findGroup("Routing results")
+            if existing_group:
+                QgsProject.instance().layerTreeRoot().removeChildNode(existing_group)
+            
+            # Create a new group layer for the routing results, it will contain all the routing modes in separate layers
+            root = QgsProject.instance().layerTreeRoot()
+            group = root.addGroup("Routing results")
+            for key, value in result.items():  
+                geojsonPath = value["pathsGeojson"]
+                mode = key
+                for i in range(len(geojsonPath)):
+                    geojson_data = geojsonPath[i]
+                    layer = QgsVectorLayer(geojson.dumps(geojson_data), mode, "ogr")
+                    if not layer.isValid():
+                        raise Exception("Layer failed to load!")
+                    QgsProject.instance().addMapLayer(layer, False)
+                    group.addLayer(layer)
+
+        except Exception as error:
+            self.iface.messageBar().pushCritical('Error', str(error))
 
     def onAccessibilityButtonClicked(self):
-        geojson_data = Transition.get_accessibility_map(
-            with_geojson=True,
-            departure_or_arrival_choice="Departure" if self.createAccessibilityForm.departureRadioButton.isChecked() else "Arrival",
-            departure_or_arrival_time=self.createAccessibilityForm.departureOrArrivalTime.time().toPyTime(),
-            n_polygons=self.createAccessibilityForm.nPolygons.value(),
-            delta_minutes=self.createAccessibilityForm.delta.value(),
-            delta_interval_minutes=self.createAccessibilityForm.deltaInterval.value(),
-            scenario_id=self.createAccessibilityForm.scenarios.json()['collection'][self.createAccessibilityForm.scenarioChoice.currentIndex()]['id'],
-            place_name=self.createAccessibilityForm.placeName.text(),
-            max_total_travel_time_minutes=self.createAccessibilityForm.maxTotalTravelTime.value(),
-            min_waiting_time_minutes=self.createAccessibilityForm.minWaitTime.value(),
-            max_access_egress_travel_time_minutes=self.createAccessibilityForm.maxAccessTimeOrigDest.value(),
-            max_transfer_travel_time_minutes=self.createAccessibilityForm.maxTransferWaitTime.value(),
-            max_first_waiting_time_minutes=self.createAccessibilityForm.maxFirstWaitTime.value(),
-            walking_speed_kmh=self.createAccessibilityForm.walkingSpeed.value(),
-            coord_latitude=self.selectedCoords['accessibilityMapPoint'].y(),
-            coord_longitude=self.selectedCoords['accessibilityMapPoint'].x()
-        )
-        geojson_data = geojson.dumps(geojson_data['polygons'])
+        try:
+            geojson_data = Transition.get_accessibility_map(
+                with_geojson=True,
+                departure_or_arrival_choice="Departure" if self.createAccessibilityForm.departureRadioButton.isChecked() else "Arrival",
+                departure_or_arrival_time=self.createAccessibilityForm.departureOrArrivalTime.time().toPyTime(),
+                n_polygons=self.createAccessibilityForm.nPolygons.value(),
+                delta_minutes=self.createAccessibilityForm.delta.value(),
+                delta_interval_minutes=self.createAccessibilityForm.deltaInterval.value(),
+                scenario_id=self.createAccessibilityForm.scenarios.json()['collection'][self.createAccessibilityForm.scenarioChoice.currentIndex()]['id'],
+                place_name=self.createAccessibilityForm.placeName.text(),
+                max_total_travel_time_minutes=self.createAccessibilityForm.maxTotalTravelTime.value(),
+                min_waiting_time_minutes=self.createAccessibilityForm.minWaitTime.value(),
+                max_access_egress_travel_time_minutes=self.createAccessibilityForm.maxAccessTimeOrigDest.value(),
+                max_transfer_travel_time_minutes=self.createAccessibilityForm.maxTransferWaitTime.value(),
+                max_first_waiting_time_minutes=self.createAccessibilityForm.maxFirstWaitTime.value(),
+                walking_speed_kmh=self.createAccessibilityForm.walkingSpeed.value(),
+                coord_latitude=self.selectedCoords['accessibilityMapPoint'].y(),
+                coord_longitude=self.selectedCoords['accessibilityMapPoint'].x()
+            )
+            geojson_data = geojson.dumps(geojson_data['polygons'])
 
-        if geojson_data:
-            # Remove the existing "Accessibility map" layer if it exists
-            existing_layers = QgsProject.instance().mapLayersByName("Accessibility map")
-            if existing_layers:
-                QgsProject.instance().removeMapLayer(existing_layers[0].id())
+            if geojson_data:
+                # Remove the existing "Accessibility map" layer if it exists
+                existing_layers = QgsProject.instance().mapLayersByName("Accessibility map")
+                if existing_layers:
+                    QgsProject.instance().removeMapLayer(existing_layers[0].id())
 
-            # Add the new "Accessibility map" layer
-            layer = QgsVectorLayer(geojson_data, "Accessibility map", "ogr")
-            QgsProject.instance().addMapLayer(layer)
-            if not layer.isValid():
-                print("Layer failed to load!")
-                return
+                # Add the new "Accessibility map" layer
+                layer = QgsVectorLayer(geojson_data, "Accessibility map", "ogr")
+                if not layer.isValid():
+                    raise Exception("Layer failed to load!")
+                QgsProject.instance().addMapLayer(layer)
 
-            # Set layer opacity to 60%
-            single_symbol_renderer = layer.renderer()
-            symbol = single_symbol_renderer.symbol()
-            symbol.setOpacity(0.6)
-            layer.triggerRepaint()
+                # Set layer opacity to 60%
+                single_symbol_renderer = layer.renderer()
+                symbol = single_symbol_renderer.symbol()
+                symbol.setOpacity(0.6)
+                layer.triggerRepaint()
+        
+        except Exception as error:
+            self.iface.messageBar().pushCritical('Error', str(error))
 
     def setCrs(self):
         selector = QgsProjectionSelectionDialog(self.iface.mainWindow())

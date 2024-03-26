@@ -235,54 +235,67 @@
         <translation>Arrivée</translation>
     </message>
     <message>
-        <location filename="../create_route.py" line="53"/>
+        <location filename="../create_route.py" line="51"/>
         <source>Departure or arrival time</source>
         <translation>Heure de départ ou d&apos;arrivée [HH:MM]</translation>
     </message>
     <message>
-        <location filename="../create_route.py" line="58"/>
+        <location filename="../create_route.py" line="56"/>
         <source>Maximum total travel time including access and egress (minutes)</source>
         <translation>Temps de parcours maximal incluant les accès (minutes)</translation>
     </message>
     <message>
-        <location filename="../create_route.py" line="63"/>
+        <location filename="../create_route.py" line="61"/>
         <source>Minimum waiting time (minutes)</source>
         <translation>Temps minimum d&apos;attente (minutes)</translation>
     </message>
     <message>
-        <location filename="../create_route.py" line="67"/>
+        <location filename="../create_route.py" line="65"/>
         <source>To account for timetable uncertainty, this value should be greater or equal to 1 minute. Suggested value: 3 minutes</source>
         <translation>Pour tenir compte des incertitudes des horaires, cette valeur doit être de 1 minute ou plus. Valeur suggérée: 3 minutes</translation>
     </message>
     <message>
-        <location filename="../create_route.py" line="69"/>
+        <location filename="../create_route.py" line="67"/>
         <source>Maximum access and egress travel time (minutes)</source>
         <translation>Temps maximum d&apos;accès à l&apos;origine et à destination (minutes)</translation>
     </message>
     <message>
-        <location filename="../create_route.py" line="79"/>
+        <location filename="../create_route.py" line="77"/>
         <source>To avoid long calculation time, this value has a maximum of 20 minutes.</source>
         <translation>Pour éviter de longs temps de calcul, la valeur maximale est de 20 minutes.</translation>
     </message>
     <message>
-        <location filename="../create_route.py" line="75"/>
+        <location filename="../create_route.py" line="73"/>
         <source>Maximum access travel time when transferring (minutes)</source>
         <translation>Temps maximum d&apos;accès lors des transferts (minutes)</translation>
     </message>
     <message>
-        <location filename="../create_route.py" line="81"/>
+        <location filename="../create_route.py" line="79"/>
         <source>Maximum first waiting time (minutes)</source>
         <translation>Temps d&apos;attente maximal au premier arrêt (minutes)</translation>
     </message>
     <message>
-        <location filename="../create_route.py" line="84"/>
+        <location filename="../create_route.py" line="82"/>
         <source>If waiting time at first stop is greater than this value for a line, ignore the departure of this line at this stop</source>
         <translation>Si l&apos;attente au premier arrêt est plus grande que cette valeur pour une ligne, ignorer le départ de cette ligne à cet arrêt</translation>
     </message>
     <message>
-        <location filename="../create_route.py" line="86"/>
+        <location filename="../create_route.py" line="84"/>
         <source>Scenario</source>
         <translation>Scénario</translation>
+    </message>
+</context>
+<context>
+    <name>CreateSettings</name>
+    <message>
+        <location filename="../create_settings.py" line="27"/>
+        <source>Username or email</source>
+        <translation>Nom d&apos;utilisateur ou courriel</translation>
+    </message>
+    <message>
+        <location filename="../create_settings.py" line="36"/>
+        <source>URL</source>
+        <translation>URL</translation>
     </message>
 </context>
 <context>
@@ -383,16 +396,26 @@
         <source>Create new accessibility map</source>
         <translation>Calculer une carte d&apos;accessibilité</translation>
     </message>
+    <message>
+        <location filename="../transition_qgis_dockwidget_base.ui" line="211"/>
+        <source>Settings</source>
+        <translation>Paramètres</translation>
+    </message>
+    <message>
+        <location filename="../transition_qgis_dockwidget_base.ui" line="234"/>
+        <source>Disconnect</source>
+        <translation>Déconnexion</translation>
+    </message>
 </context>
 <context>
     <name>TransitionWidget</name>
     <message>
-        <location filename="../transition_qgis.py" line="237"/>
+        <location filename="../transition_qgis.py" line="238"/>
         <source>&amp;Transition</source>
         <translation>&amp;Transition</translation>
     </message>
     <message>
-        <location filename="../transition_qgis.py" line="202"/>
+        <location filename="../transition_qgis.py" line="203"/>
         <source>Transition</source>
         <translation>Transition</translation>
     </message>

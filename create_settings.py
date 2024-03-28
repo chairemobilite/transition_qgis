@@ -43,8 +43,6 @@ class CreateSettings(QWidget):
         self.urlField.setReadOnly(True)
         self.urlField.setMinimumSize(50,40)
 
-     
-
         # Add fields to form display
         for label, field in zip([self.usernameOrEmailLabel, self.urlLabel], 
                                 [self.usernameField, self.urlField]):

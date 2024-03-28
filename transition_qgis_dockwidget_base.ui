@@ -221,7 +221,7 @@
      </property>
      <layout class="QVBoxLayout" name="settingsVerticalLayout"/>
     </widget>
-    <widget class="QPushButton" name="diconnectButton">
+    <widget class="QPushButton" name="disconnectButton">
      <property name="geometry">
       <rect>
        <x>120</x>

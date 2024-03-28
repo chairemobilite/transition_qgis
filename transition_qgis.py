@@ -310,7 +310,7 @@ class TransitionWidget:
             self.dockwidget.nodeButton.clicked.connect(self.onNodeButtonClicked)
             self.dockwidget.accessibilityButton.clicked.connect(self.onAccessibilityButtonClicked)
             self.dockwidget.routeButton.clicked.connect(self.onNewRouteButtonClicked)
-            self.dockwidget.diconnectButton.clicked.connect(self.onDisconnectUser)
+            self.dockwidget.disconnectButton.clicked.connect(self.onDisconnectUser)
             
             self.mapToolFrom = CoordinateCaptureMapTool(self.iface, self.iface.mapCanvas(), Qt.darkGreen, "Starting point")
             self.mapToolFrom.mouseClicked.connect(lambda event: self.mouseClickedCapture(event, self.dockwidget.userCrsEditFrom, 'routeOriginPoint'))

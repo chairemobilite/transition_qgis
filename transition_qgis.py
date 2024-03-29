@@ -49,6 +49,7 @@ from transition_api_lib import Transition
 
 from .create_route import CreateRouteDialog
 from .create_accessibility import CreateAccessibilityForm
+from .create_settings import CreateSettings
 
 
 class TransitionWidget:
@@ -302,11 +303,14 @@ class TransitionWidget:
             self.dockwidget.routeVerticalLayout.addWidget(self.createRouteForm)
             self.createAccessibilityForm = CreateAccessibilityForm()
             self.dockwidget.accessibilityVerticalLayout.addWidget(self.createAccessibilityForm)
+            self.dockwidget.settings = CreateSettings()
+            self.dockwidget.settingsVerticalLayout.addWidget(self.dockwidget.settings)
 
             self.dockwidget.pathButton.clicked.connect(self.onPathButtonClicked)
             self.dockwidget.nodeButton.clicked.connect(self.onNodeButtonClicked)
             self.dockwidget.accessibilityButton.clicked.connect(self.onAccessibilityButtonClicked)
             self.dockwidget.routeButton.clicked.connect(self.onNewRouteButtonClicked)
+            self.dockwidget.disconnectButton.clicked.connect(self.onDisconnectUser)
             
             self.mapToolFrom = CoordinateCaptureMapTool(self.iface, self.iface.mapCanvas(), Qt.darkGreen, "Starting point")
             self.mapToolFrom.mouseClicked.connect(lambda event: self.mouseClickedCapture(event, self.dockwidget.userCrsEditFrom, 'routeOriginPoint'))
@@ -489,3 +493,12 @@ class TransitionWidget:
         # Set mouse cursor back to pan mode
         self.iface.actionPan().trigger()
         self.mapToolFrom.deactivate()
+
+    def onDisconnectUser(self):
+        Transition.clear_configurations()
+        self.validLogin = False
+        self.dockwidget.close()
+        self.dockwidget.closingPlugin.emit()
+        self.loginPopup = Login()
+        self.loginPopup.finished.connect(self.onLoginFinished)
+        self.loginPopup.show()

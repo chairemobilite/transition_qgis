@@ -499,6 +499,10 @@ class TransitionWidget:
         # Remove all layers
         for layer in QgsProject.instance().mapLayers().values():
             QgsProject.instance().removeMapLayer(layer)
+        # Remove all groups
+        root = QgsProject.instance().layerTreeRoot()
+        for group in root.children():
+            root.removeChildNode(group)
         # Remove all user settings
         self.settings.remove("token")
         self.settings.remove("url")

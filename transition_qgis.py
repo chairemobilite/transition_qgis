@@ -217,6 +217,7 @@ class TransitionWidget:
         # disconnects
         if self.dockwidget is not None:
             self.dockwidget.closingPlugin.disconnect(self.onClosePlugin)
+            self.dockwidget = None
         print("closing")
 
         # remove this statement if dockwidget is to remain
@@ -226,8 +227,6 @@ class TransitionWidget:
         # self.dockwidget = None
 
         self.pluginIsActive = False
-
-        self.mapToolFrom.deactivate()
 
 
     def unload(self):
@@ -314,7 +313,7 @@ class TransitionWidget:
             self.dockwidget.accessibilityButton.clicked.connect(self.onAccessibilityButtonClicked)
             self.dockwidget.routeButton.clicked.connect(self.onNewRouteButtonClicked)
             self.dockwidget.disconnectButton.clicked.connect(self.onDisconnectUser)
-            
+
             self.mapToolFrom = CoordinateCaptureMapTool(self.iface, self.iface.mapCanvas(), Qt.darkGreen, "Starting point")
             self.mapToolFrom.mouseClicked.connect(lambda event: self.mouseClickedCapture(event, self.dockwidget.userCrsEditFrom, 'routeOriginPoint'))
             self.mapToolFrom.endSelection.connect(self.stopCapturing)
@@ -507,7 +506,6 @@ class TransitionWidget:
         self.settings.remove("username")
         self.validLogin = False
         self.dockwidget.close()
-        self.dockwidget.closingPlugin.emit()
         # add a delay to allow the layers to be removed before the login popup is shown
         QtTest.QTest.qWait(1000)
         self.loginPopup = Login(self.iface, self.settings)

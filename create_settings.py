@@ -17,8 +17,9 @@ class CustomLabel(QLabel):
         super().__init__(parent)
     
 class CreateSettings(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, settings, parent=None):
         super(CreateSettings, self).__init__(parent)
+        self.settings = settings
 
         layout = QVBoxLayout(self)
         form_layout = QFormLayout()
@@ -27,7 +28,7 @@ class CreateSettings(QWidget):
         self.usernameOrEmailLabel = CustomLabel(self.tr("Username or email"))
         self.usernameOrEmailLabel.setMinimumSize(50,40)
 
-        self.username = Transition.get_username()
+        self.username = self.settings.value("username")
         self.usernameField = QLineEdit()
         self.usernameField.setText(self.username)
         self.usernameField.setReadOnly(True)
@@ -36,8 +37,7 @@ class CreateSettings(QWidget):
         self.urlLabel = CustomLabel(self.tr("URL"))
         self.urlLabel.setMinimumSize(50,40)
 
-        self.url = Transition.get_url()
-        # display the url in a field that cannot be edited
+        self.url = self.settings.value("url")
         self.urlField = QLineEdit()
         self.urlField.setText(self.url)
         self.urlField.setReadOnly(True)

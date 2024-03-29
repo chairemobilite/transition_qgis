@@ -12,14 +12,14 @@ sys.path.append(return_lib_path())
 from transition_api_lib import Transition
 
 missing_credentials = "Please enter your username and password."
-invalid_credentials = "Bad username or password."
 popup_title = "Invalid loggin credentials"
 
 class Login(QDialog):
-    def __init__(self, parent = None) -> None:
+    def __init__(self, iface, settings, parent = None) -> None:
         super().__init__(parent)
         uic.loadUi(os.path.join(os.path.dirname(__file__), 'login_dialog.ui'), self)
-        self.config = Transition.get_configurations()
+        self.settings = settings
+        self.iface = iface
         self.show()
 
         self.urlEdit.setText("http://localhost:8080")
@@ -30,15 +30,17 @@ class Login(QDialog):
 
     def onConnectButtonClicked(self):
         try:
-            print("Connecting...")
+            if self.usernameEdit.text() == "" or self.passwordEdit.text() == "":
+                QMessageBox.warning(self, popup_title, missing_credentials)
+                return
+            self.settings.setValue("username", self.usernameEdit.text())
+            self.settings.setValue("url", self.urlEdit.text())
             Transition.set_url(self.urlEdit.text())
-            Transition.set_username(self.usernameEdit.text())
-
-            Transition.get_token(self.usernameEdit.text(), self.passwordEdit.text())
-            print("Successfully connected to API")
+            token = Transition.get_token(self.usernameEdit.text(), self.passwordEdit.text())
+            self.settings.setValue("token", token)
+            Transition.set_token(token)
             self.accept()
 
-        except Exception as e:
-                QMessageBox.warning(self, "Invalid login credentials", "Bad username or password.")
-                
+        except Exception as error:
+            self.iface.messageBar().pushCritical('Error', str(error))
 

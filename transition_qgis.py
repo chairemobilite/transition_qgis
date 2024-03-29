@@ -26,6 +26,7 @@ from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt, pyqtS
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QDialog, QSpinBox
 from PyQt5.QtWidgets import QWidget, QMessageBox
+from PyQt5 import QtTest
 
 
 from qgis.gui import QgsMapToolEmitPoint, QgsRubberBand, QgsProjectionSelectionDialog
@@ -68,9 +69,9 @@ class TransitionWidget:
 
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
-
+        self.settings = QSettings()
         # initialize locale
-        locale = QSettings().value('locale/userLocale')[0:2]
+        locale = self.settings.value('locale/userLocale')[0:2]
         locale_path = os.path.join(
             self.plugin_dir,
             'i18n',
@@ -259,13 +260,15 @@ class TransitionWidget:
                 self.show_dockwidget()
 
             else:
-                self.loginPopup = Login()
+                self.loginPopup = Login(self.iface, self.settings)
                 self.loginPopup.finished.connect(self.onLoginFinished)
 
     def checkValidLogin(self):
-        config = Transition.get_configurations()
-        if config['credentials']['token']:
+        token = self.settings.value("token")
+        if token:
             self.validLogin = True
+            Transition.set_token(self.settings.value("token"))
+            Transition.set_url(self.settings.value("url"))
 
 
     def onLoginFinished(self, result):
@@ -303,8 +306,8 @@ class TransitionWidget:
             self.dockwidget.routeVerticalLayout.addWidget(self.createRouteForm)
             self.createAccessibilityForm = CreateAccessibilityForm()
             self.dockwidget.accessibilityVerticalLayout.addWidget(self.createAccessibilityForm)
-            self.dockwidget.settings = CreateSettings()
-            self.dockwidget.settingsVerticalLayout.addWidget(self.dockwidget.settings)
+            self.dockwidget.createSettings = CreateSettings(self.settings)
+            self.dockwidget.settingsVerticalLayout.addWidget(self.dockwidget.createSettings)
 
             self.dockwidget.pathButton.clicked.connect(self.onPathButtonClicked)
             self.dockwidget.nodeButton.clicked.connect(self.onNodeButtonClicked)
@@ -495,10 +498,18 @@ class TransitionWidget:
         self.mapToolFrom.deactivate()
 
     def onDisconnectUser(self):
-        Transition.clear_configurations()
+        # Remove all layers
+        for layer in QgsProject.instance().mapLayers().values():
+            QgsProject.instance().removeMapLayer(layer)
+        # Remove all user settings
+        self.settings.remove("token")
+        self.settings.remove("url")
+        self.settings.remove("username")
         self.validLogin = False
         self.dockwidget.close()
         self.dockwidget.closingPlugin.emit()
-        self.loginPopup = Login()
+        # add a delay to allow the layers to be removed before the login popup is shown
+        QtTest.QTest.qWait(1000)
+        self.loginPopup = Login(self.iface, self.settings)
         self.loginPopup.finished.connect(self.onLoginFinished)
         self.loginPopup.show()

@@ -43,9 +43,7 @@ import sys
 import geojson
 import configparser
 
-from .import_path import return_lib_path
-sys.path.append(return_lib_path())
-from transition_api_lib import Transition
+from transition_lib.transition import Transition
 
 from .create_route import CreateRouteDialog
 from .create_accessibility import CreateAccessibilityForm

@@ -7,9 +7,7 @@ from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QApplication, QDialog, QFormLayout, QLabel, QLineEdit, QSpinBox, QVBoxLayout, QHBoxLayout, QComboBox, QTimeEdit, QPushButton, QDialogButtonBox
 
-from .import_path import return_lib_path
-sys.path.append(return_lib_path())
-from transition_api_lib import Transition
+from transition_lib.transition import Transition
 
 missing_credentials = "Please enter your username and password."
 invalid_credentials = "Bad username or password."

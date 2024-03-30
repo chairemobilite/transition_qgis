@@ -16,9 +16,9 @@ class CustomLabel(QLabel):
     def __init__(self, parent=None):
         super().__init__(parent)
     
-class CreateSettings(QWidget):
+class CreateSettingsForm(QWidget):
     def __init__(self, settings, parent=None):
-        super(CreateSettings, self).__init__(parent)
+        super(CreateSettingsForm, self).__init__(parent)
         self.settings = settings
 
         layout = QVBoxLayout(self)

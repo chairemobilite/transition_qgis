@@ -50,7 +50,7 @@ from transition_api_lib import Transition
 
 from .create_route import CreateRouteDialog
 from .create_accessibility import CreateAccessibilityForm
-from .create_settings import CreateSettings
+from .create_settings import CreateSettingsForm
 
 
 class TransitionWidget:
@@ -305,8 +305,8 @@ class TransitionWidget:
             self.dockwidget.routeVerticalLayout.addWidget(self.createRouteForm)
             self.createAccessibilityForm = CreateAccessibilityForm()
             self.dockwidget.accessibilityVerticalLayout.addWidget(self.createAccessibilityForm)
-            self.dockwidget.createSettings = CreateSettings(self.settings)
-            self.dockwidget.settingsVerticalLayout.addWidget(self.dockwidget.createSettings)
+            self.dockwidget.createSettingsForm = CreateSettingsForm(self.settings)
+            self.dockwidget.settingsVerticalLayout.addWidget(self.dockwidget.createSettingsForm)
 
             self.dockwidget.pathButton.clicked.connect(self.onPathButtonClicked)
             self.dockwidget.nodeButton.clicked.connect(self.onNodeButtonClicked)
@@ -384,7 +384,7 @@ class TransitionWidget:
             maxWaitTimeFisrstStopChoice = self.createRouteForm.maxWaitTimeFisrstStopChoice.value()
             scenarioId = self.createRouteForm.scenarios.json()['collection'][self.createRouteForm.scenarioChoice.currentIndex()]['id']
 
-            result = Transition.get_routing_result(modes=modes, 
+            result = Transition.request_routing_result(modes=modes, 
                                                 origin=originCoord, 
                                                 destination=destCoord, 
                                                 scenario_id=scenarioId, 
@@ -421,7 +421,7 @@ class TransitionWidget:
 
     def onAccessibilityButtonClicked(self):
         try:
-            geojson_data = Transition.get_accessibility_map(
+            geojson_data = Transition.request_accessibility_map(
                 with_geojson=True,
                 departure_or_arrival_choice="Departure" if self.createAccessibilityForm.departureRadioButton.isChecked() else "Arrival",
                 departure_or_arrival_time=self.createAccessibilityForm.departureOrArrivalTime.time().toPyTime(),
@@ -499,16 +499,19 @@ class TransitionWidget:
         # Remove all layers
         for layer in QgsProject.instance().mapLayers().values():
             QgsProject.instance().removeMapLayer(layer)
+
         # Remove all groups
         root = QgsProject.instance().layerTreeRoot()
         for group in root.children():
             root.removeChildNode(group)
+
         # Remove all user settings
         self.settings.remove("token")
         self.settings.remove("url")
         self.settings.remove("username")
         self.validLogin = False
         self.dockwidget.close()
+
         # add a delay to allow the layers to be removed before the login popup is shown
         QtTest.QTest.qWait(1000)
         self.loginPopup = Login(self.iface, self.settings)

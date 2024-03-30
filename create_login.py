@@ -36,7 +36,7 @@ class Login(QDialog):
             self.settings.setValue("username", self.usernameEdit.text())
             self.settings.setValue("url", self.urlEdit.text())
             Transition.set_url(self.urlEdit.text())
-            token = Transition.get_token(self.usernameEdit.text(), self.passwordEdit.text())
+            token = Transition.request_token(self.usernameEdit.text(), self.passwordEdit.text())
             self.settings.setValue("token", token)
             Transition.set_token(token)
             self.accept()

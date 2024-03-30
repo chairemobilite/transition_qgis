@@ -26,6 +26,7 @@ from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt, pyqtS
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QDialog, QSpinBox
 from PyQt5.QtWidgets import QWidget, QMessageBox
+from PyQt5 import QtTest
 
 
 from qgis.gui import QgsMapToolEmitPoint, QgsRubberBand, QgsProjectionSelectionDialog
@@ -49,7 +50,7 @@ from transition_api_lib import Transition
 
 from .create_route import CreateRouteDialog
 from .create_accessibility import CreateAccessibilityForm
-from .create_settings import CreateSettings
+from .create_settings import CreateSettingsForm
 
 
 class TransitionWidget:
@@ -68,9 +69,9 @@ class TransitionWidget:
 
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
-
+        self.settings = QSettings()
         # initialize locale
-        locale = QSettings().value('locale/userLocale')[0:2]
+        locale = self.settings.value('locale/userLocale')[0:2]
         locale_path = os.path.join(
             self.plugin_dir,
             'i18n',
@@ -216,6 +217,7 @@ class TransitionWidget:
         # disconnects
         if self.dockwidget is not None:
             self.dockwidget.closingPlugin.disconnect(self.onClosePlugin)
+            self.dockwidget = None
         print("closing")
 
         # remove this statement if dockwidget is to remain
@@ -225,8 +227,6 @@ class TransitionWidget:
         # self.dockwidget = None
 
         self.pluginIsActive = False
-
-        self.mapToolFrom.deactivate()
 
 
     def unload(self):
@@ -259,13 +259,15 @@ class TransitionWidget:
                 self.show_dockwidget()
 
             else:
-                self.loginPopup = Login()
+                self.loginPopup = Login(self.iface, self.settings)
                 self.loginPopup.finished.connect(self.onLoginFinished)
 
     def checkValidLogin(self):
-        config = Transition.get_configurations()
-        if config['credentials']['token']:
+        token = self.settings.value("token")
+        if token:
             self.validLogin = True
+            Transition.set_token(self.settings.value("token"))
+            Transition.set_url(self.settings.value("url"))
 
 
     def onLoginFinished(self, result):
@@ -303,15 +305,14 @@ class TransitionWidget:
             self.dockwidget.routeVerticalLayout.addWidget(self.createRouteForm)
             self.createAccessibilityForm = CreateAccessibilityForm()
             self.dockwidget.accessibilityVerticalLayout.addWidget(self.createAccessibilityForm)
-            self.dockwidget.settings = CreateSettings()
-            self.dockwidget.settingsVerticalLayout.addWidget(self.dockwidget.settings)
+            self.dockwidget.createSettingsForm = CreateSettingsForm(self.settings)
+            self.dockwidget.settingsVerticalLayout.addWidget(self.dockwidget.createSettingsForm)
 
             self.dockwidget.pathButton.clicked.connect(self.onPathButtonClicked)
             self.dockwidget.nodeButton.clicked.connect(self.onNodeButtonClicked)
             self.dockwidget.accessibilityButton.clicked.connect(self.onAccessibilityButtonClicked)
             self.dockwidget.routeButton.clicked.connect(self.onNewRouteButtonClicked)
             self.dockwidget.disconnectButton.clicked.connect(self.onDisconnectUser)
-            
             self.mapToolFrom = CoordinateCaptureMapTool(self.iface, self.iface.mapCanvas(), Qt.darkGreen, "Starting point")
             self.mapToolFrom.mouseClicked.connect(lambda event: self.mouseClickedCapture(event, self.dockwidget.userCrsEditFrom, 'routeOriginPoint'))
             self.mapToolFrom.endSelection.connect(self.stopCapturing)
@@ -383,7 +384,7 @@ class TransitionWidget:
             maxWaitTimeFisrstStopChoice = self.createRouteForm.maxWaitTimeFisrstStopChoice.value()
             scenarioId = self.createRouteForm.scenarios.json()['collection'][self.createRouteForm.scenarioChoice.currentIndex()]['id']
 
-            result = Transition.get_routing_result(modes=modes, 
+            result = Transition.request_routing_result(modes=modes, 
                                                 origin=originCoord, 
                                                 destination=destCoord, 
                                                 scenario_id=scenarioId, 
@@ -420,7 +421,7 @@ class TransitionWidget:
 
     def onAccessibilityButtonClicked(self):
         try:
-            geojson_data = Transition.get_accessibility_map(
+            geojson_data = Transition.request_accessibility_map(
                 with_geojson=True,
                 departure_or_arrival_choice="Departure" if self.createAccessibilityForm.departureRadioButton.isChecked() else "Arrival",
                 departure_or_arrival_time=self.createAccessibilityForm.departureOrArrivalTime.time().toPyTime(),
@@ -495,10 +496,24 @@ class TransitionWidget:
         self.mapToolFrom.deactivate()
 
     def onDisconnectUser(self):
-        Transition.clear_configurations()
+        # Remove all layers
+        for layer in QgsProject.instance().mapLayers().values():
+            QgsProject.instance().removeMapLayer(layer)
+
+        # Remove all groups
+        root = QgsProject.instance().layerTreeRoot()
+        for group in root.children():
+            root.removeChildNode(group)
+
+        # Remove all user settings
+        self.settings.remove("token")
+        self.settings.remove("url")
+        self.settings.remove("username")
         self.validLogin = False
         self.dockwidget.close()
-        self.dockwidget.closingPlugin.emit()
-        self.loginPopup = Login()
+
+        # add a delay to allow the layers to be removed before the login popup is shown
+        QtTest.QTest.qWait(1000)
+        self.loginPopup = Login(self.iface, self.settings)
         self.loginPopup.finished.connect(self.onLoginFinished)
         self.loginPopup.show()

@@ -10,7 +10,7 @@ from PyQt5.QtGui import QFontMetrics
 import sys
 from .import_path import return_lib_path
 sys.path.append(return_lib_path())
-from transition_api_lib import Transition
+from transition_lib import Transition
 
 class CustomLabel(QLabel):
     def __init__(self, parent=None):

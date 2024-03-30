@@ -7,7 +7,7 @@ from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QApplication, QDialog, QFormLayout, QLabel, QLineEdit, QSpinBox, QVBoxLayout, QHBoxLayout, QComboBox, QTimeEdit, QPushButton, QDialogButtonBox
 
-from transition_lib.transition import Transition
+from transition_lib import Transition
 
 missing_credentials = "Please enter your username and password."
 popup_title = "Invalid loggin credentials"

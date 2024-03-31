@@ -382,7 +382,7 @@ class TransitionWidget:
             maxAccessTimeOrigDest = self.createRouteForm.maxAccessTimeOrigDestChoice.value()
             maxTransferWaitTime = self.createRouteForm.maxTransferWaitTimeChoice.value()
             maxWaitTimeFisrstStopChoice = self.createRouteForm.maxWaitTimeFisrstStopChoice.value()
-            scenarioId = self.createRouteForm.scenarios.json()['collection'][self.createRouteForm.scenarioChoice.currentIndex()]['id']
+            scenarioId = self.createRouteForm.scenarios['collection'][self.createRouteForm.scenarioChoice.currentIndex()]['id']
 
             result = Transition.request_routing_result(modes=modes, 
                                                 origin=originCoord, 
@@ -428,7 +428,7 @@ class TransitionWidget:
                 n_polygons=self.createAccessibilityForm.nPolygons.value(),
                 delta_minutes=self.createAccessibilityForm.delta.value(),
                 delta_interval_minutes=self.createAccessibilityForm.deltaInterval.value(),
-                scenario_id=self.createAccessibilityForm.scenarios.json()['collection'][self.createAccessibilityForm.scenarioChoice.currentIndex()]['id'],
+                scenario_id=self.createAccessibilityForm.scenarios['collection'][self.createAccessibilityForm.scenarioChoice.currentIndex()]['id'],
                 place_name=self.createAccessibilityForm.placeName.text(),
                 max_total_travel_time_minutes=self.createAccessibilityForm.maxTotalTravelTime.value(),
                 min_waiting_time_minutes=self.createAccessibilityForm.minWaitTime.value(),

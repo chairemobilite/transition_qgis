@@ -1,7 +1,7 @@
 import os
 
 from qgis.core import *
-from qgis.PyQt.QtWidgets import QApplication, QDialog, QWidget, QFormLayout, QLabel, QLineEdit, QSpinBox, QVBoxLayout, QHBoxLayout, QComboBox, QTimeEdit, QPushButton, QDialogButtonBox, QRadioButton
+from qgis.PyQt.QtWidgets import QApplication, QDialog, QWidget, QFormLayout, QLabel, QLineEdit, QSpinBox, QVBoxLayout, QHBoxLayout, QComboBox, QTimeEdit, QPushButton, QDialogButtonBox, QRadioButton, QCheckBox
 from qgis.PyQt import QtGui, QtWidgets, uic
 from qgis.gui import QgsCheckableComboBox, QgsMapToolEmitPoint, QgsMapTool
 from PyQt5.QtCore import QTime, Qt
@@ -87,9 +87,13 @@ class CreateRouteDialog(QWidget):
         self.scenariosNames = [entry['name'] for entry in self.scenarios['collection']]
         self.scenarioChoice.addItems(self.scenariosNames)
 
+        self.withAlternativeLabel = CustomLabel(self.tr("With alternatives"))
+        self.withAlternativeChoice = QCheckBox()
+        self.withAlternativeChoice.setChecked(False)
+
         # Add fields to form display
-        for label, field in zip([self.modeLabel, self.departureOrArrivalLabel,self.departureOrArrivalTimeLabel, self.maxParcoursTimeLabel, self.minWaitTimeLabel, self.maxAccessTimeOrigDestLabel, self.maxTransferWaitTimeLabel, self.maxWaitTimeFisrstStopLabel, self.scenarioLabel], 
-                                [self.modeChoice, self.radioButtonsWidget, self.departureOrArrivalTime, self.maxParcoursTimeChoice, self.minWaitTimeChoice, self.maxAccessTimeOrigDestChoice, self.maxTransferWaitTimeChoice, self.maxWaitTimeFisrstStopChoice, self.scenarioChoice]):
+        for label, field in zip([self.modeLabel, self.departureOrArrivalLabel,self.departureOrArrivalTimeLabel, self.maxParcoursTimeLabel, self.minWaitTimeLabel, self.maxAccessTimeOrigDestLabel, self.maxTransferWaitTimeLabel, self.maxWaitTimeFisrstStopLabel, self.scenarioLabel, self.withAlternativeLabel], 
+                                [self.modeChoice, self.radioButtonsWidget, self.departureOrArrivalTime, self.maxParcoursTimeChoice, self.minWaitTimeChoice, self.maxAccessTimeOrigDestChoice, self.maxTransferWaitTimeChoice, self.maxWaitTimeFisrstStopChoice, self.scenarioChoice, self.withAlternativeChoice]):
             label.setWordWrap(True)
             row_layout = QHBoxLayout()
             row_layout.addWidget(label, stretch=4)  # 66% of the space

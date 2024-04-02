@@ -383,19 +383,21 @@ class TransitionWidget:
             maxTransferWaitTime = self.createRouteForm.maxTransferWaitTimeChoice.value()
             maxWaitTimeFisrstStopChoice = self.createRouteForm.maxWaitTimeFisrstStopChoice.value()
             scenarioId = self.createRouteForm.scenarios['collection'][self.createRouteForm.scenarioChoice.currentIndex()]['id']
+            withAlternatives = self.createRouteForm.withAlternativeChoice.isChecked()
 
             result = Transition.request_routing_result(modes=modes, 
                                                 origin=originCoord, 
                                                 destination=destCoord, 
                                                 scenario_id=scenarioId, 
-                                                max_travel_time=maxParcoursTime, 
-                                                min_waiting_time=minWaitTime,
-                                                max_transfer_time=maxTransferWaitTime, 
-                                                max_access_time=maxAccessTimeOrigDest, 
+                                                max_travel_time_minutes=maxParcoursTime, 
+                                                min_waiting_time_minutes=minWaitTime,
+                                                max_transfer_time_minutes=maxTransferWaitTime, 
+                                                max_access_time_minutes=maxAccessTimeOrigDest, 
                                                 departure_or_arrival_time=departureOrArrivalTime, 
                                                 departure_or_arrival_choice=departureOrArrivalChoice, 
-                                                max_first_waiting_time=maxWaitTimeFisrstStopChoice,
-                                                with_geojson=True)
+                                                max_first_waiting_time_minutes=maxWaitTimeFisrstStopChoice,
+                                                with_geojson=True,
+                                                with_alternatives=withAlternatives)
             
             # Remove the existing "Routing results" group if it exists
             existing_group = QgsProject.instance().layerTreeRoot().findGroup("Routing results")

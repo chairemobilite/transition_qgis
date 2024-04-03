@@ -7,18 +7,9 @@ from qgis.gui import QgsCheckableComboBox, QgsMapToolEmitPoint, QgsMapTool
 from PyQt5.QtCore import QTime, Qt
 from PyQt5.QtGui import QFontMetrics
 
+from .custom_label import CustomLabel
+
 from transition_lib import Transition
-
-class CustomLabel(QLabel):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-    def minimumSizeHint(self):
-        metrics = self.fontMetrics()
-        minSize = metrics.boundingRect(self.text()).size()
-        minSize.setWidth(1)
-        minSize.setHeight(minSize.height() + 30)
-        return minSize
     
 class CreateAccessibilityForm(QWidget):
     def __init__(self, parent=None):

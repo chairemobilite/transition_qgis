@@ -13,7 +13,7 @@ missing_credentials = "Please enter your username and password."
 invalid_credentials = "Bad username or password."
 popup_title = "Invalid loggin credentials"
 
-class Login(QDialog):
+class LoginDialog(QDialog):
     def __init__(self, parent = None) -> None:
         super().__init__(parent)
         uic.loadUi(os.path.join(os.path.dirname(__file__), 'login_dialog.ui'), self)

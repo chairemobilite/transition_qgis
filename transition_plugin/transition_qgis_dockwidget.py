@@ -23,12 +23,9 @@
 """
 
 import os
-import sys
-import geojson
 
-from qgis.PyQt import QtGui, QtWidgets, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal
-from qgis.core import QgsVectorLayer, QgsProject
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(

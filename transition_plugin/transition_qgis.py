@@ -27,27 +27,23 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QDialog, QSpinBox
 from PyQt5.QtWidgets import QWidget, QMessageBox
 
-
 from qgis.gui import QgsMapToolEmitPoint, QgsRubberBand, QgsProjectionSelectionDialog
 from qgis.core import QgsUnitTypes, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsPointXY, QgsVectorLayer, QgsProject, QgsLayerTreeGroup, Qgis
+
 # Initialize Qt resources from file resources.py
 from .resources import *
 
 # Import the code for the DockWidget
 from .transition_qgis_dockwidget import TransitionDockWidget
-from .create_login import Login
+from .create_login import LoginDialog
 from .coordinate_capture_map_tool import CoordinateCaptureMapTool
-import os.path
-
-import sys
-import geojson
-import configparser
-
-from transition_lib import Transition
-
 from .create_route import CreateRouteDialog
 from .create_accessibility import CreateAccessibilityForm
 from .create_settings import CreateSettings
+
+import os.path
+import geojson
+from transition_lib import Transition
 
 
 class TransitionWidget:
@@ -257,7 +253,7 @@ class TransitionWidget:
                 self.show_dockwidget()
 
             else:
-                self.loginPopup = Login()
+                self.loginPopup = LoginDialog()
                 self.loginPopup.finished.connect(self.onLoginFinished)
 
     def checkValidLogin(self):
@@ -497,6 +493,6 @@ class TransitionWidget:
         self.validLogin = False
         self.dockwidget.close()
         self.dockwidget.closingPlugin.emit()
-        self.loginPopup = Login()
+        self.loginPopup = LoginDialog()
         self.loginPopup.finished.connect(self.onLoginFinished)
         self.loginPopup.show()

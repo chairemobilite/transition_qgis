@@ -22,4 +22,4 @@ jobs:
       run: pip3 install qgis-plugin-ci
       
     - name: Deploy plugin
-      run: qgis-plugin-ci release 1.0.0 --github-token ${{ secrets.GITHUB_TOKEN }} --osgeo-username ${{ secrets.OSGEO_USERNAME }} --osgeo-password ${{ secrets.OSGEO_PASSWORD }}
+      run: qgis-plugin-ci release --github-token ${{ secrets.GITHUB_TOKEN }} --osgeo-username ${{ secrets.OSGEO_USERNAME }} --osgeo-password ${{ secrets.OSGEO_PASSWORD }} 0.0.1

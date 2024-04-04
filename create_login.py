@@ -1,18 +1,21 @@
-import os
-import sys
-from tkinter import messagebox
+
 from qgis.PyQt import QtGui, QtWidgets, uic
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget, QMessageBox
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QApplication, QDialog, QFormLayout, QLabel, QLineEdit, QSpinBox, QVBoxLayout, QHBoxLayout, QComboBox, QTimeEdit, QPushButton, QDialogButtonBox
 
+import os
+import requests
 from transition_lib import Transition
 
 missing_credentials = "Please enter your username and password."
 popup_title = "Invalid loggin credentials"
 
-class Login(QDialog):
+class LoginDialog(QDialog):
+    closeWidget = pyqtSignal()
+    
     def __init__(self, iface, settings, parent = None) -> None:
         super().__init__(parent)
         uic.loadUi(os.path.join(os.path.dirname(__file__), 'login_dialog.ui'), self)
@@ -38,7 +41,10 @@ class Login(QDialog):
             self.settings.setValue("token", token)
             Transition.set_token(token)
             self.accept()
-
+        except requests.exceptions.ConnectionError:
+            QMessageBox.critical(None, "Unable to connect to server", "Unable to connect to your Transition server.\nMake sure you provided the right server URL and that the server is up.")
+            self.close()
+            self.closeWidget.emit()
         except Exception as error:
             self.iface.messageBar().pushCritical('Error', str(error))
 

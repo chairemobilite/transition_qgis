@@ -36,13 +36,14 @@ from .resources import *
 
 # Import the code for the DockWidget
 from .transition_qgis_dockwidget import TransitionDockWidget
-from .create_login import Login
+from .create_login import LoginDialog
 from .coordinate_capture_map_tool import CoordinateCaptureMapTool
 import os.path
 
 import sys
 import geojson
 import configparser
+import requests
 
 from transition_lib import Transition
 
@@ -257,8 +258,9 @@ class TransitionWidget:
                 self.show_dockwidget()
 
             else:
-                self.loginPopup = Login(self.iface, self.settings)
+                self.loginPopup = LoginDialog(self.iface, self.settings)
                 self.loginPopup.finished.connect(self.onLoginFinished)
+                self.loginPopup.closeWidget.connect(self.onClosePlugin)
 
     def checkValidLogin(self):
         token = self.settings.value("token")
@@ -292,50 +294,55 @@ class TransitionWidget:
             self.onClosePlugin()
 
     def show_dockwidget(self):
-        if self.dockwidget == None and self.validLogin:
-            print("Creating new dockwidget")
-            # Create the dockwidget (after translation) and keep reference
-            self.dockwidget = TransitionDockWidget()
+        try:
+            if self.dockwidget == None and self.validLogin:
+                print("Creating new dockwidget")
+                # Create the dockwidget (after translation) and keep reference
+                self.dockwidget = TransitionDockWidget()
 
-            self.selectedCoords = { 'routeOriginPoint': None, 'routeDestinationPoint': None, 'accessibilityMapPoint': None }
+                self.selectedCoords = { 'routeOriginPoint': None, 'routeDestinationPoint': None, 'accessibilityMapPoint': None }
 
-            self.createRouteForm = CreateRouteDialog()
-            self.dockwidget.routeVerticalLayout.addWidget(self.createRouteForm)
-            self.createAccessibilityForm = CreateAccessibilityForm()
-            self.dockwidget.accessibilityVerticalLayout.addWidget(self.createAccessibilityForm)
-            self.dockwidget.createSettingsForm = CreateSettingsForm(self.settings)
-            self.dockwidget.settingsVerticalLayout.addWidget(self.dockwidget.createSettingsForm)
+                self.createRouteForm = CreateRouteDialog()
+                self.dockwidget.routeVerticalLayout.addWidget(self.createRouteForm)
+                self.createAccessibilityForm = CreateAccessibilityForm()
+                self.dockwidget.accessibilityVerticalLayout.addWidget(self.createAccessibilityForm)
+                self.dockwidget.createSettingsForm = CreateSettingsForm(self.settings)
+                self.dockwidget.settingsVerticalLayout.addWidget(self.dockwidget.createSettingsForm)
 
-            self.dockwidget.pathButton.clicked.connect(self.onPathButtonClicked)
-            self.dockwidget.nodeButton.clicked.connect(self.onNodeButtonClicked)
-            self.dockwidget.accessibilityButton.clicked.connect(self.onAccessibilityButtonClicked)
-            self.dockwidget.routeButton.clicked.connect(self.onNewRouteButtonClicked)
-            self.dockwidget.disconnectButton.clicked.connect(self.onDisconnectUser)
-            self.mapToolFrom = CoordinateCaptureMapTool(self.iface, self.iface.mapCanvas(), Qt.darkGreen, "Starting point")
-            self.mapToolFrom.mouseClicked.connect(lambda event: self.mouseClickedCapture(event, self.dockwidget.userCrsEditFrom, 'routeOriginPoint'))
-            self.mapToolFrom.endSelection.connect(self.stopCapturing)
+                self.dockwidget.pathButton.clicked.connect(self.onPathButtonClicked)
+                self.dockwidget.nodeButton.clicked.connect(self.onNodeButtonClicked)
+                self.dockwidget.accessibilityButton.clicked.connect(self.onAccessibilityButtonClicked)
+                self.dockwidget.routeButton.clicked.connect(self.onNewRouteButtonClicked)
+                self.dockwidget.disconnectButton.clicked.connect(self.onDisconnectUser)
+                self.mapToolFrom = CoordinateCaptureMapTool(self.iface, self.iface.mapCanvas(), Qt.darkGreen, "Starting point")
+                self.mapToolFrom.mouseClicked.connect(lambda event: self.mouseClickedCapture(event, self.dockwidget.userCrsEditFrom, 'routeOriginPoint'))
+                self.mapToolFrom.endSelection.connect(self.stopCapturing)
 
-            self.mapToolTo = CoordinateCaptureMapTool(self.iface, self.iface.mapCanvas(), Qt.blue, "Destination point")
-            self.mapToolTo.mouseClicked.connect(lambda event: self.mouseClickedCapture(event, self.dockwidget.userCrsEditTo, 'routeDestinationPoint'))
-            self.mapToolTo.endSelection.connect(self.stopCapturing)
+                self.mapToolTo = CoordinateCaptureMapTool(self.iface, self.iface.mapCanvas(), Qt.blue, "Destination point")
+                self.mapToolTo.mouseClicked.connect(lambda event: self.mouseClickedCapture(event, self.dockwidget.userCrsEditTo, 'routeDestinationPoint'))
+                self.mapToolTo.endSelection.connect(self.stopCapturing)
 
-            self.mapToolAccessibility = CoordinateCaptureMapTool(self.iface, self.iface.mapCanvas(), Qt.blue, "Accessibility map center")
-            self.mapToolAccessibility.mouseClicked.connect(lambda event: self.mouseClickedCapture(event, self.dockwidget.userCrsEditAccessibility, 'accessibilityMapPoint'))
-            self.mapToolAccessibility.endSelection.connect(self.stopCapturing)
+                self.mapToolAccessibility = CoordinateCaptureMapTool(self.iface, self.iface.mapCanvas(), Qt.blue, "Accessibility map center")
+                self.mapToolAccessibility.mouseClicked.connect(lambda event: self.mouseClickedCapture(event, self.dockwidget.userCrsEditAccessibility, 'accessibilityMapPoint'))
+                self.mapToolAccessibility.endSelection.connect(self.stopCapturing)
 
-            self.dockwidget.routeCaptureButtonFrom.clicked.connect(lambda: self.startCapturing(self.mapToolFrom))
-            self.dockwidget.routeCaptureButtonTo.clicked.connect(lambda: self.startCapturing(self.mapToolTo))
-            self.dockwidget.accessibilityCaptureButton.clicked.connect(lambda: self.startCapturing(self.mapToolAccessibility))
+                self.dockwidget.routeCaptureButtonFrom.clicked.connect(lambda: self.startCapturing(self.mapToolFrom))
+                self.dockwidget.routeCaptureButtonTo.clicked.connect(lambda: self.startCapturing(self.mapToolTo))
+                self.dockwidget.accessibilityCaptureButton.clicked.connect(lambda: self.startCapturing(self.mapToolAccessibility))
 
-            # connect to provide cleanup on closing of dockwidget
-            self.dockwidget.closingPlugin.connect(self.onClosePlugin)
+                # connect to provide cleanup on closing of dockwidget
+                self.dockwidget.closingPlugin.connect(self.onClosePlugin)
 
-            # Determine the order in which the layers are shown on the map (point, line, polygon)
-            QgsProject.instance().layerTreeRegistryBridge().setLayerInsertionMethod(Qgis.LayerTreeInsertionMethod.OptimalInInsertionGroup)
+                # Determine the order in which the layers are shown on the map (point, line, polygon)
+                QgsProject.instance().layerTreeRegistryBridge().setLayerInsertionMethod(Qgis.LayerTreeInsertionMethod.OptimalInInsertionGroup)
 
-        # show the dockwidget
-        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
-        self.dockwidget.show()
+            # show the dockwidget
+            self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
+            self.dockwidget.show()
+        except requests.exceptions.ConnectionError:
+            QMessageBox.critical(None, "Unable to connect to server", "Unable to connect to your Transition server.\nMake sure you provided the right server URL and that the server is up.")
+            self.dockwidget = None
+            self.onClosePlugin()
 
     def onPathButtonClicked(self):
         try:
@@ -514,6 +521,6 @@ class TransitionWidget:
 
         # add a delay to allow the layers to be removed before the login popup is shown
         QtTest.QTest.qWait(1000)
-        self.loginPopup = Login(self.iface, self.settings)
+        self.loginPopup = LoginDialog(self.iface, self.settings)
         self.loginPopup.finished.connect(self.onLoginFinished)
         self.loginPopup.show()

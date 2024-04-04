@@ -48,12 +48,6 @@ class TransitionDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
 
-        # Connect the buttons
-        self.resetButton.clicked.connect(self.on_resetButton_clicked)
-
-    def on_resetButton_clicked(self):
-        self.plainTextEdit.clear()
-
     def closeEvent(self, event):
         self.closingPlugin.emit()
         event.accept()

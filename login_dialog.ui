@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>386</width>
-    <height>315</height>
+    <height>282</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -42,9 +42,9 @@
   <widget class="QLineEdit" name="usernameEdit">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>20</x>
      <y>40</y>
-     <width>361</width>
+     <width>341</width>
      <height>41</height>
     </rect>
    </property>
@@ -52,9 +52,9 @@
   <widget class="QgsPasswordLineEdit" name="passwordEdit">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>20</x>
      <y>110</y>
-     <width>361</width>
+     <width>341</width>
      <height>41</height>
     </rect>
    </property>
@@ -89,20 +89,20 @@
     <rect>
      <x>20</x>
      <y>160</y>
-     <width>67</width>
+     <width>221</width>
      <height>17</height>
     </rect>
    </property>
    <property name="text">
-    <string>URL</string>
+    <string>Transition server URL</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="urlEdit">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>20</x>
      <y>180</y>
-     <width>361</width>
+     <width>341</width>
      <height>41</height>
     </rect>
    </property>

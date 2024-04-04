@@ -342,12 +342,20 @@ class TransitionWidget:
     def onPathButtonClicked(self):
         try:
             geojson_data = Transition.get_paths()
-            layer = QgsVectorLayer(geojson.dumps(geojson_data), "transition_paths", "ogr")
-            
-            if not layer.isValid():
-                raise Exception("Layer failed to load!")
-    
-            QgsProject.instance().addMapLayer(layer)
+            if geojson_data:
+
+                # Remove the existing "transition_paths" layer if it exists
+                existing_layers = QgsProject.instance().mapLayersByName("transition_paths")
+                if existing_layers:
+                    QgsProject.instance().removeMapLayer(existing_layers[0].id())
+
+                # Add the new "transition_paths" layer
+                layer = QgsVectorLayer(geojson.dumps(geojson_data), "transition_paths", "ogr")
+                
+                if not layer.isValid():
+                    raise Exception("Layer failed to load!")
+                
+                QgsProject.instance().addMapLayer(layer)
 
         except Exception as error:
             self.iface.messageBar().pushCritical('Error', str(error))
@@ -356,12 +364,20 @@ class TransitionWidget:
     def onNodeButtonClicked(self):
         try:
             geojson_data = Transition.get_nodes()
-            layer = QgsVectorLayer(geojson.dumps(geojson_data), "transition_nodes", "ogr")
-            
-            if not layer.isValid():
-                raise Exception("Layer failed to load!")
+            if geojson_data:
 
-            QgsProject.instance().addMapLayer(layer)
+                # Remove the existing "transition_nodes" layer if it exists
+                existing_layers = QgsProject.instance().mapLayersByName("transition_nodes")
+                if existing_layers:
+                    QgsProject.instance().removeMapLayer(existing_layers[0].id())
+
+                # Add the new "transition_nodes" layer
+                layer = QgsVectorLayer(geojson.dumps(geojson_data), "transition_nodes", "ogr")
+                
+                if not layer.isValid():
+                    raise Exception("Layer failed to load!")
+
+                QgsProject.instance().addMapLayer(layer)
 
         except Exception as error:
             self.iface.messageBar().pushCritical('Error', str(error))
@@ -438,8 +454,7 @@ class TransitionWidget:
                 max_transfer_travel_time_minutes=self.createAccessibilityForm.maxTransferWaitTime.value(),
                 max_first_waiting_time_minutes=self.createAccessibilityForm.maxFirstWaitTime.value(),
                 walking_speed_kmh=self.createAccessibilityForm.walkingSpeed.value(),
-                coord_latitude=self.selectedCoords['accessibilityMapPoint'].y(),
-                coord_longitude=self.selectedCoords['accessibilityMapPoint'].x()
+                coordinates = [self.selectedCoords['accessibilityMapPoint'].x(), self.selectedCoords['accessibilityMapPoint'].y()]
             )
             geojson_data = geojson.dumps(geojson_data['polygons'])
 

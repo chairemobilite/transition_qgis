@@ -382,20 +382,22 @@ class TransitionWidget:
             maxAccessTimeOrigDest = self.createRouteForm.maxAccessTimeOrigDestChoice.value()
             maxTransferWaitTime = self.createRouteForm.maxTransferWaitTimeChoice.value()
             maxWaitTimeFisrstStopChoice = self.createRouteForm.maxWaitTimeFisrstStopChoice.value()
-            scenarioId = self.createRouteForm.scenarios.json()['collection'][self.createRouteForm.scenarioChoice.currentIndex()]['id']
+            scenarioId = self.createRouteForm.scenarios['collection'][self.createRouteForm.scenarioChoice.currentIndex()]['id']
+            withAlternatives = self.createRouteForm.withAlternativeChoice.isChecked()
 
             result = Transition.request_routing_result(modes=modes, 
                                                 origin=originCoord, 
                                                 destination=destCoord, 
                                                 scenario_id=scenarioId, 
-                                                max_travel_time=maxParcoursTime, 
-                                                min_waiting_time=minWaitTime,
-                                                max_transfer_time=maxTransferWaitTime, 
-                                                max_access_time=maxAccessTimeOrigDest, 
+                                                max_travel_time_minutes=maxParcoursTime, 
+                                                min_waiting_time_minutes=minWaitTime,
+                                                max_transfer_time_minutes=maxTransferWaitTime, 
+                                                max_access_time_minutes=maxAccessTimeOrigDest, 
                                                 departure_or_arrival_time=departureOrArrivalTime, 
                                                 departure_or_arrival_choice=departureOrArrivalChoice, 
-                                                max_first_waiting_time=maxWaitTimeFisrstStopChoice,
-                                                with_geojson=True)
+                                                max_first_waiting_time_minutes=maxWaitTimeFisrstStopChoice,
+                                                with_geojson=True,
+                                                with_alternatives=withAlternatives)
             
             # Remove the existing "Routing results" group if it exists
             existing_group = QgsProject.instance().layerTreeRoot().findGroup("Routing results")
@@ -428,7 +430,7 @@ class TransitionWidget:
                 n_polygons=self.createAccessibilityForm.nPolygons.value(),
                 delta_minutes=self.createAccessibilityForm.delta.value(),
                 delta_interval_minutes=self.createAccessibilityForm.deltaInterval.value(),
-                scenario_id=self.createAccessibilityForm.scenarios.json()['collection'][self.createAccessibilityForm.scenarioChoice.currentIndex()]['id'],
+                scenario_id=self.createAccessibilityForm.scenarios['collection'][self.createAccessibilityForm.scenarioChoice.currentIndex()]['id'],
                 place_name=self.createAccessibilityForm.placeName.text(),
                 max_total_travel_time_minutes=self.createAccessibilityForm.maxTotalTravelTime.value(),
                 min_waiting_time_minutes=self.createAccessibilityForm.minWaitTime.value(),

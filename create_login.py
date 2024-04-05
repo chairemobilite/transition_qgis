@@ -45,6 +45,8 @@ class LoginDialog(QDialog):
             QMessageBox.critical(None, "Unable to connect to server", "Unable to connect to your Transition server.\nMake sure you provided the right server URL and that the server is up.")
             self.close()
             self.closeWidget.emit()
+        except requests.exceptions.HTTPError as error:
+            self.iface.messageBar().pushCritical('Error', str(error.response.text))
         except Exception as error:
             self.iface.messageBar().pushCritical('Error', str(error))
 

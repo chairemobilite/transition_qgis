@@ -50,6 +50,9 @@ class CreateRouteDialog(QWidget):
         self.departureOrArrivalTime.setDisplayFormat("hh:mm")
         self.departureOrArrivalTime.setTime(QTime(8, 00))
 
+        self.placeNameLabel = CustomLabel(self.tr("Place name"))
+        self.placeName = QLineEdit()
+
         self.maxParcoursTimeLabel = CustomLabel(self.tr("Maximum total travel time including access and egress (minutes)"))
         self.maxParcoursTimeChoice = QSpinBox()
         self.maxParcoursTimeChoice.setMaximum(1000)
@@ -89,8 +92,8 @@ class CreateRouteDialog(QWidget):
         self.withAlternativeChoice.setChecked(False)
 
         # Add fields to form display
-        for label, field in zip([self.modeLabel, self.departureOrArrivalLabel,self.departureOrArrivalTimeLabel, self.maxParcoursTimeLabel, self.minWaitTimeLabel, self.maxAccessTimeOrigDestLabel, self.maxTransferWaitTimeLabel, self.maxWaitTimeFisrstStopLabel, self.scenarioLabel, self.withAlternativeLabel], 
-                                [self.modeChoice, self.radioButtonsWidget, self.departureOrArrivalTime, self.maxParcoursTimeChoice, self.minWaitTimeChoice, self.maxAccessTimeOrigDestChoice, self.maxTransferWaitTimeChoice, self.maxWaitTimeFisrstStopChoice, self.scenarioChoice, self.withAlternativeChoice]):
+        for label, field in zip([self.modeLabel, self.departureOrArrivalLabel,self.departureOrArrivalTimeLabel, self.scenarioLabel, self.placeNameLabel, self.maxParcoursTimeLabel, self.minWaitTimeLabel, self.maxAccessTimeOrigDestLabel, self.maxTransferWaitTimeLabel, self.maxWaitTimeFisrstStopLabel, self.withAlternativeLabel], 
+                                [self.modeChoice, self.radioButtonsWidget, self.departureOrArrivalTime, self.scenarioChoice, self.placeName, self.maxParcoursTimeChoice, self.minWaitTimeChoice, self.maxAccessTimeOrigDestChoice, self.maxTransferWaitTimeChoice, self.maxWaitTimeFisrstStopChoice, self.withAlternativeChoice]):
             label.setWordWrap(True)
             row_layout = QHBoxLayout()
             row_layout.addWidget(label, stretch=4)  # 66% of the space

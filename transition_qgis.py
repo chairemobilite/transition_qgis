@@ -459,7 +459,9 @@ class TransitionWidget:
                 max_transfer_travel_time_minutes=self.createAccessibilityForm.maxTransferWaitTime.value(),
                 max_first_waiting_time_minutes=self.createAccessibilityForm.maxFirstWaitTime.value(),
                 walking_speed_kmh=self.createAccessibilityForm.walkingSpeed.value(),
-                coordinates = [self.selectedCoords['accessibilityMapPoint'].x(), self.selectedCoords['accessibilityMapPoint'].y()]
+                # coordinates = [self.selectedCoords['accessibilityMapPoint'].x(), self.selectedCoords['accessibilityMapPoint'].y()]
+                coord_latitude=self.selectedCoords['accessibilityMapPoint'].y(),
+                coord_longitude=self.selectedCoords['accessibilityMapPoint'].x()
             )
             geojson_data = geojson.dumps(geojson_data['polygons'])
 

@@ -84,7 +84,7 @@ class CreateRouteDialog(QWidget):
         self.scenariosNames = [entry['name'] for entry in self.scenarios['collection']]
         self.scenarioChoice.addItems(self.scenariosNames)
 
-        self.withAlternativeLabel = CustomLabel(self.tr("With alternatives"))
+        self.withAlternativeLabel = CustomLabel(self.tr("Calculate with alternatives"))
         self.withAlternativeChoice = QCheckBox()
         self.withAlternativeChoice.setChecked(False)
 

@@ -78,7 +78,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Create new route</string>
+      <string>Calculate new route</string>
      </property>
     </widget>
     <widget class="QPushButton" name="routeCaptureButtonFrom">
@@ -91,7 +91,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Capture From coord</string>
+      <string>Select origin</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="userCrsEditTo">
@@ -124,7 +124,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Capture To coord</string>
+      <string>Select destination</string>
      </property>
     </widget>
     <widget class="QWidget" name="verticalLayoutWidget">
@@ -155,7 +155,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Create new route</string>
+      <string>Calculate new route</string>
      </property>
     </widget>
    </widget>
@@ -173,20 +173,21 @@
       </rect>
      </property>
      <property name="text">
-      <string>Capture coord</string>
+      <string>Select map origin</string>
      </property>
     </widget>
     <widget class="QPushButton" name="accessibilityButton">
      <property name="geometry">
       <rect>
-       <x>60</x>
+       <x>100</x>
        <y>620</y>
-       <width>271</width>
+       <width>191</width>
        <height>61</height>
       </rect>
      </property>
      <property name="text">
-      <string>Create new accessibility map</string>
+      <string>Calculate new 
+accessibility map</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="userCrsEditAccessibility">
@@ -215,7 +216,7 @@
       <rect>
        <x>20</x>
        <y>20</y>
-       <width>281</width>
+       <width>371</width>
        <height>20</height>
       </rect>
      </property>
@@ -227,7 +228,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Create new accessibility map</string>
+      <string>Calculate new accessibility map</string>
      </property>
     </widget>
    </widget>

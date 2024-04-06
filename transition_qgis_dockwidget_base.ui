@@ -78,26 +78,26 @@
       </rect>
      </property>
      <property name="text">
-      <string>Calculate new route</string>
+      <string>Create new route</string>
      </property>
     </widget>
     <widget class="QPushButton" name="routeCaptureButtonFrom">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>30</x>
        <y>450</y>
        <width>181</width>
        <height>31</height>
       </rect>
      </property>
      <property name="text">
-      <string>Origin coordinates</string>
+      <string>Capture From coord</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="userCrsEditTo">
      <property name="geometry">
       <rect>
-       <x>210</x>
+       <x>200</x>
        <y>490</y>
        <width>181</width>
        <height>31</height>
@@ -107,9 +107,9 @@
     <widget class="QLineEdit" name="userCrsEditFrom">
      <property name="geometry">
       <rect>
-       <x>210</x>
+       <x>200</x>
        <y>450</y>
-       <width>181</width>
+       <width>161</width>
        <height>31</height>
       </rect>
      </property>
@@ -117,14 +117,14 @@
     <widget class="QPushButton" name="routeCaptureButtonTo">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>30</x>
        <y>490</y>
-       <width>181</width>
+       <width>161</width>
        <height>31</height>
       </rect>
      </property>
      <property name="text">
-      <string>Destination coordinates</string>
+      <string>Capture To coord</string>
      </property>
     </widget>
     <widget class="QWidget" name="verticalLayoutWidget">
@@ -155,7 +155,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Calculate new route</string>
+      <string>Create new route</string>
      </property>
     </widget>
    </widget>
@@ -166,34 +166,34 @@
     <widget class="QPushButton" name="accessibilityCaptureButton">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>600</y>
-       <width>181</width>
+       <x>30</x>
+       <y>570</y>
+       <width>161</width>
        <height>31</height>
       </rect>
      </property>
      <property name="text">
-      <string>Origin coordinates</string>
+      <string>Capture coord</string>
      </property>
     </widget>
     <widget class="QPushButton" name="accessibilityButton">
      <property name="geometry">
       <rect>
        <x>60</x>
-       <y>650</y>
+       <y>620</y>
        <width>271</width>
        <height>61</height>
       </rect>
      </property>
      <property name="text">
-      <string>Calculate new accessibility map</string>
+      <string>Create new accessibility map</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="userCrsEditAccessibility">
      <property name="geometry">
       <rect>
-       <x>210</x>
-       <y>600</y>
+       <x>200</x>
+       <y>570</y>
        <width>181</width>
        <height>31</height>
       </rect>
@@ -205,7 +205,7 @@
        <x>20</x>
        <y>50</y>
        <width>371</width>
-       <height>541</height>
+       <height>501</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="accessibilityVerticalLayout"/>
@@ -215,7 +215,7 @@
       <rect>
        <x>20</x>
        <y>20</y>
-       <width>371</width>
+       <width>281</width>
        <height>20</height>
       </rect>
      </property>
@@ -227,7 +227,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Calculate new accessibility map</string>
+      <string>Create new accessibility map</string>
      </property>
     </widget>
    </widget>

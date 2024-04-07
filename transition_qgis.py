@@ -93,7 +93,6 @@ class TransitionWidget:
         self.dockwidget = None
         self.loginPopup = None
         self.transition_paths = None
-        self.validLogin = False
 
         self.crs = QgsCoordinateReferenceSystem("EPSG:4326")
         self.transform = QgsCoordinateTransform()
@@ -213,10 +212,15 @@ class TransitionWidget:
 
         #print "** CLOSING Transition"
 
+        # Remove user settings
+        if not self.settings.value('keepConnection'):
+            self.removeSettings()
+
         # disconnects
         if self.dockwidget is not None:
             self.dockwidget.closingPlugin.disconnect(self.onClosePlugin)
             self.dockwidget = None
+
         print("closing")
 
         # remove this statement if dockwidget is to remain
@@ -249,12 +253,8 @@ class TransitionWidget:
 
         if not self.pluginIsActive:
             self.pluginIsActive = True
-            print("Transition plugin is active")
 
-            self.checkValidLogin()
-            print(f"Valid login: {self.validLogin}")
-
-            if self.validLogin:
+            if self.checkValidLogin():
                 self.show_dockwidget()
 
             else:
@@ -265,15 +265,15 @@ class TransitionWidget:
     def checkValidLogin(self):
         token = self.settings.value("token")
         if token:
-            self.validLogin = True
             Transition.set_token(self.settings.value("token"))
             Transition.set_url(self.settings.value("url"))
-
+            return True
+        
+        return False
 
     def onLoginFinished(self, result):
         if result == QDialog.Accepted:
             print("Login successful")
-            self.validLogin = True
             self.show_dockwidget()
 
             #print "** STARTING Transition"
@@ -281,12 +281,7 @@ class TransitionWidget:
             # dockwidget may not exist if:
             #    first run of plugin
             #    removed on close (see self.onClosePlugin method)
-            if self.dockwidget == None and self.validLogin:
-                self.show_dockwidget()
-
         else:
-            print("Login canceled")
-
             # Close the plugin's dock widget if it was created
             if self.dockwidget:
                 self.iface.removeDockWidget(self.dockwidget)
@@ -295,7 +290,7 @@ class TransitionWidget:
 
     def show_dockwidget(self):
         try:
-            if self.dockwidget == None and self.validLogin:
+            if self.dockwidget == None:
                 print("Creating new dockwidget")
                 # Create the dockwidget (after translation) and keep reference
                 self.dockwidget = TransitionDockWidget()
@@ -459,7 +454,9 @@ class TransitionWidget:
                 max_transfer_travel_time_minutes=self.createAccessibilityForm.maxTransferWaitTime.value(),
                 max_first_waiting_time_minutes=self.createAccessibilityForm.maxFirstWaitTime.value(),
                 walking_speed_kmh=self.createAccessibilityForm.walkingSpeed.value(),
-                coordinates = [self.selectedCoords['accessibilityMapPoint'].x(), self.selectedCoords['accessibilityMapPoint'].y()]
+                # coordinates = [self.selectedCoords['accessibilityMapPoint'].x(), self.selectedCoords['accessibilityMapPoint'].y()]
+                coord_latitude=self.selectedCoords['accessibilityMapPoint'].y(),
+                coord_longitude=self.selectedCoords['accessibilityMapPoint'].x()
             )
             geojson_data = geojson.dumps(geojson_data['polygons'])
 
@@ -527,11 +524,10 @@ class TransitionWidget:
         for group in root.children():
             root.removeChildNode(group)
 
-        # Remove all user settings
-        self.settings.remove("token")
-        self.settings.remove("url")
-        self.settings.remove("username")
-        self.validLogin = False
+        # Remove user settings
+        if self.settings.value("keepConnection") !=  Qt.CheckState.Checked:
+            self.removeSettings()
+        
         self.dockwidget.close()
 
         # add a delay to allow the layers to be removed before the login popup is shown
@@ -539,3 +535,10 @@ class TransitionWidget:
         self.loginPopup = LoginDialog(self.iface, self.settings)
         self.loginPopup.finished.connect(self.onLoginFinished)
         self.loginPopup.show()
+
+    def removeSettings(self):
+        print("removing settings")
+        self.settings.remove("token")
+        self.settings.remove("url")
+        self.settings.remove("username")
+        self.settings.remove("keepConnection")

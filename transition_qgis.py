@@ -461,10 +461,9 @@ class TransitionWidget:
             if polygons_geojson:
                 # If the user checked the option, display map polygons into separate layers in a group
                 if self.createAccessibilityForm.distinctPolygonLayers.isChecked():
-                    # Remove the existing "Accessibility map results" groups if some exist
-                    existing_groups = QgsProject.instance().layerTreeRoot().findGroup("Accessibility map results")
-                    if existing_groups:
-                        for existing_group in existing_groups:
+                    # Remove the existing "Accessibility map results" group if it exists
+                    existing_group = QgsProject.instance().layerTreeRoot().findGroup("Accessibility map results")
+                    if existing_group:
                             QgsProject.instance().layerTreeRoot().removeChildNode(existing_group)
                     
                     # Add all polygons as separate layer inside "Accessibility map results" group

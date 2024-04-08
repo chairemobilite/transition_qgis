@@ -427,25 +427,25 @@ class TransitionWidget:
             for mode, mode_data in result.items():  
                 geojson_paths = mode_data["pathsGeojson"]
                 
-                # Put alternative routes in a group if there are more than one for a mode
+                geojson_data = geojson_paths[0]
+                layer = QgsVectorLayer(geojson.dumps(geojson_data), mode, "ogr")
+                if not layer.isValid():
+                    raise Exception("Layer failed to load!")
+                QgsProject.instance().addMapLayer(layer, False)
+                routing_result_group.addLayer(layer)
+
+                # If there are other alternative routes for this mode, add them as layers in a subgroup
                 if len(geojson_paths) > 1:
-                    mode_group = QgsLayerTreeGroup(mode)
+                    mode_group = QgsLayerTreeGroup(f"{mode} alternatives")
                     routing_result_group.addChildNode(mode_group)
 
-                    for i, index in enumerate(range(len(geojson_paths))):
+                    for i, index in enumerate(range(1, len(geojson_paths))):
                         geojson_data = geojson_paths[i]
                         layer = QgsVectorLayer(geojson.dumps(geojson_data), f"{mode} alternative {index}", "ogr")
                         if not layer.isValid():
                             raise Exception("Layer failed to load!")
                         QgsProject.instance().addMapLayer(layer, False)
                         mode_group.addLayer(layer)
-                else:
-                    geojson_data = geojson_paths[0]
-                    layer = QgsVectorLayer(geojson.dumps(geojson_data), mode, "ogr")
-                    if not layer.isValid():
-                        raise Exception("Layer failed to load!")
-                    QgsProject.instance().addMapLayer(layer, False)
-                    routing_result_group.addLayer(layer)
 
         except Exception as error:
             self.iface.messageBar().pushCritical('Error', str(error))

@@ -39,10 +39,17 @@ For transit, if the **Calculate with alternatives** option is checked, multiple 
 The accessibility map page allows users to send a calculation request to the Transition application in order to receive an accessibility map. Users can choose the origin point as well as different parameters such as the departure and waiting time.\
 If the **Separate polygons into different layers** option is checked, the result will be a group layer containing a separate layer for each polygon. Otherwise, the result will just be one layer containing all the polygons.
 
+### Settings page
+![alt text](docs/screenshots/settings_page.png)
+
+The settings page contains read-only fields that display the connected user and the server URL currently being used. This mainly allows users to validate if the current URL is the desired one or if it needs to be changed.\
+The page also allows users to disconnect from the plugin.  
+
 ## Contribute
 
 ### Clone the repository and install dependencies
-To contribute to the Transition QGIS plugin, you can clone this reponsitory in `~/.local/share/QGIS/QGIS3/profiles/default/python/plugins/`. The plugin should then be added to your installed plugins and can be visible in the plugin bar.\
+To contribute to the Transition QGIS plugin, you can clone this reponsitory in `~/.local/share/QGIS/QGIS3/profiles/default/python/plugins/`. The plugin should then be added to your installed plugins and can be visible in the plugin bar.
+
 ![alt text](docs/screenshots/plugin_icons.png)
 
 In order to contribute to the project, you need to install the project dependencies. To do that, run the command :

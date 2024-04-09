@@ -238,7 +238,7 @@
     <message>
         <location filename="../create_login.py" line="44"/>
         <source>Unable to connect to server</source>
-        <translation>Impossible de se connecter au server</translation>
+        <translation>Impossible de se connecter au serveur</translation>
     </message>
     <message>
         <location filename="../create_login.py" line="44"/>

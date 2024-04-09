@@ -1,13 +1,7 @@
 import os
 
 from qgis.core import *
-from qgis.PyQt.QtWidgets import QApplication, QDialog, QWidget, QFormLayout, QLabel, QLineEdit, QSpinBox, QVBoxLayout, QHBoxLayout, QComboBox, QTimeEdit, QPushButton, QDialogButtonBox, QRadioButton
-from qgis.PyQt import QtGui, QtWidgets, uic
-from qgis.gui import QgsCheckableComboBox, QgsMapToolEmitPoint, QgsMapTool
-from PyQt5.QtCore import QTime, Qt
-from PyQt5.QtGui import QFontMetrics
-
-from transition_lib.transition import Transition
+from qgis.PyQt.QtWidgets import QWidget, QFormLayout, QLabel, QLineEdit, QVBoxLayout
 
 class CreateSettingsForm(QWidget):
     def __init__(self, settings, parent=None):

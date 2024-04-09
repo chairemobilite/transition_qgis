@@ -335,7 +335,7 @@ class TransitionWidget:
             self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
         except requests.exceptions.ConnectionError:
-            QMessageBox.critical(None, "Unable to connect to server", "Unable to connect to your Transition server.\nMake sure you provided the right server URL and that the server is up.")
+            QMessageBox.critical(None, self.tr("Unable to connect to server"), self.tr("Unable to connect to your Transition server.\nMake sure you provided the right server URL and that the server is up."))
             self.dockwidget = None
             self.onClosePlugin()
 
@@ -386,7 +386,7 @@ class TransitionWidget:
         try:
             modes = self.createRouteForm.modeChoice.checkedItems()
             if not modes:
-                QMessageBox.warning(self.dockwidget, "No modes selected", "Please select at least one mode.")
+                QMessageBox.warning(self.dockwidget, self.tr("No modes selected"), self.tr("Please select at least one mode."))
                 return
             
             originCoord = [self.selectedCoords['routeOriginPoint'].x(), self.selectedCoords['routeOriginPoint'].y()]
@@ -472,29 +472,48 @@ class TransitionWidget:
                 walking_speed_kmh=self.createAccessibilityForm.walkingSpeed.value(),
                 coordinates = [self.selectedCoords['accessibilityMapPoint'].x(), self.selectedCoords['accessibilityMapPoint'].y()]
             )
-            geojson_data = geojson.dumps(geojson_data['polygons'])
+            polygons_geojson = geojson.dumps(geojson_data['polygons'])
 
-            if geojson_data:
+            if polygons_geojson:
                 placeName = self.createAccessibilityForm.accessibilityName.text()
-                placeName = placeName if placeName else "Accessibility map"
+                placeName = placeName if placeName else "Accessibility map results"
 
-                # Remove the existing layer with the same name if it exists
+                # Remove pre-existing layer or group with the same name
+                existing_group = QgsProject.instance().layerTreeRoot().findGroup(placeName)
+                if existing_group:
+                        QgsProject.instance().layerTreeRoot().removeChildNode(existing_group)
+
                 existing_layers = QgsProject.instance().mapLayersByName(placeName)
                 if existing_layers:
-                    QgsProject.instance().removeMapLayer(existing_layers[0].id())
+                    for existing_layer in existing_layers:
+                        QgsProject.instance().removeMapLayer(existing_layer.id())
 
-                # Add the new layer
-                layer = QgsVectorLayer(geojson_data, placeName, "ogr")
-                if not layer.isValid():
-                    raise Exception("Layer failed to load!")
-                QgsProject.instance().addMapLayer(layer)
+                # If the user checked the option, display map polygons into separate layers in a group
+                if self.createAccessibilityForm.distinctPolygonLayers.isChecked():
+                    
+                    # Add all polygons as separate layer inside the group
+                    root = QgsProject.instance().layerTreeRoot()
+                    group = root.addGroup(placeName)
 
-                # Set layer opacity to 60%
-                single_symbol_renderer = layer.renderer()
-                symbol = single_symbol_renderer.symbol()
-                symbol.setOpacity(0.6)
-                layer.triggerRepaint()
-        
+                    # Sort polygons from smallest to largest durations
+                    polygons_coords = sorted(geojson_data['polygons']["features"], key=lambda x: x['properties']['durationMinutes'])
+                    for i, polygon in enumerate(polygons_coords):
+                        layer = QgsVectorLayer(geojson.dumps(polygon), f"Polygon {i+1}", "ogr")
+                        if not layer.isValid():
+                            raise Exception("Layer failed to load!")
+                        QgsProject.instance().addMapLayer(layer, False)
+                        group.addLayer(layer)
+                        self.setLayerOpacity(layer, 0.4)
+
+                # Else display all polygons in one single layer
+                else:
+                    # Add the new layer
+                    layer = QgsVectorLayer(polygons_geojson, placeName, "ogr")
+                    if not layer.isValid():
+                        raise Exception("Layer failed to load!")
+                    QgsProject.instance().addMapLayer(layer)
+                    self.setLayerOpacity(layer, 0.6)
+            
         except Exception as error:
             self.iface.messageBar().pushCritical('Error', str(error))
 
@@ -558,3 +577,9 @@ class TransitionWidget:
         self.settings.remove("url")
         self.settings.remove("username")
         self.settings.remove("keepConnection")
+
+    def setLayerOpacity(self, layer, opacity):
+        single_symbol_renderer = layer.renderer()
+        symbol = single_symbol_renderer.symbol()
+        symbol.setOpacity(opacity)
+        layer.triggerRepaint()

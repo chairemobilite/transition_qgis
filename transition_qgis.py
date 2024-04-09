@@ -526,3 +526,9 @@ class TransitionWidget:
         self.settings.remove("url")
         self.settings.remove("username")
         self.settings.remove("keepConnection")
+
+    def setLayerOpacity(self, layer, opacity):
+        single_symbol_renderer = layer.renderer()
+        symbol = single_symbol_renderer.symbol()
+        symbol.setOpacity(opacity)
+        layer.triggerRepaint()

@@ -415,14 +415,16 @@ class TransitionWidget:
                                                        with_geojson=True,
                                                        with_alternatives=withAlternatives)
             
-            # Remove the existing "Routing results" group if it exists
-            existing_group = QgsProject.instance().layerTreeRoot().findGroup("Routing results")
+            placeName = self.createRouteForm.placeName.text()
+            placeName = placeName if placeName else "Routing results"
+
+            existing_group = QgsProject.instance().layerTreeRoot().findGroup(placeName)
             if existing_group:
                 QgsProject.instance().layerTreeRoot().removeChildNode(existing_group)
             
             # Create a new group layer for the routing results, it will contain all the routing modes in separate layers
             root = QgsProject.instance().layerTreeRoot()
-            routing_result_group = root.addGroup("Routing results")
+            routing_result_group = root.addGroup(placeName)
             
             for mode, mode_data in result.items():  
                 geojson_paths = mode_data["pathsGeojson"]
@@ -472,13 +474,16 @@ class TransitionWidget:
             geojson_data = geojson.dumps(geojson_data['polygons'])
 
             if geojson_data:
-                # Remove the existing "Accessibility map" layer if it exists
-                existing_layers = QgsProject.instance().mapLayersByName("Accessibility map")
+                placeName = self.createAccessibilityForm.placeName.text()
+                placeName = placeName if placeName else "Accessibility map"
+
+                # Remove the existing layer with the same name if it exists
+                existing_layers = QgsProject.instance().mapLayersByName(placeName)
                 if existing_layers:
                     QgsProject.instance().removeMapLayer(existing_layers[0].id())
 
-                # Add the new "Accessibility map" layer
-                layer = QgsVectorLayer(geojson_data, "Accessibility map", "ogr")
+                # Add the new layer
+                layer = QgsVectorLayer(geojson_data, placeName, "ogr")
                 if not layer.isValid():
                     raise Exception("Layer failed to load!")
                 QgsProject.instance().addMapLayer(layer)

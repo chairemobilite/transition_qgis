@@ -101,7 +101,7 @@ class CreateRouteDialog(QWidget):
         self.routeName = QLineEdit()
 
         # Add fields to form display
-        for label, field in zip([self.modeLabel, self.departureOrArrivalLabel,self.departureOrArrivalTimeLabel, self.routeNameLabel, self.maxParcoursTimeLabel, self.minWaitTimeLabel, self.maxAccessTimeOrigDestLabel, self.maxTransferWaitTimeLabel, self.maxWaitTimeFisrstStopLabel, self.scenarioLabel, self.withAlternativeLabel], 
+        for label, field in zip([self.modeLabel, self.departureOrArrivalLabel,self.departureOrArrivalTimeLabel,self.routeNameLabel, self.maxParcoursTimeLabel, self.minWaitTimeLabel, self.maxAccessTimeOrigDestLabel, self.maxTransferWaitTimeLabel, self.maxWaitTimeFisrstStopLabel, self.scenarioLabel, self.withAlternativeLabel], 
                                 [self.modeChoice, self.radioButtonsWidget, self.departureOrArrivalTime, self.routeName, self.maxParcoursTimeChoice, self.minWaitTimeChoice, self.maxAccessTimeOrigDestChoice, self.maxTransferWaitTimeChoice, self.maxWaitTimeFisrstStopChoice, self.scenarioChoice, self.withAlternativeChoice]):
             label.setWordWrap(True)
             row_layout = QHBoxLayout()

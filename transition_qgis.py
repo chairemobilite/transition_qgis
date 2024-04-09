@@ -463,7 +463,7 @@ class TransitionWidget:
                 delta_minutes=self.createAccessibilityForm.delta.value(),
                 delta_interval_minutes=self.createAccessibilityForm.deltaInterval.value(),
                 scenario_id=self.createAccessibilityForm.scenarios['collection'][self.createAccessibilityForm.scenarioChoice.currentIndex()]['id'],
-                place_name=self.createAccessibilityForm.accessibilityName.text(),
+                place_name=self.createAccessibilityForm.accessibilityMapName.text(),
                 max_total_travel_time_minutes=self.createAccessibilityForm.maxTotalTravelTime.value(),
                 min_waiting_time_minutes=self.createAccessibilityForm.minWaitTime.value(),
                 max_access_egress_travel_time_minutes=self.createAccessibilityForm.maxAccessTimeOrigDest.value(),
@@ -475,15 +475,15 @@ class TransitionWidget:
             polygons_geojson = geojson.dumps(geojson_data['polygons'])
 
             if polygons_geojson:
-                accessibilityName = self.createAccessibilityForm.accessibilityName.text()
-                accessibilityName = accessibilityName if accessibilityName else "Accessibility map results"
+                accessibilityMapName = self.createAccessibilityForm.accessibilityMapName.text()
+                accessibilityMapName = accessibilityMapName if accessibilityMapName else "Accessibility map results"
 
                 # Remove pre-existing layer or group with the same name
-                existing_group = QgsProject.instance().layerTreeRoot().findGroup(accessibilityName)
+                existing_group = QgsProject.instance().layerTreeRoot().findGroup(accessibilityMapName)
                 if existing_group:
                         QgsProject.instance().layerTreeRoot().removeChildNode(existing_group)
 
-                existing_layers = QgsProject.instance().mapLayersByName(accessibilityName)
+                existing_layers = QgsProject.instance().mapLayersByName(accessibilityMapName)
                 if existing_layers:
                     for existing_layer in existing_layers:
                         QgsProject.instance().removeMapLayer(existing_layer.id())
@@ -493,7 +493,7 @@ class TransitionWidget:
                     
                     # Add all polygons as separate layer inside the group
                     root = QgsProject.instance().layerTreeRoot()
-                    group = root.addGroup(accessibilityName)
+                    group = root.addGroup(accessibilityMapName)
 
                     # Sort polygons from smallest to largest durations
                     polygons_coords = sorted(geojson_data['polygons']["features"], key=lambda x: x['properties']['durationMinutes'])
@@ -508,7 +508,7 @@ class TransitionWidget:
                 # Else display all polygons in one single layer
                 else:
                     # Add the new layer
-                    layer = QgsVectorLayer(polygons_geojson, accessibilityName, "ogr")
+                    layer = QgsVectorLayer(polygons_geojson, accessibilityMapName, "ogr")
                     if not layer.isValid():
                         raise Exception("Layer failed to load!")
                     QgsProject.instance().addMapLayer(layer)

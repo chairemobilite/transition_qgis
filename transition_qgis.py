@@ -402,18 +402,18 @@ class TransitionWidget:
             withAlternatives = self.createRouteForm.withAlternativeChoice.isChecked()
 
             result = Transition.request_routing_result(modes=modes, 
-                                                origin=originCoord, 
-                                                destination=destCoord, 
-                                                scenario_id=scenarioId, 
-                                                max_travel_time_minutes=maxParcoursTime, 
-                                                min_waiting_time_minutes=minWaitTime,
-                                                max_transfer_time_minutes=maxTransferWaitTime, 
-                                                max_access_time_minutes=maxAccessTimeOrigDest, 
-                                                departure_or_arrival_time=departureOrArrivalTime, 
-                                                departure_or_arrival_choice=departureOrArrivalChoice, 
-                                                max_first_waiting_time_minutes=maxWaitTimeFisrstStopChoice,
-                                                with_geojson=True,
-                                                with_alternatives=withAlternatives)
+                                                       origin=originCoord, 
+                                                       destination=destCoord, 
+                                                       scenario_id=scenarioId, 
+                                                       max_travel_time_minutes=maxParcoursTime, 
+                                                       min_waiting_time_minutes=minWaitTime,
+                                                       max_transfer_time_minutes=maxTransferWaitTime, 
+                                                       max_access_time_minutes=maxAccessTimeOrigDest, 
+                                                       departure_or_arrival_time=departureOrArrivalTime, 
+                                                       departure_or_arrival_choice=departureOrArrivalChoice, 
+                                                       max_first_waiting_time_minutes=maxWaitTimeFisrstStopChoice,
+                                                       with_geojson=True,
+                                                       with_alternatives=withAlternatives)
             
             # Remove the existing "Routing results" group if it exists
             existing_group = QgsProject.instance().layerTreeRoot().findGroup("Routing results")
@@ -422,17 +422,30 @@ class TransitionWidget:
             
             # Create a new group layer for the routing results, it will contain all the routing modes in separate layers
             root = QgsProject.instance().layerTreeRoot()
-            group = root.addGroup("Routing results")
-            for key, value in result.items():  
-                geojsonPath = value["pathsGeojson"]
-                mode = key
-                for i in range(len(geojsonPath)):
-                    geojson_data = geojsonPath[i]
-                    layer = QgsVectorLayer(geojson.dumps(geojson_data), mode, "ogr")
-                    if not layer.isValid():
-                        raise Exception("Layer failed to load!")
-                    QgsProject.instance().addMapLayer(layer, False)
-                    group.addLayer(layer)
+            routing_result_group = root.addGroup("Routing results")
+            
+            for mode, mode_data in result.items():  
+                geojson_paths = mode_data["pathsGeojson"]
+                
+                geojson_data = geojson_paths[0]
+                layer = QgsVectorLayer(geojson.dumps(geojson_data), mode, "ogr")
+                if not layer.isValid():
+                    raise Exception("Layer failed to load!")
+                QgsProject.instance().addMapLayer(layer, False)
+                routing_result_group.addLayer(layer)
+
+                # If there are other alternative routes for this mode, add them as layers in a subgroup
+                if len(geojson_paths) > 1:
+                    mode_group = QgsLayerTreeGroup(f"{mode} alternatives")
+                    routing_result_group.addChildNode(mode_group)
+
+                    for i, index in enumerate(range(1, len(geojson_paths))):
+                        geojson_data = geojson_paths[i]
+                        layer = QgsVectorLayer(geojson.dumps(geojson_data), f"{mode} alternative {index}", "ogr")
+                        if not layer.isValid():
+                            raise Exception("Layer failed to load!")
+                        QgsProject.instance().addMapLayer(layer, False)
+                        mode_group.addLayer(layer)
 
         except Exception as error:
             self.iface.messageBar().pushCritical('Error', str(error))

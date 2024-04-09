@@ -1,17 +1,12 @@
 
-from qgis.PyQt import QtGui, QtWidgets, uic
+from qgis.PyQt import uic
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QWidget, QMessageBox
-from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt
-from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QApplication, QDialog, QFormLayout, QLabel, QLineEdit, QSpinBox, QVBoxLayout, QHBoxLayout, QComboBox, QTimeEdit, QPushButton, QDialogButtonBox
+from PyQt5.QtWidgets import QMessageBox
+from qgis.PyQt.QtWidgets import QDialog
 
 import os
 import requests
 from transition_lib import Transition
-
-missing_credentials = "Please enter your username and password."
-popup_title = "Invalid loggin credentials"
 
 class LoginDialog(QDialog):
     closeWidget = pyqtSignal()
@@ -32,17 +27,22 @@ class LoginDialog(QDialog):
     def onConnectButtonClicked(self):
         try:
             if self.usernameEdit.text() == "" or self.passwordEdit.text() == "":
-                QMessageBox.warning(self, popup_title, missing_credentials)
+                QMessageBox.warning(self, self.tr("Invalid loggin credentials"), self.tr("Please enter your username and password."))
                 return
-            self.settings.setValue("username", self.usernameEdit.text())
-            self.settings.setValue("url", self.urlEdit.text())
+            
             Transition.set_url(self.urlEdit.text())
             token = Transition.request_token(self.usernameEdit.text(), self.passwordEdit.text())
-            self.settings.setValue("token", token)
             Transition.set_token(token)
+            
+            self.settings.setValue("username", self.usernameEdit.text())
+            self.settings.setValue("url", self.urlEdit.text())
+            self.settings.setValue("token", token)
+            self.settings.setValue("keepConnection", self.loginCheckbox.isChecked())
+            
             self.accept()
+            
         except requests.exceptions.ConnectionError:
-            QMessageBox.critical(None, "Unable to connect to server", "Unable to connect to your Transition server.\nMake sure you provided the right server URL and that the server is up.")
+            QMessageBox.critical(None, self.tr("Unable to connect to server"), self.tr("Unable to connect to your Transition server.\nMake sure you provided the right server URL and that the server is up."))
             self.close()
             self.closeWidget.emit()
         except requests.exceptions.HTTPError as error:

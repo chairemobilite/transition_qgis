@@ -93,7 +93,6 @@ class TransitionWidget:
         self.dockwidget = None
         self.loginPopup = None
         self.transition_paths = None
-        self.validLogin = False
 
         self.crs = QgsCoordinateReferenceSystem("EPSG:4326")
         self.transform = QgsCoordinateTransform()
@@ -213,10 +212,15 @@ class TransitionWidget:
 
         #print "** CLOSING Transition"
 
+        # Remove user settings
+        if not self.settings.value('keepConnection'):
+            self.removeSettings()
+
         # disconnects
         if self.dockwidget is not None:
             self.dockwidget.closingPlugin.disconnect(self.onClosePlugin)
             self.dockwidget = None
+
         print("closing")
 
         # remove this statement if dockwidget is to remain
@@ -249,12 +253,8 @@ class TransitionWidget:
 
         if not self.pluginIsActive:
             self.pluginIsActive = True
-            print("Transition plugin is active")
 
-            self.checkValidLogin()
-            print(f"Valid login: {self.validLogin}")
-
-            if self.validLogin:
+            if self.checkValidLogin():
                 self.show_dockwidget()
 
             else:
@@ -265,15 +265,15 @@ class TransitionWidget:
     def checkValidLogin(self):
         token = self.settings.value("token")
         if token:
-            self.validLogin = True
             Transition.set_token(self.settings.value("token"))
             Transition.set_url(self.settings.value("url"))
-
+            return True
+        
+        return False
 
     def onLoginFinished(self, result):
         if result == QDialog.Accepted:
             print("Login successful")
-            self.validLogin = True
             self.show_dockwidget()
 
             #print "** STARTING Transition"
@@ -281,12 +281,7 @@ class TransitionWidget:
             # dockwidget may not exist if:
             #    first run of plugin
             #    removed on close (see self.onClosePlugin method)
-            if self.dockwidget == None and self.validLogin:
-                self.show_dockwidget()
-
         else:
-            print("Login canceled")
-
             # Close the plugin's dock widget if it was created
             if self.dockwidget:
                 self.iface.removeDockWidget(self.dockwidget)
@@ -295,7 +290,7 @@ class TransitionWidget:
 
     def show_dockwidget(self):
         try:
-            if self.dockwidget == None and self.validLogin:
+            if self.dockwidget == None:
                 print("Creating new dockwidget")
                 # Create the dockwidget (after translation) and keep reference
                 self.dockwidget = TransitionDockWidget()
@@ -340,7 +335,7 @@ class TransitionWidget:
             self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
         except requests.exceptions.ConnectionError:
-            QMessageBox.critical(None, "Unable to connect to server", "Unable to connect to your Transition server.\nMake sure you provided the right server URL and that the server is up.")
+            QMessageBox.critical(None, self.tr("Unable to connect to server"), self.tr("Unable to connect to your Transition server.\nMake sure you provided the right server URL and that the server is up."))
             self.dockwidget = None
             self.onClosePlugin()
 
@@ -391,7 +386,7 @@ class TransitionWidget:
         try:
             modes = self.createRouteForm.modeChoice.checkedItems()
             if not modes:
-                QMessageBox.warning(self.dockwidget, "No modes selected", "Please select at least one mode.")
+                QMessageBox.warning(self.dockwidget, self.tr("No modes selected"), self.tr("Please select at least one mode."))
                 return
             
             originCoord = [self.selectedCoords['routeOriginPoint'].x(), self.selectedCoords['routeOriginPoint'].y()]
@@ -407,18 +402,18 @@ class TransitionWidget:
             withAlternatives = self.createRouteForm.withAlternativeChoice.isChecked()
 
             result = Transition.request_routing_result(modes=modes, 
-                                                origin=originCoord, 
-                                                destination=destCoord, 
-                                                scenario_id=scenarioId, 
-                                                max_travel_time_minutes=maxParcoursTime, 
-                                                min_waiting_time_minutes=minWaitTime,
-                                                max_transfer_time_minutes=maxTransferWaitTime, 
-                                                max_access_time_minutes=maxAccessTimeOrigDest, 
-                                                departure_or_arrival_time=departureOrArrivalTime, 
-                                                departure_or_arrival_choice=departureOrArrivalChoice, 
-                                                max_first_waiting_time_minutes=maxWaitTimeFisrstStopChoice,
-                                                with_geojson=True,
-                                                with_alternatives=withAlternatives)
+                                                       origin=originCoord, 
+                                                       destination=destCoord, 
+                                                       scenario_id=scenarioId, 
+                                                       max_travel_time_minutes=maxParcoursTime, 
+                                                       min_waiting_time_minutes=minWaitTime,
+                                                       max_transfer_time_minutes=maxTransferWaitTime, 
+                                                       max_access_time_minutes=maxAccessTimeOrigDest, 
+                                                       departure_or_arrival_time=departureOrArrivalTime, 
+                                                       departure_or_arrival_choice=departureOrArrivalChoice, 
+                                                       max_first_waiting_time_minutes=maxWaitTimeFisrstStopChoice,
+                                                       with_geojson=True,
+                                                       with_alternatives=withAlternatives)
             
             # Remove the existing "Routing results" group if it exists
             existing_group = QgsProject.instance().layerTreeRoot().findGroup("Routing results")
@@ -427,17 +422,30 @@ class TransitionWidget:
             
             # Create a new group layer for the routing results, it will contain all the routing modes in separate layers
             root = QgsProject.instance().layerTreeRoot()
-            group = root.addGroup("Routing results")
-            for key, value in result.items():  
-                geojsonPath = value["pathsGeojson"]
-                mode = key
-                for i in range(len(geojsonPath)):
-                    geojson_data = geojsonPath[i]
-                    layer = QgsVectorLayer(geojson.dumps(geojson_data), mode, "ogr")
-                    if not layer.isValid():
-                        raise Exception("Layer failed to load!")
-                    QgsProject.instance().addMapLayer(layer, False)
-                    group.addLayer(layer)
+            routing_result_group = root.addGroup("Routing results")
+            
+            for mode, mode_data in result.items():  
+                geojson_paths = mode_data["pathsGeojson"]
+                
+                geojson_data = geojson_paths[0]
+                layer = QgsVectorLayer(geojson.dumps(geojson_data), mode, "ogr")
+                if not layer.isValid():
+                    raise Exception("Layer failed to load!")
+                QgsProject.instance().addMapLayer(layer, False)
+                routing_result_group.addLayer(layer)
+
+                # If there are other alternative routes for this mode, add them as layers in a subgroup
+                if len(geojson_paths) > 1:
+                    mode_group = QgsLayerTreeGroup(f"{mode} alternatives")
+                    routing_result_group.addChildNode(mode_group)
+
+                    for i, index in enumerate(range(1, len(geojson_paths))):
+                        geojson_data = geojson_paths[i]
+                        layer = QgsVectorLayer(geojson.dumps(geojson_data), f"{mode} alternative {index}", "ogr")
+                        if not layer.isValid():
+                            raise Exception("Layer failed to load!")
+                        QgsProject.instance().addMapLayer(layer, False)
+                        mode_group.addLayer(layer)
 
         except Exception as error:
             self.iface.messageBar().pushCritical('Error', str(error))
@@ -463,26 +471,45 @@ class TransitionWidget:
                 coord_latitude=self.selectedCoords['accessibilityMapPoint'].y(),
                 coord_longitude=self.selectedCoords['accessibilityMapPoint'].x()
             )
-            geojson_data = geojson.dumps(geojson_data['polygons'])
+            polygons_geojson = geojson.dumps(geojson_data['polygons'])
 
-            if geojson_data:
-                # Remove the existing "Accessibility map" layer if it exists
-                existing_layers = QgsProject.instance().mapLayersByName("Accessibility map")
+            if polygons_geojson:
+                # Remove pre-existing "Accessibility map results" layer or group
+                existing_group = QgsProject.instance().layerTreeRoot().findGroup("Accessibility map results")
+                if existing_group:
+                        QgsProject.instance().layerTreeRoot().removeChildNode(existing_group)
+
+                existing_layers = QgsProject.instance().mapLayersByName("Accessibility map results")
                 if existing_layers:
-                    QgsProject.instance().removeMapLayer(existing_layers[0].id())
+                    for existing_layer in existing_layers:
+                        QgsProject.instance().removeMapLayer(existing_layer.id())
 
-                # Add the new "Accessibility map" layer
-                layer = QgsVectorLayer(geojson_data, "Accessibility map", "ogr")
-                if not layer.isValid():
-                    raise Exception("Layer failed to load!")
-                QgsProject.instance().addMapLayer(layer)
+                # If the user checked the option, display map polygons into separate layers in a group
+                if self.createAccessibilityForm.distinctPolygonLayers.isChecked():
+                    
+                    # Add all polygons as separate layer inside "Accessibility map results" group
+                    root = QgsProject.instance().layerTreeRoot()
+                    group = root.addGroup("Accessibility map results")
 
-                # Set layer opacity to 60%
-                single_symbol_renderer = layer.renderer()
-                symbol = single_symbol_renderer.symbol()
-                symbol.setOpacity(0.6)
-                layer.triggerRepaint()
-        
+                    # Sort polygons from smallest to largest durations
+                    polygons_coords = sorted(geojson_data['polygons']["features"], key=lambda x: x['properties']['durationMinutes'])
+                    for i, polygon in enumerate(polygons_coords):
+                        layer = QgsVectorLayer(geojson.dumps(polygon), f"Polygon {i+1}", "ogr")
+                        if not layer.isValid():
+                            raise Exception("Layer failed to load!")
+                        QgsProject.instance().addMapLayer(layer, False)
+                        group.addLayer(layer)
+                        self.setLayerOpacity(layer, 0.4)
+
+                # Else display all polygons in one single layer
+                else:
+                    # Add the new "Accessibility map" layer
+                    layer = QgsVectorLayer(polygons_geojson, "Accessibility map results", "ogr")
+                    if not layer.isValid():
+                        raise Exception("Layer failed to load!")
+                    QgsProject.instance().addMapLayer(layer)
+                    self.setLayerOpacity(layer, 0.6)
+            
         except Exception as error:
             self.iface.messageBar().pushCritical('Error', str(error))
 
@@ -529,11 +556,10 @@ class TransitionWidget:
         for group in root.children():
             root.removeChildNode(group)
 
-        # Remove all user settings
-        self.settings.remove("token")
-        self.settings.remove("url")
-        self.settings.remove("username")
-        self.validLogin = False
+        # Remove user settings
+        if self.settings.value("keepConnection") !=  Qt.CheckState.Checked:
+            self.removeSettings()
+        
         self.dockwidget.close()
 
         # add a delay to allow the layers to be removed before the login popup is shown
@@ -541,3 +567,15 @@ class TransitionWidget:
         self.loginPopup = LoginDialog(self.iface, self.settings)
         self.loginPopup.finished.connect(self.onLoginFinished)
         self.loginPopup.show()
+
+    def removeSettings(self):
+        self.settings.remove("token")
+        self.settings.remove("url")
+        self.settings.remove("username")
+        self.settings.remove("keepConnection")
+
+    def setLayerOpacity(self, layer, opacity):
+        single_symbol_renderer = layer.renderer()
+        symbol = single_symbol_renderer.symbol()
+        symbol.setOpacity(opacity)
+        layer.triggerRepaint()

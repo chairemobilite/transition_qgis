@@ -335,7 +335,7 @@ class TransitionWidget:
             self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
         except requests.exceptions.ConnectionError:
-            QMessageBox.critical(None, "Unable to connect to server", "Unable to connect to your Transition server.\nMake sure you provided the right server URL and that the server is up.")
+            QMessageBox.critical(None, self.tr("Unable to connect to server"), self.tr("Unable to connect to your Transition server.\nMake sure you provided the right server URL and that the server is up."))
             self.dockwidget = None
             self.onClosePlugin()
 
@@ -386,7 +386,7 @@ class TransitionWidget:
         try:
             modes = self.createRouteForm.modeChoice.checkedItems()
             if not modes:
-                QMessageBox.warning(self.dockwidget, "No modes selected", "Please select at least one mode.")
+                QMessageBox.warning(self.dockwidget, self.tr("No modes selected"), self.tr("Please select at least one mode."))
                 return
             
             originCoord = [self.selectedCoords['routeOriginPoint'].x(), self.selectedCoords['routeOriginPoint'].y()]

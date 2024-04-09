@@ -469,26 +469,45 @@ class TransitionWidget:
                 walking_speed_kmh=self.createAccessibilityForm.walkingSpeed.value(),
                 coordinates = [self.selectedCoords['accessibilityMapPoint'].x(), self.selectedCoords['accessibilityMapPoint'].y()]
             )
-            geojson_data = geojson.dumps(geojson_data['polygons'])
+            polygons_geojson = geojson.dumps(geojson_data['polygons'])
 
-            if geojson_data:
-                # Remove the existing "Accessibility map" layer if it exists
-                existing_layers = QgsProject.instance().mapLayersByName("Accessibility map")
+            if polygons_geojson:
+                # Remove pre-existing "Accessibility map results" layer or group
+                existing_group = QgsProject.instance().layerTreeRoot().findGroup("Accessibility map results")
+                if existing_group:
+                        QgsProject.instance().layerTreeRoot().removeChildNode(existing_group)
+
+                existing_layers = QgsProject.instance().mapLayersByName("Accessibility map results")
                 if existing_layers:
-                    QgsProject.instance().removeMapLayer(existing_layers[0].id())
+                    for existing_layer in existing_layers:
+                        QgsProject.instance().removeMapLayer(existing_layer.id())
 
-                # Add the new "Accessibility map" layer
-                layer = QgsVectorLayer(geojson_data, "Accessibility map", "ogr")
-                if not layer.isValid():
-                    raise Exception("Layer failed to load!")
-                QgsProject.instance().addMapLayer(layer)
+                # If the user checked the option, display map polygons into separate layers in a group
+                if self.createAccessibilityForm.distinctPolygonLayers.isChecked():
+                    
+                    # Add all polygons as separate layer inside "Accessibility map results" group
+                    root = QgsProject.instance().layerTreeRoot()
+                    group = root.addGroup("Accessibility map results")
 
-                # Set layer opacity to 60%
-                single_symbol_renderer = layer.renderer()
-                symbol = single_symbol_renderer.symbol()
-                symbol.setOpacity(0.6)
-                layer.triggerRepaint()
-        
+                    # Sort polygons from smallest to largest durations
+                    polygons_coords = sorted(geojson_data['polygons']["features"], key=lambda x: x['properties']['durationMinutes'])
+                    for i, polygon in enumerate(polygons_coords):
+                        layer = QgsVectorLayer(geojson.dumps(polygon), f"Polygon {i+1}", "ogr")
+                        if not layer.isValid():
+                            raise Exception("Layer failed to load!")
+                        QgsProject.instance().addMapLayer(layer, False)
+                        group.addLayer(layer)
+                        self.setLayerOpacity(layer, 0.4)
+
+                # Else display all polygons in one single layer
+                else:
+                    # Add the new "Accessibility map" layer
+                    layer = QgsVectorLayer(polygons_geojson, "Accessibility map results", "ogr")
+                    if not layer.isValid():
+                        raise Exception("Layer failed to load!")
+                    QgsProject.instance().addMapLayer(layer)
+                    self.setLayerOpacity(layer, 0.6)
+            
         except Exception as error:
             self.iface.messageBar().pushCritical('Error', str(error))
 
@@ -552,3 +571,9 @@ class TransitionWidget:
         self.settings.remove("url")
         self.settings.remove("username")
         self.settings.remove("keepConnection")
+
+    def setLayerOpacity(self, layer, opacity):
+        single_symbol_renderer = layer.renderer()
+        symbol = single_symbol_renderer.symbol()
+        symbol.setOpacity(opacity)
+        layer.triggerRepaint()

@@ -418,6 +418,7 @@ class TransitionWidget:
             placeName = self.createRouteForm.routeName.text()
             placeName = placeName if placeName else "Routing results"
 
+            # Remove the existing group layer with the same name if it exists
             existing_group = QgsProject.instance().layerTreeRoot().findGroup(placeName)
             if existing_group:
                 QgsProject.instance().layerTreeRoot().removeChildNode(existing_group)

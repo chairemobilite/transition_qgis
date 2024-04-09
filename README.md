@@ -1,6 +1,6 @@
 # Transition QGIS
-Transition es a QGIS plugin allowing to interact with the transit planning application Transition.\
-Before using this plugin, users need to install the Transition python library that this plugin depends on. To install it, use the following command :
+Transition is a QGIS plugin designed to interact with the transit planning application Transition.\
+Before using this plugin, users need to install the Transition python library that this plugin depends on in order to interact with the application. To install it, use the following command :
 ```bash
 pip install transition-lib
 ```
@@ -11,7 +11,7 @@ When the plugin is open for the first time, users are prompt to enter their logi
 
 ![alt text](docs/screenshots/login_prompt.png)
 
-The prompt also asks users for the URL of the server which, by default, is `http://localhost:8080` but can be edited by users. The authentication gets a token from the Transition application and will be saved if the user choses to maintain a connexion. When the token expires, the user will be prompted to login again for a new one.
+The prompt also asks users for the server URL that is to be used. By default, it is set to `http://localhost:8080` but can be edited by users. The login gets an authentication token from the Transition application. When the token expires, the user will be prompted to login again to get a new one.
 
 After a successful login, users have access to the plugin, which is a dockwidget.\
 The dockwidget contains multiple tabs which are described in the following.
@@ -21,8 +21,8 @@ The dockwidget contains multiple tabs which are described in the following.
 ![alt text](docs/screenshots/home_page.png)
 
 The home page offers the following functionalities :
-- Get the paths loaded in the Transition application.
-- Get the nodes loaded in the Transition application.
+- Get all the paths currently loaded in the Transition application.
+- Get all the nodes currently loaded in the Transition application.
 The results for each request will be displayed as a layer in QGIS.
 
 
@@ -30,13 +30,14 @@ The results for each request will be displayed as a layer in QGIS.
 ![alt text](docs/screenshots/routing_page.png)
 
 The routing page allows users to send a calculation request to the Transition application in order to receive a route. Users can choose transit modes, origin and destination points, as well as different parameters for transit, such as departure and waiting time.\
-The result will bu displayed as a group layer containing a separate layer for the result of each mode. For transit, the alternative routes will be displayed in a sub-group containing all alternative routes. 
+The result will be displayed as a group layer containing a separate layer for each mode. 
+For transit, if the **Calculate with alternatives** option is checked, multiple alternatives can be returned. When that is the case, the alternative routes will be displayed in a sub-group.
 
 ### Accessibility map page
-![alt text](docs/screenshots/map_page.png)
+![alt text](docs/screenshots/accessibility_map_page.png)
 
-The accessibility page allows users to send a calculation request to the Transition application in order to receive an accessibility map. Users can choose the origin point as well as different parameters such as the departure and waiting time.\
-If **Separate polygons into different layers** is checked, the result will be a group layer containing a separate layer for each polygon. Otherwise, the result will just be one layer containing all the polygons.
+The accessibility map page allows users to send a calculation request to the Transition application in order to receive an accessibility map. Users can choose the origin point as well as different parameters such as the departure and waiting time.\
+If the **Separate polygons into different layers** option is checked, the result will be a group layer containing a separate layer for each polygon. Otherwise, the result will just be one layer containing all the polygons.
 
 ## Contribute
 

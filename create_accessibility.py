@@ -96,8 +96,9 @@ class CreateAccessibilityForm(QWidget):
 
         self.maxFirstWaitTimeLabel = CustomLabel(self.tr("Maximum first waiting time (minutes)"))
         self.maxFirstWaitTime = QSpinBox()
-        self.maxFirstWaitTime.setValue(0)
-        self.maxFirstWaitTime.setToolTip(self.tr("If waiting time at first stop is greater than this value for a line, ignore the departure of this line at this stop"))
+        self.maxFirstWaitTime.setMinimum(-1)
+        self.maxFirstWaitTime.setValue(-1)
+        self.maxFirstWaitTime.setToolTip(self.tr("If waiting time at first stop is greater than this value for a line, ignore the departure of this line at this stop. Use -1 to ignore this field and allow for indefinite waiting."))
 
         self.walkingSpeedLabel = CustomLabel(self.tr("Walking speed (km/h)"))
         self.walkingSpeed = QSpinBox()

@@ -459,35 +459,37 @@ class TransitionWidget:
             polygons_geojson = geojson.dumps(geojson_data['polygons'])
 
             if polygons_geojson:
+                # Remove pre-existing "Accessibility map results" layer or group
+                existing_group = QgsProject.instance().layerTreeRoot().findGroup("Accessibility map results")
+                if existing_group:
+                        QgsProject.instance().layerTreeRoot().removeChildNode(existing_group)
+
+                existing_layers = QgsProject.instance().mapLayersByName("Accessibility map results")
+                if existing_layers:
+                    for existing_layer in existing_layers:
+                        QgsProject.instance().removeMapLayer(existing_layer.id())
+
                 # If the user checked the option, display map polygons into separate layers in a group
                 if self.createAccessibilityForm.distinctPolygonLayers.isChecked():
-                    # Remove the existing "Accessibility map results" group if it exists
-                    existing_group = QgsProject.instance().layerTreeRoot().findGroup("Accessibility map results")
-                    if existing_group:
-                            QgsProject.instance().layerTreeRoot().removeChildNode(existing_group)
                     
                     # Add all polygons as separate layer inside "Accessibility map results" group
                     root = QgsProject.instance().layerTreeRoot()
                     group = root.addGroup("Accessibility map results")
-                    polygons_coords = geojson_data['polygons']["features"]
-                    for i, polygon in enumerate(polygons_coords[::-1]):
+
+                    # Sort polygons from smallest to largest durations
+                    polygons_coords = sorted(geojson_data['polygons']["features"], key=lambda x: x['properties']['durationMinutes'])
+                    for i, polygon in enumerate(polygons_coords):
                         layer = QgsVectorLayer(geojson.dumps(polygon), f"Polygon {i+1}", "ogr")
                         if not layer.isValid():
                             raise Exception("Layer failed to load!")
                         QgsProject.instance().addMapLayer(layer, False)
                         group.addLayer(layer)
-                        self.setLayerOpacity(layer, 0.6)
+                        self.setLayerOpacity(layer, 0.4)
 
                 # Else display all polygons in one single layer
                 else:
-                    # Remove the existing "Accessibility map" layers if some exist
-                    existing_layers = QgsProject.instance().mapLayersByName("Accessibility map")
-                    if existing_layers:
-                        for existing_layer in existing_layers:
-                            QgsProject.instance().removeMapLayer(existing_layer.id())
-
                     # Add the new "Accessibility map" layer
-                    layer = QgsVectorLayer(polygons_geojson, "Accessibility map", "ogr")
+                    layer = QgsVectorLayer(polygons_geojson, "Accessibility map results", "ogr")
                     if not layer.isValid():
                         raise Exception("Layer failed to load!")
                     QgsProject.instance().addMapLayer(layer)

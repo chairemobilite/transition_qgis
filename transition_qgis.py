@@ -415,7 +415,7 @@ class TransitionWidget:
                                                        with_geojson=True,
                                                        with_alternatives=withAlternatives)
             
-            placeName = self.createRouteForm.placeName.text()
+            placeName = self.createRouteForm.routeName.text()
             placeName = placeName if placeName else "Routing results"
 
             existing_group = QgsProject.instance().layerTreeRoot().findGroup(placeName)
@@ -474,7 +474,7 @@ class TransitionWidget:
             geojson_data = geojson.dumps(geojson_data['polygons'])
 
             if geojson_data:
-                placeName = self.createAccessibilityForm.placeName.text()
+                placeName = self.createAccessibilityForm.accessibilityName.text()
                 placeName = placeName if placeName else "Accessibility map"
 
                 # Remove the existing layer with the same name if it exists

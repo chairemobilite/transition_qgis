@@ -68,8 +68,8 @@ class CreateAccessibilityForm(QWidget):
         self.scenariosNames = [entry['name'] for entry in self.scenarios['collection']]
         self.scenarioChoice.addItems(self.scenariosNames)
 
-        self.placeNameLabel = CustomLabel(self.tr("Place name"))
-        self.placeName = QLineEdit()
+        self.accessibilityNameLabel = CustomLabel(self.tr("Accessibility Name"))
+        self.accessibilityName = QLineEdit()
 
         self.maxTotalTravelTimeLabel = CustomLabel(self.tr("Maximum total travel time including access and egress (minutes)"))
         self.maxTotalTravelTime = QSpinBox()
@@ -104,8 +104,8 @@ class CreateAccessibilityForm(QWidget):
         self.walkingSpeed.setValue(5)
 
         # Add fields to form display
-        for label, field in zip([self.departureOrArrivalLabel, self.departureOrArrivalTimeLabel, self.nPolygonsLabel, self.deltaLabel, self.deltaIntervalLabel, self.scenarioLabel, self.placeNameLabel, self.maxTotalTravelTimeLabel, self.minWaitTimeLabel, self.maxAccessTimeOrigDestLabel, self.maxTransferWaitTimeLabel, self.maxFirstWaitTimeLabel, self.walkingSpeedLabel], 
-                                [self.radioButtonsWidget, self.departureOrArrivalTime, self.nPolygons, self.delta, self.deltaInterval, self.scenarioChoice, self.placeName, self.maxTotalTravelTime, self.minWaitTime, self.maxAccessTimeOrigDest, self.maxTransferWaitTime, self.maxFirstWaitTime, self.walkingSpeed]):
+        for label, field in zip([self.departureOrArrivalLabel, self.departureOrArrivalTimeLabel, self.nPolygonsLabel, self.deltaLabel, self.deltaIntervalLabel, self.scenarioLabel, self.accessibilityNameLabel, self.maxTotalTravelTimeLabel, self.minWaitTimeLabel, self.maxAccessTimeOrigDestLabel, self.maxTransferWaitTimeLabel, self.maxFirstWaitTimeLabel, self.walkingSpeedLabel], 
+                                [self.radioButtonsWidget, self.departureOrArrivalTime, self.nPolygons, self.delta, self.deltaInterval, self.scenarioChoice, self.accessibilityName, self.maxTotalTravelTime, self.minWaitTime, self.maxAccessTimeOrigDest, self.maxTransferWaitTime, self.maxFirstWaitTime, self.walkingSpeed]):
             label.setWordWrap(True)
             row_layout = QHBoxLayout()
             row_layout.addWidget(label, stretch=4)  # 66% of the space

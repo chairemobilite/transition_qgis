@@ -25,7 +25,7 @@
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt, pyqtSignal
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QDialog, QSpinBox
-from PyQt5.QtWidgets import QWidget, QMessageBox
+from PyQt5.QtWidgets import QWidget, QMessageBox, QLabel
 from PyQt5 import QtTest
 
 
@@ -583,3 +583,23 @@ class TransitionWidget:
         symbol = single_symbol_renderer.symbol()
         symbol.setOpacity(opacity)
         layer.triggerRepaint()
+
+    def displayTransitSteps(self, transit_steps):
+        for step in transit_steps:
+            action = step['action']
+            if action == "boarding" or action == "unboarding":
+                # Add information about the line and the stop in self.dockwidget.scrollArea
+                lineNumber = step["lineShortname"]
+                lineName = step["lineLongname"]
+                stopName = step["nodeName"]
+
+                # Add a new label with the information
+                label = QLabel(f"{action.capitalize()} line {lineNumber} ({lineName}) at stop {stopName}")
+                self.dockwidget.scrollArea.layout().addWidget(label)
+            else:
+                # Add information about the walk
+                # distance is in meters, duration in seconds
+                distance = step["distance"]
+                duration = step["travelTime"] // 60
+                label = QLabel(f"Walk for {duration} minutes over {distance} meters")
+                self.dockwidget.scrollArea.layout().addWidget(label)

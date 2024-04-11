@@ -19,11 +19,11 @@
      <x>20</x>
      <y>30</y>
      <width>421</width>
-     <height>831</height>
+     <height>811</height>
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -74,7 +74,7 @@
        <x>120</x>
        <y>540</y>
        <width>171</width>
-       <height>61</height>
+       <height>51</height>
       </rect>
      </property>
      <property name="text">
@@ -157,6 +157,29 @@
      <property name="text">
       <string>Calculate new route</string>
      </property>
+    </widget>
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="geometry">
+      <rect>
+       <x>9</x>
+       <y>599</y>
+       <width>401</width>
+       <height>171</height>
+      </rect>
+     </property>
+     <property name="widgetResizable">
+      <bool>true</bool>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>399</width>
+        <height>169</height>
+       </rect>
+      </property>
+     </widget>
     </widget>
    </widget>
    <widget class="QWidget" name="tab_3">

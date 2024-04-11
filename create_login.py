@@ -6,7 +6,7 @@ from qgis.PyQt.QtWidgets import QDialog
 
 import os
 import requests
-from transition_lib.transition import Transition
+from pyTransition.transition import Transition
 
 class LoginDialog(QDialog):
     closeWidget = pyqtSignal()

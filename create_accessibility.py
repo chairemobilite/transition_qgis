@@ -4,7 +4,7 @@ from qgis.core import *
 from qgis.PyQt.QtWidgets import QCheckBox, QWidget, QFormLayout, QLabel, QLineEdit, QSpinBox, QVBoxLayout, QHBoxLayout, QComboBox, QTimeEdit, QRadioButton
 from PyQt5.QtCore import QTime
 
-from transition_lib.transition import Transition
+from pyTransition.transition import Transition
 
 class CustomLabel(QLabel):
     def __init__(self, parent=None):

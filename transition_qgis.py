@@ -9,7 +9,7 @@ from qgis.gui import QgsProjectionSelectionDialog
 import os.path
 import geojson
 import requests
-from transition_lib.transition import Transition
+from pyTransition.transition import Transition
 
 from .resources import *
 from .transition_qgis_dockwidget import TransitionDockWidget

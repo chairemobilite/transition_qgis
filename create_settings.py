@@ -3,6 +3,8 @@ import os
 from qgis.core import *
 from qgis.PyQt.QtWidgets import QWidget, QFormLayout, QLabel, QLineEdit, QVBoxLayout
 
+from pyTransition.transition import Transition
+
 class CreateSettingsForm(QWidget):
     def __init__(self, settings, parent=None):
         super(CreateSettingsForm, self).__init__(parent)

@@ -7,7 +7,7 @@ from qgis.gui import QgsCheckableComboBox, QgsMapToolEmitPoint, QgsMapTool
 from PyQt5.QtCore import QTime, Qt
 from PyQt5.QtGui import QFontMetrics
 
-from transition_lib.transition import Transition
+from pyTransition.transition import Transition
 
 class CreateSettingsForm(QWidget):
     def __init__(self, settings, parent=None):

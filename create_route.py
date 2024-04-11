@@ -1,18 +1,11 @@
 from qgis.core import *
-from qgis.PyQt.QtWidgets import QWidget, QFormLayout, QLabel, QSpinBox, QVBoxLayout, QHBoxLayout, QComboBox, QTimeEdit, QRadioButton, QCheckBox
+from qgis.PyQt.QtWidgets import QWidget, QFormLayout, QLineEdit, QSpinBox, QVBoxLayout, QHBoxLayout, QComboBox, QTimeEdit, QRadioButton, QCheckBox
 from qgis.gui import QgsCheckableComboBox
 from PyQt5.QtCore import QTime
 
-class CustomLabel(QLabel):
-    def __init__(self, parent=None):
-        super().__init__(parent)
+from pyTransition.transition import Transition
 
-    def minimumSizeHint(self):
-        metrics = self.fontMetrics()
-        minSize = metrics.boundingRect(self.text()).size()
-        minSize.setWidth(1)
-        minSize.setHeight(minSize.height() + 30)
-        return minSize
+from .custom_label import CustomLabel
     
 class CreateRouteDialog(QWidget):
     def __init__(self, parent=None):

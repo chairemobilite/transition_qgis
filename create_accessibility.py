@@ -1,19 +1,10 @@
 from qgis.core import *
-from qgis.PyQt.QtWidgets import QCheckBox, QWidget, QFormLayout, QLabel, QLineEdit, QSpinBox, QVBoxLayout, QHBoxLayout, QComboBox, QTimeEdit, QRadioButton
+from qgis.PyQt.QtWidgets import QCheckBox, QWidget, QFormLayout, QLineEdit, QSpinBox, QVBoxLayout, QHBoxLayout, QComboBox, QTimeEdit, QRadioButton
 from PyQt5.QtCore import QTime
 
 from pyTransition.transition import Transition
 
-class CustomLabel(QLabel):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-    def minimumSizeHint(self):
-        metrics = self.fontMetrics()
-        minSize = metrics.boundingRect(self.text()).size()
-        minSize.setWidth(1)
-        minSize.setHeight(minSize.height() + 30)
-        return minSize
+from .custom_label import CustomLabel
     
 class CreateAccessibilityForm(QWidget):
     def __init__(self, parent=None):

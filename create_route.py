@@ -50,9 +50,6 @@ class CreateRouteDialog(QWidget):
         self.departureOrArrivalTime.setDisplayFormat("hh:mm")
         self.departureOrArrivalTime.setTime(QTime(8, 00))
 
-        self.placeNameLabel = CustomLabel(self.tr("Place name"))
-        self.placeName = QLineEdit()
-
         self.maxParcoursTimeLabel = CustomLabel(self.tr("Maximum total travel time including access and egress (minutes)"))
         self.maxParcoursTimeChoice = QSpinBox()
         self.maxParcoursTimeChoice.setMaximum(1000)

@@ -105,10 +105,6 @@ class CreateAccessibilityForm(QWidget):
         self.walkingSpeed.setMinimum(1)
         self.walkingSpeed.setValue(5)
 
-        self.separatePolygonsLabel = CustomLabel(self.tr("Separate polygons into different layers"))
-        self.separatePolygonsChoice = QCheckBox()
-        self.separatePolygonsChoice.setChecked(False)
-
         # Add fields to form display
         for label, field in zip([self.departureOrArrivalLabel, self.departureOrArrivalTimeLabel, self.nPolygonsLabel, self.distinctPolygonLayersLabel, self.deltaLabel, self.deltaIntervalLabel, self.scenarioLabel, self.accessibilityMapNameLabel, self.maxTotalTravelTimeLabel, self.minWaitTimeLabel, self.maxAccessTimeOrigDestLabel, self.maxTransferWaitTimeLabel, self.maxFirstWaitTimeLabel, self.walkingSpeedLabel], 
                                 [self.radioButtonsWidget, self.departureOrArrivalTime, self.nPolygons, self.distinctPolygonLayers, self.delta, self.deltaInterval, self.scenarioChoice, self.accessibilityMapName, self.maxTotalTravelTime, self.minWaitTime, self.maxAccessTimeOrigDest, self.maxTransferWaitTime, self.maxFirstWaitTime, self.walkingSpeed]):

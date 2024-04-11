@@ -2,4 +2,4 @@ geojson==3.1.0
 PyQt5==5.15.6
 PyQt5-sip==12.9.1
 requests==2.25.1
-transition-lib==0.1.11
+pytransition==0.1.11

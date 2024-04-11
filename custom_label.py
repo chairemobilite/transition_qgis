@@ -20,24 +20,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import os
+from qgis.PyQt.QtWidgets import QLabel
 
-from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSignal
-
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'transition_qgis_dockwidget_base.ui'))
-
-class TransitionDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
-
-    closingPlugin = pyqtSignal()
-
+class CustomLabel(QLabel):
     def __init__(self, parent=None):
-        """Constructor."""
-        super(TransitionDockWidget, self).__init__(parent)
-        self.setupUi(self)
+        super().__init__(parent)
 
-    def closeEvent(self, event):
-        self.closingPlugin.emit()
-        event.accept()
-
+    def minimumSizeHint(self):
+        metrics = self.fontMetrics()
+        minSize = metrics.boundingRect(self.text()).size()
+        minSize.setWidth(1)
+        minSize.setHeight(minSize.height() + 30)
+        return minSize
+    

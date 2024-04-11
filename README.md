@@ -72,7 +72,7 @@ You can then add or edit the code and see it reflected in QGIS. It is recommende
 ### Translate the plugin
 All text visible by the user needs to be translated. To allow this, they need to be wrapped in a `self.tr` clause. For example :
 ```python
-CustomLabel(self.tr("Departure or arrival time"))
+QLabel(self.tr("Departure or arrival time"))
 ```
 The files that need to be translated need to be specified in the `i18n/transition_qgis.pro`. Once all the files are added to the .pro file, you need to run the followind command in the `i18n` directory :
 ```bash

@@ -301,7 +301,7 @@ class TransitionWidget:
             self.dockwidget.show()
 
         except requests.exceptions.ConnectionError:
-            QMessageBox.critical(None, "Unable to connect to server", "Unable to connect to your Transition server.\nMake sure you provided the right server URL and that the server is up.")
+            QMessageBox.critical(None, self.tr("Unable to connect to server"), self.tr("Unable to connect to your Transition server.\nMake sure you provided the right server URL and that the server is up."))
             self.dockwidget = None
             self.onClosePlugin()
 
@@ -345,7 +345,7 @@ class TransitionWidget:
         try:
             modes = self.createRouteForm.modeChoice.checkedItems()
             if not modes:
-                QMessageBox.warning(self.dockwidget, "No modes selected", "Please select at least one mode.")
+                QMessageBox.warning(self.dockwidget, self.tr("No modes selected"), self.tr("Please select at least one mode."))
                 return
  
             result = Transition.request_routing_result(
@@ -380,12 +380,13 @@ class TransitionWidget:
                 geojson_paths = mode_data["pathsGeojson"]
 
                 # Add the first route for each mode in its own layer
-                geojson_data = geojson_paths[0]
-                layer = QgsVectorLayer(geojson.dumps(geojson_data), mode, "ogr")
-                if not layer.isValid():
-                    raise Exception("Layer failed to load!")
-                QgsProject.instance().addMapLayer(layer, False)
-                routing_result_group.addLayer(layer)
+                if len(geojson_paths) > 0:
+                    geojson_data = geojson_paths[0]
+                    layer = QgsVectorLayer(geojson.dumps(geojson_data), mode, "ogr")
+                    if not layer.isValid():
+                        raise Exception("Layer failed to load!")
+                    QgsProject.instance().addMapLayer(layer, False)
+                    routing_result_group.addLayer(layer)
 
                 # If there are other alternative routes for this mode, add them as layers in a subgroup
                 if len(geojson_paths) > 1:

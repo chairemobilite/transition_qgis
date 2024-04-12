@@ -24,7 +24,7 @@
 
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt, pyqtSignal
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction, QDialog, QSpinBox
+from qgis.PyQt.QtWidgets import QAction, QDialog, QSpinBox, QVBoxLayout, QTabWidget, QScrollArea, QCheckBox
 from PyQt5.QtWidgets import QWidget, QMessageBox, QLabel
 from PyQt5 import QtTest
 
@@ -93,6 +93,10 @@ class TransitionWidget:
         self.dockwidget = None
         self.loginPopup = None
         self.transition_paths = None
+
+        self.tab_widget = QTabWidget()
+        self.tab_widget.setWindowTitle("Transit information")
+
 
         self.crs = QgsCoordinateReferenceSystem("EPSG:4326")
         self.transform = QgsCoordinateTransform()
@@ -383,7 +387,7 @@ class TransitionWidget:
             self.iface.messageBar().pushCritical('Error', str(error))
 
     def onNewRouteButtonClicked(self):
-        try:
+        # try:
             modes = self.createRouteForm.modeChoice.checkedItems()
             if not modes:
                 QMessageBox.warning(self.dockwidget, self.tr("No modes selected"), self.tr("Please select at least one mode."))
@@ -429,7 +433,14 @@ class TransitionWidget:
             
             for mode, mode_data in result.items():  
                 geojson_paths = mode_data["pathsGeojson"]
-                
+
+                if mode == "transit":
+                    # clear the tab widget
+                    self.tab_widget.clear()
+                    self.dockwidget.transitInfoLayout.addWidget(self.tab_widget)
+                    transit_paths = mode_data["paths"][0]
+                    self.displayTransitInformation(transit_paths)
+
                 geojson_data = geojson_paths[0]
                 layer = QgsVectorLayer(geojson.dumps(geojson_data), mode, "ogr")
                 if not layer.isValid():
@@ -444,14 +455,16 @@ class TransitionWidget:
 
                     for i, index in enumerate(range(1, len(geojson_paths))):
                         geojson_data = geojson_paths[i]
+                        transit_paths = mode_data["paths"][i]
+                        self.displayTransitInformation(transit_paths, index)
                         layer = QgsVectorLayer(geojson.dumps(geojson_data), f"{mode} alternative {index}", "ogr")
                         if not layer.isValid():
                             raise Exception("Layer failed to load!")
                         QgsProject.instance().addMapLayer(layer, False)
                         mode_group.addLayer(layer)
 
-        except Exception as error:
-            self.iface.messageBar().pushCritical('Error', str(error))
+        # except Exception as error:
+        #     self.iface.messageBar().pushCritical('Error', str(error))
 
     def onAccessibilityButtonClicked(self):
         try:
@@ -584,22 +597,36 @@ class TransitionWidget:
         symbol.setOpacity(opacity)
         layer.triggerRepaint()
 
-    def displayTransitSteps(self, transit_steps):
-        for step in transit_steps:
+    def displayTransitInformation(self, transitPaths, index=0):
+        # Add a scroll area to the tab
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        stepLayout = QVBoxLayout()
+        stepWidget = QWidget()
+        for step in transitPaths["steps"]:
             action = step['action']
             if action == "boarding" or action == "unboarding":
                 # Add information about the line and the stop in self.dockwidget.scrollArea
                 lineNumber = step["lineShortname"]
-                lineName = step["lineLongname"]
                 stopName = step["nodeName"]
 
                 # Add a new label with the information
-                label = QLabel(f"{action.capitalize()} line {lineNumber} ({lineName}) at stop {stopName}")
-                self.dockwidget.scrollArea.layout().addWidget(label)
+                label = QLabel(f"{action.capitalize()} line {lineNumber} at stop {stopName}")
+                stepLayout.addWidget(label)
             else:
                 # Add information about the walk
                 # distance is in meters, duration in seconds
                 distance = step["distance"]
                 duration = step["travelTime"] // 60
                 label = QLabel(f"Walk for {duration} minutes over {distance} meters")
-                self.dockwidget.scrollArea.layout().addWidget(label)
+                stepLayout.addWidget(label)
+
+        stepWidget.setLayout(stepLayout)
+        scroll_area.setWidget(stepWidget)
+        title = "Transit" if index == 0 else f"Alternative {index}"
+        self.tab_widget.addTab(scroll_area, title)
+
+
+
+        
+

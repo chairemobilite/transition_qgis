@@ -74,7 +74,7 @@
        <x>120</x>
        <y>540</y>
        <width>171</width>
-       <height>51</height>
+       <height>41</height>
       </rect>
      </property>
      <property name="text">
@@ -158,28 +158,16 @@
       <string>Calculate new route</string>
      </property>
     </widget>
-    <widget class="QScrollArea" name="scrollArea">
+    <widget class="QWidget" name="verticalLayoutWidget_4">
      <property name="geometry">
       <rect>
-       <x>9</x>
-       <y>599</y>
+       <x>10</x>
+       <y>590</y>
        <width>401</width>
-       <height>171</height>
+       <height>181</height>
       </rect>
      </property>
-     <property name="widgetResizable">
-      <bool>true</bool>
-     </property>
-     <widget class="QWidget" name="scrollAreaWidgetContents">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>399</width>
-        <height>169</height>
-       </rect>
-      </property>
-     </widget>
+     <layout class="QVBoxLayout" name="transitInfoLayout"/>
     </widget>
    </widget>
    <widget class="QWidget" name="tab_3">

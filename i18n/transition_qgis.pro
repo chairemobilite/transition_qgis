@@ -6,6 +6,7 @@ SOURCES = ../transition_qgis_dockwidget.py \
 ../create_route.py \
 ../create_login.py \
 ../create_accessibility.py \
-../create_settings.py
+../create_settings.py \
+../create_info_panel.py
 
 TRANSLATIONS = transition_qgis_fr.ts

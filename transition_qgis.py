@@ -391,7 +391,7 @@ class TransitionWidget:
                         self.tab_widget.clear()
                         self.dockwidget.transitInfoLayout.addWidget(self.tab_widget)
                         transit_paths = mode_data["paths"][0]
-                        CreateInformationPanel(transit_paths, self.tab_widget, index)
+                        CreateInformationPanel(transit_paths, self.tab_widget, 0)
 
                     geojson_data = geojson_paths[0]
                     layer = QgsVectorLayer(geojson.dumps(geojson_data), mode, "ogr")

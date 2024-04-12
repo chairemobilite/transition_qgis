@@ -84,8 +84,9 @@ class CreateRouteDialog(QWidget):
 
         self.maxWaitTimeFisrstStopLabel = CustomLabel(self.tr("Maximum first waiting time (minutes)"))
         self.maxWaitTimeFisrstStopChoice = QSpinBox()
-        self.maxWaitTimeFisrstStopChoice.setValue(5)
-        self.maxWaitTimeFisrstStopChoice.setToolTip(self.tr("If waiting time at first stop is greater than this value for a line, ignore the departure of this line at this stop"))
+        self.maxWaitTimeFisrstStopChoice.setMinimum(-1)
+        self.maxWaitTimeFisrstStopChoice.setValue(-1)
+        self.maxWaitTimeFisrstStopChoice.setToolTip(self.tr("If waiting time at first stop is greater than this value for a line, ignore the departure of this line at this stop. Use -1 to ignore this field and allow for indefinite waiting."))
 
         self.scenarioLabel = CustomLabel(self.tr("Scenario"))
         self.scenarioChoice = QComboBox()

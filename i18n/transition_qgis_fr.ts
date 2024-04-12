@@ -54,11 +54,6 @@
         <translation>Scénario</translation>
     </message>
     <message>
-        <location filename="../create_accessibility.py" line="71"/>
-        <source>Place name</source>
-        <translation type="obsolete">Nom du lieu</translation>
-    </message>
-    <message>
         <location filename="../create_accessibility.py" line="86"/>
         <source>Maximum total travel time including access and egress (minutes)</source>
         <translation>Temps de parcours maximal incluant les accès (minutes)</translation>
@@ -92,11 +87,6 @@
         <location filename="../create_accessibility.py" line="108"/>
         <source>Maximum first waiting time (minutes)</source>
         <translation>Temps d&apos;attente maximal au premier arrêt (minutes)</translation>
-    </message>
-    <message>
-        <location filename="../create_accessibility.py" line="100"/>
-        <source>If waiting time at first stop is greater than this value for a line, ignore the departure of this line at this stop</source>
-        <translation type="obsolete">Si l&apos;attente au premier arrêt est plus grande que cette valeur pour une ligne, ignorer le départ de cette ligne à cet arrêt</translation>
     </message>
     <message>
         <location filename="../create_accessibility.py" line="114"/>
@@ -372,18 +362,6 @@ d&apos;accessibilité</translation>
         <location filename="../transition_qgis.py" line="193"/>
         <source>Transition</source>
         <translation>Transition</translation>
-    </message>
-    <message>
-        <location filename="../transition_qgis.py" line="338"/>
-        <source>Unable to connect to server</source>
-        <translation type="obsolete">Imposible de se connecter au serveur</translation>
-    </message>
-    <message>
-        <location filename="../transition_qgis.py" line="338"/>
-        <source>Unable to connect to your Transition server.
-Make sure you provided the right server URL and that the server is up.</source>
-        <translation type="obsolete">Impossible de se connecter à votre serveur Transition.
-Assurez-vous d&apos;avoir fourni la bonne URL du serveur et que le serveur est actif.</translation>
     </message>
     <message>
         <location filename="../transition_qgis.py" line="353"/>

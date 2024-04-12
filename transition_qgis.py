@@ -380,12 +380,13 @@ class TransitionWidget:
                 geojson_paths = mode_data["pathsGeojson"]
 
                 # Add the first route for each mode in its own layer
-                geojson_data = geojson_paths[0]
-                layer = QgsVectorLayer(geojson.dumps(geojson_data), mode, "ogr")
-                if not layer.isValid():
-                    raise Exception("Layer failed to load!")
-                QgsProject.instance().addMapLayer(layer, False)
-                routing_result_group.addLayer(layer)
+                if len(geojson_paths) > 0:
+                    geojson_data = geojson_paths[0]
+                    layer = QgsVectorLayer(geojson.dumps(geojson_data), mode, "ogr")
+                    if not layer.isValid():
+                        raise Exception("Layer failed to load!")
+                    QgsProject.instance().addMapLayer(layer, False)
+                    routing_result_group.addLayer(layer)
 
                 # If there are other alternative routes for this mode, add them as layers in a subgroup
                 if len(geojson_paths) > 1:

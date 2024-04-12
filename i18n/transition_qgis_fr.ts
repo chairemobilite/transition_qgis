@@ -116,7 +116,7 @@
     <message>
         <location filename="../create_accessibility.py" line="112"/>
         <source>If waiting time at first stop is greater than this value for a line, ignore the departure of this line at this stop. Use -1 to ignore this field and allow for indefinite waiting.</source>
-        <translation type="unfinished"></translation>
+        <translation>Si l&apos;attente au premier arrêt est plus grande que cette valeur pour une ligne, ignorer le départ de cette ligne à cet arrêt. Utilisez -1 pour ignorer ce champ et accepter l&apos;attente indéfinie.</translation>
     </message>
 </context>
 <context>
@@ -129,12 +129,12 @@
     <message>
         <location filename="../create_info_panel.py" line="60"/>
         <source>Unboarding line {} at stop {} at {}</source>
-        <translation type="unfinished">Débarquer de la ligne {} à l&apos;arrêt {} à {}</translation>
+        <translation>Débarquer de la ligne {} à l&apos;arrêt {} à {}</translation>
     </message>
     <message>
         <location filename="../create_info_panel.py" line="67"/>
         <source>Walk for {} minutes over {} meters</source>
-        <translation type="unfinished">Marcher {} minutes pour {} mètres</translation>
+        <translation>Marcher {} minutes pour {} mètres</translation>
     </message>
 </context>
 <context>
@@ -398,7 +398,7 @@ Assurez-vous d&apos;avoir fourni la bonne URL du serveur et que le serveur est a
     <message>
         <location filename="../transition_qgis.py" line="592"/>
         <source>Alternative {index}</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternative {index}</translation>
     </message>
 </context>
 </TS>

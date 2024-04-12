@@ -306,7 +306,7 @@ class TransitionWidget:
             self.dockwidget.show()
 
         except requests.exceptions.ConnectionError:
-            QMessageBox.critical(None, "Unable to connect to server", "Unable to connect to your Transition server.\nMake sure you provided the right server URL and that the server is up.")
+            QMessageBox.critical(None, self.tr("Unable to connect to server"), self.tr("Unable to connect to your Transition server.\nMake sure you provided the right server URL and that the server is up."))
             self.dockwidget = None
             self.onClosePlugin()
 

@@ -63,7 +63,7 @@ class LoginDialog(QDialog):
             self.accept()
             
         except requests.exceptions.ConnectionError:
-            QMessageBox.critical(None, self.tr("Unable to connect to server"), self.tr("Unable to connect to your Transition server.\nMake sure you provided the right server URL and that the server is up."))
+            QMessageBox.critical(self, self.tr("Unable to connect to server"), self.tr("Unable to connect to your Transition server.\nMake sure you provided the right server URL and that the server is up."))
             self.close()
             self.closeWidget.emit()
         except requests.exceptions.HTTPError as error:

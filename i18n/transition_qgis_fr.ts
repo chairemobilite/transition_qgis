@@ -352,7 +352,7 @@ d&apos;accessibilité</translation>
     </message>
     <message>
         <location filename="../transition_qgis.py" line="304"/>
-        <source>Unable to connect to your Transition server.
+        <source> Unable to connect to your Transition server.
 Make sure you provided the right server URL and that the server is up.</source>
         <translation>Impossible de se connecter à votre serveur Transition.
 Assurez-vous d&apos;avoir fourni la bonne URL du serveur et que le serveur est actif.</translation>

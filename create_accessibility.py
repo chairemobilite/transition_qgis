@@ -29,7 +29,7 @@ from pyTransition.transition import Transition
 from .custom_label import CustomLabel
     
 class CreateAccessibilityForm(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, scenarios, parent=None):
         super(CreateAccessibilityForm, self).__init__(parent)
 
         layout = QVBoxLayout(self)
@@ -76,7 +76,7 @@ class CreateAccessibilityForm(QWidget):
 
         self.scenarioLabel = CustomLabel(self.tr("Scenario"))
         self.scenarioChoice = QComboBox()
-        self.scenarios = Transition.get_scenarios()
+        self.scenarios = scenarios
         self.scenariosNames = [entry['name'] for entry in self.scenarios['collection']]
         self.scenarioChoice.addItems(self.scenariosNames)
 

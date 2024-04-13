@@ -31,6 +31,7 @@ from pyTransition.transition import Transition
 
 class LoginDialog(QDialog):
     closeWidget = pyqtSignal()
+    transitionInstanceCreated = pyqtSignal(object)
     
     def __init__(self, iface, settings, parent = None) -> None:
         super().__init__(parent)
@@ -51,13 +52,12 @@ class LoginDialog(QDialog):
                 QMessageBox.warning(self, self.tr("Invalid loggin credentials"), self.tr("Please enter your username and password."))
                 return
             
-            Transition.set_url(self.urlEdit.text())
-            token = Transition.request_token(self.usernameEdit.text(), self.passwordEdit.text())
-            Transition.set_token(token)
-            
+            transition_instance = Transition(self.urlEdit.text(), self.usernameEdit.text(), self.passwordEdit.text())
+            self.transitionInstanceCreated.emit(transition_instance)
+
             self.settings.setValue("username", self.usernameEdit.text())
             self.settings.setValue("url", self.urlEdit.text())
-            self.settings.setValue("token", token)
+            self.settings.setValue("token", transition_instance.token)
             self.settings.setValue("keepConnection", self.loginCheckbox.isChecked())
             
             self.accept()

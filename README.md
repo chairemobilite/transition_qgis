@@ -80,7 +80,7 @@ pylupdate5 transition_qgis.pro
 ```
 This command will update the `transition_qgis_fr.ts` file and add all text that needs to be translated to it with the correct line number. The command should be ran every time new visible text is added to the plugin.
 
-After that, you can open the `transition_qgis_fr.ts` file in QT Linguist, write the translation of each field and save your changes.  This does not automatically delete older versions of the text but marks them as *outdated* in the `transition_qgis_fr.ts`. The outdated fields can be manually removed. 
+After that, you can open the `transition_qgis_fr.ts` file in QT Linguist, write the translation of each field and save your changes.  This does not automatically delete older versions of the text but marks them as **obsolete** in the `transition_qgis_fr.ts`. The obsolete fields can be manually removed. 
 Once that is done, run the following command in the `i18n` directory :
 ```bash
 lrelease transition_qgis_fr.ts

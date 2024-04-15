@@ -44,7 +44,6 @@ from .create_settings import CreateSettingsForm
 class TransitionWidget:
     """QGIS Plugin Implementation."""
 
-
     def __init__(self, iface):
         """Constructor.
 
@@ -234,7 +233,6 @@ class TransitionWidget:
 
     def checkValidLogin(self):
         token = self.settings.value("token")
-        print("token =", token)
         if token:
             self.transition_instance = Transition(self.settings.value("url"), None, None, self.settings.value("token"))
             return True

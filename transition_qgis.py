@@ -22,8 +22,8 @@
 
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction, QDialog
-from PyQt5.QtWidgets import QMessageBox
+from qgis.PyQt.QtWidgets import QAction, QDialog, QVBoxLayout, QTabWidget, QScrollArea
+from PyQt5.QtWidgets import QWidget, QMessageBox, QLabel
 from PyQt5 import QtTest
 from qgis.core import QgsUnitTypes, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsPointXY, QgsVectorLayer, QgsProject, QgsLayerTreeGroup, Qgis
 from qgis.gui import QgsProjectionSelectionDialog
@@ -40,6 +40,7 @@ from .capture_coord_tool import CaptureCoordTool
 from .create_route import CreateRouteDialog
 from .create_accessibility import CreateAccessibilityForm
 from .create_settings import CreateSettingsForm
+from .create_info_panel import CreateInformationPanel
 
 class TransitionWidget:
     """QGIS Plugin Implementation."""
@@ -83,6 +84,10 @@ class TransitionWidget:
         self.dockwidget = None
         self.loginPopup = None
         self.transition_paths = None
+
+        self.tab_widget = QTabWidget()
+        self.tab_widget.setWindowTitle("Transit information")
+
 
         self.crs = QgsCoordinateReferenceSystem("EPSG:4326")
         self.transform = QgsCoordinateTransform()
@@ -385,6 +390,14 @@ class TransitionWidget:
 
                 # Add the first route for each mode in its own layer
                 if len(geojson_paths) > 0:
+                    # If the mode is transit, display the information about the transit steps in a tab widget
+                    if mode == "transit":
+                        # Clear the tab widget and add the information about the transit steps to it
+                        self.tab_widget.clear()
+                        self.dockwidget.transitInfoLayout.addWidget(self.tab_widget)
+                        transit_paths = mode_data["paths"][0]
+                        CreateInformationPanel(transit_paths, self.tab_widget, 0)
+
                     geojson_data = geojson_paths[0]
                     layer = QgsVectorLayer(geojson.dumps(geojson_data), mode, "ogr")
                     if not layer.isValid():
@@ -399,6 +412,8 @@ class TransitionWidget:
 
                     for i, index in enumerate(range(1, len(geojson_paths))):
                         geojson_data = geojson_paths[i]
+                        transit_paths = mode_data["paths"][i]
+                        CreateInformationPanel(transit_paths, self.tab_widget, index)
                         layer = QgsVectorLayer(geojson.dumps(geojson_data), f"{mode} alternative {index}", "ogr")
                         if not layer.isValid():
                             raise Exception("Layer failed to load!")

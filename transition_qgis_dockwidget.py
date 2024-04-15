@@ -30,7 +30,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class TransitionDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
     """
-        A dock widget to display the Transition plugin.
+        A dock widget to display the Transition-QGIS plugin.
     """
     closingPlugin = pyqtSignal()
 

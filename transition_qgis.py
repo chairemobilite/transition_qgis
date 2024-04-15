@@ -490,7 +490,9 @@ class TransitionWidget:
             self.iface.messageBar().pushCritical('Error', str(error))
 
     def setCrs(self):
-        """Set the CRS for the user input."""
+        """
+            Set the CRS for the user input. This method is used in order to capture coordinates for the CaptureCoordTool.
+        """
         selector = QgsProjectionSelectionDialog(self.iface.mainWindow())
         selector.setCrs(self.crs)
         if selector.exec():
@@ -502,7 +504,9 @@ class TransitionWidget:
                 self.userCrsDisplayPrecision = 3
 
     def setSourceCrs(self):
-        """Set the source CRS for the user input."""
+        """
+            Set the source CRS for the user input. This method is used in order to capture coordinates for the CaptureCoordTool.
+        """
         self.transform.setSourceCrs(self.iface.mapCanvas().mapSettings().destinationCrs())
         if self.iface.mapCanvas().mapSettings().destinationCrs().mapUnits() == QgsUnitTypes.DistanceDegrees:
             self.canvasCrsDisplayPrecision = 5
@@ -511,7 +515,8 @@ class TransitionWidget:
 
     def mouseClickedCapture(self, point: QgsPointXY, displayField, selectedCoordKey):
         """
-            Handle the mouse click event on the map canvas.
+            Handle the mouse click event on the map canvas, capture the corresponding coordinates, 
+            display them in the specified field and save them in the "selectedCoords" dict.
 
             :param point: The point clicked on the map canvas.
             :param displayField: The field to display the coordinates.

@@ -86,3 +86,6 @@ Once that is done, run the following command in the `i18n` directory :
 lrelease transition_qgis_fr.ts
 ```
 This command will generate a new `transition_qgis_fr` binary file with the new translations.
+
+### Publish the plugin
+In odrer to publish the plugin, the `plugin_upload.py` script is used. First, you need to create a zip file containing all the plugin source files, but without a link to the GitHub repo (without the `.git` file). Once the zip file is created, you can run the `plugin_upload.py` script using your OSGEO credentials.

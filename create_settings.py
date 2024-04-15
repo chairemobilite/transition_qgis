@@ -23,7 +23,7 @@
 from qgis.core import *
 from qgis.PyQt.QtWidgets import QWidget, QFormLayout, QLabel, QLineEdit, QVBoxLayout
 
-from pyTransition.transition import Transition
+from pyTransition import Transition
 
 class CreateSettingsForm(QWidget):
     def __init__(self, settings, parent=None):

@@ -31,12 +31,11 @@ class CreateInformationPanel(QWidget):
     def __init__(self, transitPaths, tabWidget, index, parent=None):
         super(CreateInformationPanel, self).__init__(parent)
         stepWidget = QWidget(self)
-        scroll_area = QScrollArea(self)
+        scrollArea = QScrollArea(self)
 
-        scroll_area.setWidgetResizable(True)
+        scrollArea.setWidgetResizable(True)
 
         stepLayout = QVBoxLayout(self)
-        print(transitPaths)
         for step in transitPaths["steps"]:
             action = step['action']
             if action == "boarding" :
@@ -48,7 +47,7 @@ class CreateInformationPanel(QWidget):
                 departureTime = f"{(departureTimeSeconds // 3600):02d}:{((departureTimeSeconds % 3600) // 60):02d}"
 
                 # Add a new label with the information
-                label = QLabel(self.tr("Boarding line {} at stop {} at {}").format(lineNumber, stopName, departureTime))
+                label = QLabel(self.tr("{} : Board line {} at stop {}.").format(departureTime, lineNumber, stopName))
                 stepLayout.addWidget(label)
             elif action == "unboarding":
                 lineNumber = step["lineShortname"]
@@ -58,20 +57,24 @@ class CreateInformationPanel(QWidget):
                 arrivalTime = f"{(arrivalTimeSeconds // 3600):02d}:{((arrivalTimeSeconds % 3600) // 60):02d}"
 
                 # Add a new label with the information
-                label = QLabel(self.tr("Unboarding line {} at stop {} at {}").format(lineNumber, stopName, arrivalTime))
+                label = QLabel(self.tr("{} : Unboard line {} at stop {}.").format(arrivalTime, lineNumber, stopName))
                 stepLayout.addWidget(label)
             else:
                 # Add information about the walk
                 # distance is in meters
                 distance = step["distance"]
                 duration = step["travelTime"] // 60
-                label = QLabel(self.tr("Walk for {} minutes over {} meters").format(duration, distance))
+                departureTimeSeconds = step["departureTime"]
+                departureTime = f"{(departureTimeSeconds // 3600):02d}:{((departureTimeSeconds % 3600) // 60):02d}"
+
+                # Add a new label with the information
+                label = QLabel(self.tr("{} : Walk for {} minutes over {} meters.").format(departureTime, duration, distance))
                 stepLayout.addWidget(label)
 
         stepWidget.setLayout(stepLayout)
-        scroll_area.setWidget(stepWidget)
+        scrollArea.setWidget(stepWidget)
         title = "Transit" if index == 0 else self.tr(f"Alternative {index}")
-        tabWidget.addTab(scroll_area, title)
+        tabWidget.addTab(scrollArea, title)
 
 
         

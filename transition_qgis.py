@@ -347,7 +347,7 @@ class TransitionWidget:
             self.iface.messageBar().pushCritical('Error', str(error))
 
     def onNewRouteButtonClicked(self):
-        # try:
+        try:
             modes = self.createRouteForm.modeChoice.checkedItems()
             if not modes:
                 QMessageBox.warning(self.dockwidget, self.tr("No modes selected"), self.tr("Please select at least one mode."))
@@ -386,6 +386,7 @@ class TransitionWidget:
 
                 # Add the first route for each mode in its own layer
                 if len(geojson_paths) > 0:
+                    # If the mode is transit, display the information about the transit steps in a tab widget
                     if mode == "transit":
                         # Clear the tab widget and add the information about the transit steps to it
                         self.tab_widget.clear()
@@ -415,8 +416,8 @@ class TransitionWidget:
                         QgsProject.instance().addMapLayer(layer, False)
                         mode_group.addLayer(layer)
 
-        # except Exception as error:
-        #     self.iface.messageBar().pushCritical('Error', str(error))
+        except Exception as error:
+            self.iface.messageBar().pushCritical('Error', str(error))
 
     def onAccessibilityButtonClicked(self):
         try:

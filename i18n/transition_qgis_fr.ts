@@ -113,18 +113,23 @@
     <name>CreateInformationPanel</name>
     <message>
         <location filename="../create_info_panel.py" line="50"/>
-        <source>Boarding line {} at stop {} at {}</source>
-        <translation>Embarquer la ligne{}à l&apos;arrêt{} à {}</translation>
+        <source>{} : Board line {} at stop {}.</source>
+        <translation>{} : Embarquer la ligne {} à l&apos;arrêt {}.</translation>
     </message>
     <message>
         <location filename="../create_info_panel.py" line="60"/>
-        <source>Unboarding line {} at stop {} at {}</source>
-        <translation>Débarquer de la ligne {} à l&apos;arrêt {} à {}</translation>
+        <source>{} : Unboard line {} at stop {}.</source>
+        <translation>{} : Débarquer la ligne {} à l&apos;arrêt {}.</translation>
     </message>
     <message>
-        <location filename="../create_info_panel.py" line="67"/>
-        <source>Walk for {} minutes over {} meters</source>
-        <translation>Marcher {} minutes pour {} mètres</translation>
+        <location filename="../create_info_panel.py" line="71"/>
+        <source>{} : Walk for {} minutes over {} meters.</source>
+        <translation>{} : Marcher {} minutes pour {} mètres</translation>
+    </message>
+    <message>
+        <location filename="../create_info_panel.py" line="76"/>
+        <source>Alternative {index}</source>
+        <translation>Alternative {index}</translation>
     </message>
 </context>
 <context>
@@ -190,24 +195,24 @@
         <translation>Temps d&apos;attente maximal au premier arrêt (minutes)</translation>
     </message>
     <message>
-        <location filename="../create_route.py" line="88"/>
-        <source>If waiting time at first stop is greater than this value for a line, ignore the departure of this line at this stop</source>
-        <translation>Si l&apos;attente au premier arrêt est plus grande que cette valeur pour une ligne, ignorer le départ de cette ligne à cet arrêt</translation>
-    </message>
-    <message>
-        <location filename="../create_route.py" line="90"/>
+        <location filename="../create_route.py" line="91"/>
         <source>Scenario</source>
         <translation>Scénario</translation>
     </message>
     <message>
-        <location filename="../create_route.py" line="96"/>
+        <location filename="../create_route.py" line="97"/>
         <source>Calculate with alternatives</source>
         <translation>Calcul avec alternatives</translation>
     </message>
     <message>
-        <location filename="../create_route.py" line="100"/>
+        <location filename="../create_route.py" line="101"/>
         <source>Route name</source>
         <translation>Nom du chemin</translation>
+    </message>
+    <message>
+        <location filename="../create_route.py" line="89"/>
+        <source>If waiting time at first stop is greater than this value for a line, ignore the departure of this line at this stop. Use -1 to ignore this field and allow for indefinite waiting.</source>
+        <translation>Si l&apos;attente au premier arrêt est plus grande que cette valeur pour une ligne, ignorer le départ de cette ligne à cet arrêt. Utilisez -1 pour ignorer ce champ et accepter l&apos;attente indéfinie.</translation>
     </message>
 </context>
 <context>
@@ -374,9 +379,16 @@ d&apos;accessibilité</translation>
         <translation>Veuillez sélectionner au moins un mode.</translation>
     </message>
     <message>
-        <location filename="../transition_qgis.py" line="592"/>
-        <source>Alternative {index}</source>
-        <translation>Alternative {index}</translation>
+        <location filename="../transition_qgis.py" line="309"/>
+        <source>Unable to connect to server</source>
+        <translation>Impossible de se connecter au serveur</translation>
+    </message>
+    <message>
+        <location filename="../transition_qgis.py" line="309"/>
+        <source>Unable to connect to your Transition server.
+Make sure you provided the right server URL and that the server is up.</source>
+        <translation>Impossible de se connecter à votre serveur Transition.
+Assurez-vous d&apos;avoir fourni la bonne URL du serveur et que le serveur est actif.</translation>
     </message>
 </context>
 </TS>

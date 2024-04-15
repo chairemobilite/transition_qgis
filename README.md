@@ -1,17 +1,17 @@
-# Transition QGIS
-Transition is a QGIS plugin designed to interact with the transit planning application Transition.\
-Before using this plugin, users need to install the Transition python library that this plugin depends on in order to interact with the application. To install it, use the following command :
+# Transition-QGIS
+Transition-QGIS is a QGIS plugin designed to interact with the transit planning application Transition.\
+Before using this plugin, users need to install the PYTransition python library that this plugin depends on in order to interact with the application. To install it, use the following command :
 ```bash
 pip install pytransition
 ```
 ## Usage (end user)
-Install `Transition` through the QGIS plugin manager under Plugins > Manage and install plugins.
+Install `Transition-QGIS` through the QGIS plugin manager under Plugins > Manage and install plugins.
 
 ![alt text](docs/screenshots/manage_plugins.png)
 
 ![alt text](docs/screenshots/transition_plugin.png)
 
-The Transition plugin will then become available as an option in the "Plugins" tab and as an icon in the "Plugins" section of the QGIS toolbar.
+The Transition-QGIS plugin will then become available as an option in the "Plugins" tab and as an icon in the "Plugins" section of the QGIS toolbar.
 
 ![alt text](docs/screenshots/plugin_icons.png)
 
@@ -59,7 +59,7 @@ The page also allows users to log out from the plugin.
 ## Contribute
 
 ### Clone the repository and install dependencies
-To contribute to the Transition QGIS plugin, you can clone this reponsitory in `~/.local/share/QGIS/QGIS3/profiles/default/python/plugins/`. The plugin should then be added to your installed plugins and can be visible in the plugin bar.
+To contribute to the Transition-QGIS plugin, you can clone this reponsitory in `~/.local/share/QGIS/QGIS3/profiles/default/python/plugins/`. The plugin should then be added to your installed plugins and can be visible in the plugin bar.
 
 ![alt text](docs/screenshots/plugin_icons.png)
 
@@ -67,7 +67,7 @@ In order to contribute to the project, you need to install the project dependenc
 ```bash
 pip install -r requirements.txt
 ``` 
-You can then add or edit the code and see it reflected in QGIS. It is recommended to install the `plugin_reloader` plugin in QGIS in order to be able to easily reload the Transition plugin when files have been edited.
+You can then add or edit the code and see it reflected in QGIS. It is recommended to install the `plugin_reloader` plugin in QGIS in order to be able to easily reload the Transition-QGIS plugin when files have been edited.
 
 ### Translate the plugin
 All text visible by the user needs to be translated. To allow this, they need to be wrapped in a `self.tr` clause. For example :
@@ -78,7 +78,11 @@ The files that need to be translated need to be specified in the `i18n/transitio
 ```bash
 pylupdate5 transition_qgis.pro
 ```
-After that, you can open the `transition_qgis_fr.ts` file in QT Linguist, write the translation of each field and save your changes. Once that is done, run the following command in the `i18n` directory :
+This command will update the `transition_qgis_fr.ts` file and add all text that needs to be translated to it with the correct line number. The command should be ran every time new visible text is added to the plugin.
+
+After that, you can open the `transition_qgis_fr.ts` file in QT Linguist, write the translation of each field and save your changes.  This does not automatically delete older versions of the text but marks them as *outdated* in the `transition_qgis_fr.ts`. The outdated fields can be manually removed. 
+Once that is done, run the following command in the `i18n` directory :
 ```bash
 lrelease transition_qgis_fr.ts
 ```
+This command will generate a new `transition_qgis_fr` binary file with the new translations.

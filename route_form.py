@@ -29,9 +29,28 @@ from pyTransition.transition import Transition
 
 from .custom_label import CustomLabel
     
-class CreateRouteDialog(QWidget):
+class RouteForm(QWidget):
+    """
+        Form to set parameters for route calculation.
+    """
     def __init__(self, parent=None):
-        super(CreateRouteDialog, self).__init__(parent)
+        """
+            Constructor for RouteForm class.
+
+            The constructor initializes the form with the following fields:
+            - Calculate for the following modes
+            - Time to use (departure or arrival)
+            - Departure or arrival time
+            - Route name
+            - Maximum total travel time including access and egress (minutes)
+            - Minimum waiting time (minutes)
+            - Maximum access and egress travel time (minutes)
+            - Maximum access travel time when transferring (minutes)
+            - Maximum first waiting time (minutes)
+            - Scenario
+            - Calculate with alternatives
+        """
+        super(RouteForm, self).__init__(parent)
 
         layout = QVBoxLayout(self)
         form_layout = QFormLayout()

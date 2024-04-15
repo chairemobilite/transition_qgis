@@ -29,7 +29,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'transition_qgis_dockwidget_base.ui'))
 
 class TransitionDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
-
+    """
+        A dock widget to display the Transition plugin.
+    """
     closingPlugin = pyqtSignal()
 
     def __init__(self, parent=None):
@@ -38,6 +40,7 @@ class TransitionDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.setupUi(self)
 
     def closeEvent(self, event):
+        """Emit the closingPlugin signal when the dock widget is closed."""
         self.closingPlugin.emit()
         event.accept()
 

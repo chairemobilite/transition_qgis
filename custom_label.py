@@ -23,10 +23,19 @@
 from qgis.PyQt.QtWidgets import QLabel
 
 class CustomLabel(QLabel):
+    """
+        A custom label with a minimum size hint.
+    """
     def __init__(self, parent=None):
+        """
+            Constructor.
+        """
         super().__init__(parent)
 
     def minimumSizeHint(self):
+        """
+            Return the minimum size hint.
+        """
         metrics = self.fontMetrics()
         minSize = metrics.boundingRect(self.text()).size()
         minSize.setWidth(1)

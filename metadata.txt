@@ -1,5 +1,5 @@
 [general]
-name=Transition
+name=Transition-QGIS
 qgisMinimumVersion=3.30
 description=A plugin to integrate Transition functionalities into QGIS
 version=0.1

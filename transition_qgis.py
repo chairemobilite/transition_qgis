@@ -35,12 +35,12 @@ from pyTransition import Transition
 
 from .resources import *
 from .transition_qgis_dockwidget import TransitionDockWidget
-from .create_login import LoginDialog
+from .login_dialog import LoginDialog
 from .capture_coord_tool import CaptureCoordTool
-from .create_route import CreateRouteDialog
-from .create_accessibility import CreateAccessibilityForm
-from .create_settings import CreateSettingsForm
-from .create_info_panel import CreateInformationPanel
+from .route_form import RouteForm
+from .accessibility_form import AccessibilityForm
+from .settings_dialog import SettingsDialog
+from .transit_info_panel import TransitInformationPanel
 
 class TransitionWidget:
     """QGIS Plugin Implementation."""
@@ -73,12 +73,12 @@ class TransitionWidget:
 
         # Declare instance attributes
         self.actions = []
-        self.menu = self.tr(u'&Transition')
+        self.menu = self.tr(u'&Transition-QGIS')
         
-        self.toolbar = self.iface.addToolBar(u'Transition')
-        self.toolbar.setObjectName(u'Transition')
+        self.toolbar = self.iface.addToolBar(u'Transition-QGIS')
+        self.toolbar.setObjectName(u'Transition-QGIS')
 
-        #print "** INITIALIZING Transition"
+        #print "** INITIALIZING Transition-QGIS PLUGIN **"
         self.transition_instance = None
         self.pluginIsActive = False
         self.dockwidget = None
@@ -111,7 +111,7 @@ class TransitionWidget:
         :returns: Translated version of message.
         :rtype: QString
         """
-        return QCoreApplication.translate('Transition', message)
+        return QCoreApplication.translate('Transition-QGIS', message)
     
     def add_action(
         self,
@@ -193,7 +193,7 @@ class TransitionWidget:
         icon_path = ':/plugins/transition_qgis/icon.png'
         self.add_action(
             icon_path,
-            text=self.tr(u'Transition'),
+            text=self.tr(u'Transition-QGIS'),
             callback=self.run,
             parent=self.iface.mainWindow())
         
@@ -215,7 +215,7 @@ class TransitionWidget:
 
         for action in self.actions:
             self.iface.removePluginMenu(
-                self.tr(u'&Transition'),
+                self.tr(u'&Transition-QGIS'),
                 action)
             self.iface.removeToolBarIcon(action)
         # remove the toolbar
@@ -237,6 +237,7 @@ class TransitionWidget:
                 self.loginPopup.transitionInstanceCreated.connect(lambda transition_instance: setattr(self, 'transition_instance', transition_instance))
 
     def checkValidLogin(self):
+        """Check if there is a login token in the settings"""
         token = self.settings.value("token")
         if token:
             self.transition_instance = Transition(self.settings.value("url"), None, None, self.settings.value("token"))
@@ -245,6 +246,7 @@ class TransitionWidget:
         return False
 
     def onLoginFinished(self, result):
+        """Handle the result of the login dialog."""
         if result == QDialog.Accepted:
             print("Login successful")
             self.show_dockwidget()
@@ -260,9 +262,9 @@ class TransitionWidget:
             self.onClosePlugin()
 
     def show_dockwidget(self):
+        """Show the dockwidget."""
         try:
             if self.dockwidget is None and self.transition_instance is not None:
-                print("Creating new dockwidget")
                 # Create the dockwidget (after translation) and keep reference
                 self.dockwidget = TransitionDockWidget()
 
@@ -271,11 +273,11 @@ class TransitionWidget:
                 scenarios = self.transition_instance.get_scenarios()
                 routing_modes = self.transition_instance.get_routing_modes()
 
-                self.createRouteForm = CreateRouteDialog(scenarios, routing_modes)
+                self.createRouteForm = RouteForm(scenarios, routing_modes)
                 self.dockwidget.routeVerticalLayout.addWidget(self.createRouteForm)
-                self.createAccessibilityForm = CreateAccessibilityForm(scenarios)
+                self.createAccessibilityForm = AccessibilityForm(scenarios)
                 self.dockwidget.accessibilityVerticalLayout.addWidget(self.createAccessibilityForm)
-                self.dockwidget.createSettingsForm = CreateSettingsForm(self.settings)
+                self.dockwidget.createSettingsForm = SettingsDialog(self.settings)
                 self.dockwidget.settingsVerticalLayout.addWidget(self.dockwidget.createSettingsForm)
 
                 self.dockwidget.pathButton.clicked.connect(self.onPathButtonClicked)
@@ -315,6 +317,11 @@ class TransitionWidget:
             self.onClosePlugin()
 
     def onPathButtonClicked(self):
+        """
+            Handle the click event on the "Get paths" button.
+            
+            This method requests the paths from the Transition server and displays them on the map.
+        """
         try:
             geojson_data = self.transition_instance.get_paths()
             if geojson_data:
@@ -324,7 +331,7 @@ class TransitionWidget:
                     QgsProject.instance().removeMapLayer(existing_layers[0].id())
 
                 # Add the new "transition_paths" layer
-                layer = QgsVectorLayer(geojson.dumps(geojson_data), "transition paths", "ogr")
+                layer = QgsVectorLayer(geojson.dumps(geojson_data), "transition_paths", "ogr")
                 if not layer.isValid():
                     raise Exception("Layer failed to load!")
                 QgsProject.instance().addMapLayer(layer)
@@ -333,6 +340,11 @@ class TransitionWidget:
             self.iface.messageBar().pushCritical('Error', str(error))
 
     def onNodeButtonClicked(self):
+        """
+            Handle the click event on the "Get nodes" button.
+            
+            This method requests the nodes from the Transition server and displays them on the map.
+        """
         try:
             geojson_data = self.transition_instance.get_nodes()
             if geojson_data:
@@ -351,6 +363,11 @@ class TransitionWidget:
             self.iface.messageBar().pushCritical('Error', str(error))
 
     def onNewRouteButtonClicked(self):
+        """
+            Handle the click event on the "Create route" button.
+
+            This method requests the routing results from the Transition server and displays them on the map.
+        """
         try:
             modes = self.createRouteForm.modeChoice.checkedItems()
             if not modes:
@@ -396,7 +413,7 @@ class TransitionWidget:
                         self.tab_widget.clear()
                         self.dockwidget.transitInfoLayout.addWidget(self.tab_widget)
                         transit_paths = mode_data["paths"][0]
-                        CreateInformationPanel(transit_paths, self.tab_widget, 0)
+                        TransitInformationPanel(transit_paths, self.tab_widget, 0)
 
                     geojson_data = geojson_paths[0]
                     layer = QgsVectorLayer(geojson.dumps(geojson_data), mode, "ogr")
@@ -413,7 +430,7 @@ class TransitionWidget:
                     for i, index in enumerate(range(1, len(geojson_paths))):
                         geojson_data = geojson_paths[i]
                         transit_paths = mode_data["paths"][i]
-                        CreateInformationPanel(transit_paths, self.tab_widget, index)
+                        TransitInformationPanel(transit_paths, self.tab_widget, index)
                         layer = QgsVectorLayer(geojson.dumps(geojson_data), f"{mode} alternative {index}", "ogr")
                         if not layer.isValid():
                             raise Exception("Layer failed to load!")
@@ -424,6 +441,11 @@ class TransitionWidget:
             self.iface.messageBar().pushCritical('Error', str(error))
 
     def onAccessibilityButtonClicked(self):
+        """
+            Handle the click event on the "Create accessibility map" button.
+
+            This method requests the accessibility map from the Transition server and displays it on the map.
+        """
         try:
             print(f"coords  = {[self.selectedCoords['accessibilityMapPoint'].x(), self.selectedCoords['accessibilityMapPoint'].y()]}")
             geojson_data = self.transition_instance.request_accessibility_map(
@@ -487,6 +509,9 @@ class TransitionWidget:
             self.iface.messageBar().pushCritical('Error', str(error))
 
     def setCrs(self):
+        """
+            Set the CRS for the user input. This method is used in order to capture coordinates for the CaptureCoordTool.
+        """
         selector = QgsProjectionSelectionDialog(self.iface.mainWindow())
         selector.setCrs(self.crs)
         if selector.exec():
@@ -498,6 +523,9 @@ class TransitionWidget:
                 self.userCrsDisplayPrecision = 3
 
     def setSourceCrs(self):
+        """
+            Set the source CRS for the user input. This method is used in order to capture coordinates for the CaptureCoordTool.
+        """
         self.transform.setSourceCrs(self.iface.mapCanvas().mapSettings().destinationCrs())
         if self.iface.mapCanvas().mapSettings().destinationCrs().mapUnits() == QgsUnitTypes.DistanceDegrees:
             self.canvasCrsDisplayPrecision = 5
@@ -505,6 +533,15 @@ class TransitionWidget:
             self.canvasCrsDisplayPrecision = 3
 
     def mouseClickedCapture(self, point: QgsPointXY, displayField, selectedCoordKey):
+        """
+            Handle the mouse click event on the map canvas, capture the corresponding coordinates, 
+            display them in the specified field and save them in the "selectedCoords" dict.
+
+            :param point: The point clicked on the map canvas.
+            :param displayField: The field to display the coordinates.
+            :param selectedCoordKey: The key to store the coordinates in the selectedCoords dictionary.
+
+        """
         userCrsPoint = self.transform.transform(point)
         displayField.setText('{0:.{2}f},{1:.{2}f}'.format(userCrsPoint.x(),
                                                           userCrsPoint.y(),
@@ -512,14 +549,27 @@ class TransitionWidget:
         self.selectedCoords[selectedCoordKey] = userCrsPoint
 
     def startCapturing(self, mapTool):
+        """
+            Start capturing the coordinates from the map canvas.
+
+            :param mapTool: The map tool to use to capture the coordinates.
+        """
         self.iface.mapCanvas().setMapTool(mapTool)
 
     def stopCapturing(self):
+        """
+            Stop capturing the coordinates from the map canvas.
+        """
         # Set mouse cursor back to pan mode
         self.iface.actionPan().trigger()
         self.mapToolFrom.deactivate()
 
     def onDisconnectUser(self):
+        """
+            Handle the click event on the "Disconnect user" button.
+
+            This method disconnects the user from the Transition server, removes all layers and groups from the map canvas, and displays the login dialog.
+        """
         # Remove all layers
         for layer in QgsProject.instance().mapLayers().values():
             QgsProject.instance().removeMapLayer(layer)
@@ -542,12 +592,21 @@ class TransitionWidget:
         self.loginPopup.show()
 
     def removeSettings(self):
+        """
+            Remove the user settings from the QGIS settings.
+        """
         self.settings.remove("token")
         self.settings.remove("url")
         self.settings.remove("username")
         self.settings.remove("keepConnection")
 
     def setLayerOpacity(self, layer, opacity):
+        """
+            Set the opacity of a layer.
+
+            :param layer: The layer to set the opacity.
+            :param opacity: The opacity value to set.
+        """
         single_symbol_renderer = layer.renderer()
         symbol = single_symbol_renderer.symbol()
         symbol.setOpacity(opacity)

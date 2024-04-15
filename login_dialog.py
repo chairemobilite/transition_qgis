@@ -30,10 +30,20 @@ import requests
 from pyTransition import Transition
 
 class LoginDialog(QDialog):
+    """
+        A dialog to login to a Transition server.
+    """
     closeWidget = pyqtSignal()
     transitionInstanceCreated = pyqtSignal(object)
     
     def __init__(self, iface, settings, parent = None) -> None:
+        """
+            Constructor.
+            
+            :param iface: The QGIS interface.
+            :param settings: The QGIS settings.
+            :param parent: The parent widget.
+        """
         super().__init__(parent)
         uic.loadUi(os.path.join(os.path.dirname(__file__), 'login_dialog.ui'), self)
         self.settings = settings
@@ -47,6 +57,11 @@ class LoginDialog(QDialog):
 
 
     def onConnectButtonClicked(self):
+        """
+            Connect to the Transition server.
+
+            :return: None
+        """
         try:
             if self.usernameEdit.text() == "" or self.passwordEdit.text() == "":
                 QMessageBox.warning(self, self.tr("Invalid loggin credentials"), self.tr("Please enter your username and password."))

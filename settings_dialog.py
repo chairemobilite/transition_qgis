@@ -25,9 +25,21 @@ from qgis.PyQt.QtWidgets import QWidget, QFormLayout, QLabel, QLineEdit, QVBoxLa
 
 from pyTransition import Transition
 
-class CreateSettingsForm(QWidget):
+class SettingsDialog(QWidget):
+    """
+        A dialog to display the settings of the plugin.
+    """
     def __init__(self, settings, parent=None):
-        super(CreateSettingsForm, self).__init__(parent)
+        """
+            Constructor for SettingsDialog class.
+
+            The constructor initializes the dialog with the following fields:
+            - Username or email
+            - Transition server URL
+
+            :param settings: The QGIS settings.
+        """
+        super(SettingsDialog, self).__init__(parent)
         self.settings = settings
 
         layout = QVBoxLayout(self)

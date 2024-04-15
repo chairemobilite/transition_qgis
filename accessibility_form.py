@@ -28,9 +28,31 @@ from pyTransition import Transition
 
 from .custom_label import CustomLabel
     
-class CreateAccessibilityForm(QWidget):
+class AccessibilityForm(QWidget):
+    """
+        Form to set parameters for accessibility map calculation.
+    """
     def __init__(self, scenarios, parent=None):
-        super(CreateAccessibilityForm, self).__init__(parent)
+        """
+            Constructor for AccessibilityForm class.
+
+            The constructor initializes the form with the following fields:
+            - Time to use (departure or arrival)
+            - Departure or arrival time
+            - Number of polygons to calculate
+            - Display polygons in distinct layers
+            - Delta (minutes)
+            - Delta interval (minutes)
+            - Scenario
+            - Accessibility map name
+            - Maximum total travel time including access and egress (minutes)
+            - Minimum waiting time (minutes)
+            - Maximum access and egress travel time (minutes)
+            - Maximum access travel time when transferring (minutes)
+            - Maximum first waiting time (minutes)
+            - Walking speed (km/h)
+        """
+        super(AccessibilityForm, self).__init__(parent)
 
         layout = QVBoxLayout(self)
         form_layout = QFormLayout()

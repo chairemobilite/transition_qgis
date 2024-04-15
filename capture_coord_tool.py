@@ -25,10 +25,20 @@ from qgis.gui import QgsMapToolEmitPoint
 from qgis.core import QgsPointXY, QgsApplication, QgsFeature, QgsGeometry, QgsVectorLayer, QgsProject
 
 class CaptureCoordTool(QgsMapToolEmitPoint):
+    """
+        A custom map tool to capture a point on the map.
+    """
     mouseClicked = pyqtSignal(QgsPointXY)
     endSelection = pyqtSignal()
 
     def __init__(self, iface, canvas, name):
+        """
+            Constructor.
+            
+            :param iface: The QGIS interface.
+            :param canvas: The map canvas.
+            :param name: The name of the layer to create.
+        """
         super(CaptureCoordTool, self).__init__(canvas)
         self.iface = iface
         self.mapCanvas = canvas
@@ -42,6 +52,9 @@ class CaptureCoordTool(QgsMapToolEmitPoint):
             QgsProject.instance().removeMapLayer(existing_layer.id())
 
     def canvasPressEvent(self, e):
+        """
+            Capture the point on the map.
+        """
         if e.button() == Qt.LeftButton:
             if not self.layer:
                 # create a memory layer with one point
@@ -69,9 +82,15 @@ class CaptureCoordTool(QgsMapToolEmitPoint):
             self.mouseClicked.emit(originalPoint)
 
     def canvasReleaseEvent(self, e):
+        """
+            End the selection.
+        """
         self.endSelection.emit()
 
     def deactivate(self):
+        """
+            Deactivate the tool.
+        """
         # Deactivate only if there is an active layer
         if self.layer:
             super(CaptureCoordTool, self).deactivate()

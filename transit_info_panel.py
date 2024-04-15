@@ -25,7 +25,7 @@ from qgis.PyQt.QtWidgets import QWidget, QLabel, QVBoxLayout, QScrollArea
 from qgis.gui import QgsCheckableComboBox
 from PyQt5.QtCore import QTime
 
-from pyTransition.transition import Transition
+from pyTransition import Transition
 
 class TransitInformationPanel(QWidget):
     def __init__(self, transitPaths, tabWidget, index, parent=None):

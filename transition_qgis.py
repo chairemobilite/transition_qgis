@@ -31,7 +31,7 @@ from qgis.gui import QgsProjectionSelectionDialog
 import os.path
 import geojson
 import requests
-from pyTransition.transition import Transition
+from pyTransition import Transition
 
 from .resources import *
 from .transition_qgis_dockwidget import TransitionDockWidget
@@ -79,6 +79,7 @@ class TransitionWidget:
         self.toolbar.setObjectName(u'Transition-QGIS')
 
         #print "** INITIALIZING Transition-QGIS PLUGIN **"
+        self.transition_instance = None
         self.pluginIsActive = False
         self.dockwidget = None
         self.loginPopup = None
@@ -233,13 +234,13 @@ class TransitionWidget:
                 self.loginPopup = LoginDialog(self.iface, self.settings)
                 self.loginPopup.finished.connect(self.onLoginFinished)
                 self.loginPopup.closeWidget.connect(self.onClosePlugin)
+                self.loginPopup.transitionInstanceCreated.connect(lambda transition_instance: setattr(self, 'transition_instance', transition_instance))
 
     def checkValidLogin(self):
         """Check if there is a login token in the settings"""
         token = self.settings.value("token")
         if token:
-            Transition.set_token(self.settings.value("token"))
-            Transition.set_url(self.settings.value("url"))
+            self.transition_instance = Transition(self.settings.value("url"), None, None, self.settings.value("token"))
             return True
         
         return False
@@ -263,15 +264,18 @@ class TransitionWidget:
     def show_dockwidget(self):
         """Show the dockwidget."""
         try:
-            if self.dockwidget == None:
+            if self.dockwidget is None and self.transition_instance is not None:
                 # Create the dockwidget (after translation) and keep reference
                 self.dockwidget = TransitionDockWidget()
 
                 self.selectedCoords = { 'routeOriginPoint': None, 'routeDestinationPoint': None, 'accessibilityMapPoint': None }
 
-                self.createRouteForm = RouteForm()
+                scenarios = self.transition_instance.get_scenarios()
+                routing_modes = self.transition_instance.get_routing_modes()
+
+                self.createRouteForm = RouteForm(scenarios, routing_modes)
                 self.dockwidget.routeVerticalLayout.addWidget(self.createRouteForm)
-                self.createAccessibilityForm = AccessibilityForm()
+                self.createAccessibilityForm = AccessibilityForm(scenarios)
                 self.dockwidget.accessibilityVerticalLayout.addWidget(self.createAccessibilityForm)
                 self.dockwidget.createSettingsForm = SettingsDialog(self.settings)
                 self.dockwidget.settingsVerticalLayout.addWidget(self.dockwidget.createSettingsForm)
@@ -319,7 +323,7 @@ class TransitionWidget:
             This method requests the paths from the Transition server and displays them on the map.
         """
         try:
-            geojson_data = Transition.get_paths()
+            geojson_data = self.transition_instance.get_paths()
             if geojson_data:
                 # Remove the existing "transition_paths" layer if it exists
                 existing_layers = QgsProject.instance().mapLayersByName("transition_paths")
@@ -342,7 +346,7 @@ class TransitionWidget:
             This method requests the nodes from the Transition server and displays them on the map.
         """
         try:
-            geojson_data = Transition.get_nodes()
+            geojson_data = self.transition_instance.get_nodes()
             if geojson_data:
                 # Remove the existing "transition_nodes" layer if it exists
                 existing_layers = QgsProject.instance().mapLayersByName("transition_nodes")
@@ -370,7 +374,7 @@ class TransitionWidget:
                 QMessageBox.warning(self.dockwidget, self.tr("No modes selected"), self.tr("Please select at least one mode."))
                 return
  
-            result = Transition.request_routing_result(
+            result = self.transition_instance.request_routing_result(
                 modes=modes, 
                 origin=[self.selectedCoords['routeOriginPoint'].x(), self.selectedCoords['routeOriginPoint'].y()], 
                 destination=[self.selectedCoords['routeDestinationPoint'].x(), self.selectedCoords['routeDestinationPoint'].y()], 
@@ -443,7 +447,8 @@ class TransitionWidget:
             This method requests the accessibility map from the Transition server and displays it on the map.
         """
         try:
-            geojson_data = Transition.request_accessibility_map(
+            print(f"coords  = {[self.selectedCoords['accessibilityMapPoint'].x(), self.selectedCoords['accessibilityMapPoint'].y()]}")
+            geojson_data = self.transition_instance.request_accessibility_map(
                 with_geojson=True,
                 departure_or_arrival_choice="Departure" if self.createAccessibilityForm.departureRadioButton.isChecked() else "Arrival",
                 departure_or_arrival_time=self.createAccessibilityForm.departureOrArrivalTime.time().toPyTime(),
@@ -451,7 +456,6 @@ class TransitionWidget:
                 delta_minutes=self.createAccessibilityForm.delta.value(),
                 delta_interval_minutes=self.createAccessibilityForm.deltaInterval.value(),
                 scenario_id=self.createAccessibilityForm.scenarios['collection'][self.createAccessibilityForm.scenarioChoice.currentIndex()]['id'],
-                place_name=self.createAccessibilityForm.accessibilityMapName.text(),
                 max_total_travel_time_minutes=self.createAccessibilityForm.maxTotalTravelTime.value(),
                 min_waiting_time_minutes=self.createAccessibilityForm.minWaitTime.value(),
                 max_access_egress_travel_time_minutes=self.createAccessibilityForm.maxAccessTimeOrigDest.value(),

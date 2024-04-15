@@ -25,7 +25,7 @@ from qgis.PyQt.QtWidgets import QWidget, QFormLayout, QLineEdit, QSpinBox, QVBox
 from qgis.gui import QgsCheckableComboBox
 from PyQt5.QtCore import QTime
 
-from pyTransition.transition import Transition
+from pyTransition import Transition
 
 from .custom_label import CustomLabel
     
@@ -33,7 +33,7 @@ class RouteForm(QWidget):
     """
         Form to set parameters for route calculation.
     """
-    def __init__(self, parent=None):
+    def __init__(self, scenarios, routing_modes, parent=None):
         """
             Constructor for RouteForm class.
 
@@ -58,7 +58,7 @@ class RouteForm(QWidget):
 
         self.modeLabel = CustomLabel(self.tr("Calculate for the following modes"))
         self.modeChoice = QgsCheckableComboBox()
-        self.modes = Transition.get_routing_modes()
+        self.modes = routing_modes
         self.modeChoice.addItems(self.modes)
 
         self.departureOrArrivalLabel = CustomLabel(self.tr("Time to use"))
@@ -109,7 +109,7 @@ class RouteForm(QWidget):
 
         self.scenarioLabel = CustomLabel(self.tr("Scenario"))
         self.scenarioChoice = QComboBox()
-        self.scenarios = Transition.get_scenarios()
+        self.scenarios = scenarios
         self.scenariosNames = [entry['name'] for entry in self.scenarios['collection']]
         self.scenarioChoice.addItems(self.scenariosNames)
 

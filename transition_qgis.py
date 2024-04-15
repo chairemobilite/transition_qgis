@@ -40,6 +40,7 @@ from .capture_coord_tool import CaptureCoordTool
 from .route_form import RouteForm
 from .accessibility_form import AccessibilityForm
 from .settings_dialog import SettingsDialog
+from .transit_info_panel import TransitInformationPanel
 
 class TransitionWidget:
     """QGIS Plugin Implementation."""
@@ -408,7 +409,7 @@ class TransitionWidget:
                         self.tab_widget.clear()
                         self.dockwidget.transitInfoLayout.addWidget(self.tab_widget)
                         transit_paths = mode_data["paths"][0]
-                        CreateInformationPanel(transit_paths, self.tab_widget, 0)
+                        TransitInformationPanel(transit_paths, self.tab_widget, 0)
 
                     geojson_data = geojson_paths[0]
                     layer = QgsVectorLayer(geojson.dumps(geojson_data), mode, "ogr")
@@ -425,7 +426,7 @@ class TransitionWidget:
                     for i, index in enumerate(range(1, len(geojson_paths))):
                         geojson_data = geojson_paths[i]
                         transit_paths = mode_data["paths"][i]
-                        CreateInformationPanel(transit_paths, self.tab_widget, index)
+                        TransitInformationPanel(transit_paths, self.tab_widget, index)
                         layer = QgsVectorLayer(geojson.dumps(geojson_data), f"{mode} alternative {index}", "ogr")
                         if not layer.isValid():
                             raise Exception("Layer failed to load!")

@@ -27,9 +27,9 @@ from PyQt5.QtCore import QTime
 
 from pyTransition.transition import Transition
 
-class CreateInformationPanel(QWidget):
+class TransitInformationPanel(QWidget):
     def __init__(self, transitPaths, tabWidget, index, parent=None):
-        super(CreateInformationPanel, self).__init__(parent)
+        super(TransitInformationPanel, self).__init__(parent)
         stepWidget = QWidget(self)
         scrollArea = QScrollArea(self)
 

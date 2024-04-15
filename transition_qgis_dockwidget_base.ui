@@ -72,7 +72,7 @@
      <property name="geometry">
       <rect>
        <x>120</x>
-       <y>540</y>
+       <y>550</y>
        <width>171</width>
        <height>41</height>
       </rect>
@@ -85,7 +85,7 @@
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>450</y>
+       <y>460</y>
        <width>161</width>
        <height>31</height>
       </rect>
@@ -98,7 +98,7 @@
      <property name="geometry">
       <rect>
        <x>200</x>
-       <y>490</y>
+       <y>500</y>
        <width>181</width>
        <height>31</height>
       </rect>
@@ -108,7 +108,7 @@
      <property name="geometry">
       <rect>
        <x>200</x>
-       <y>450</y>
+       <y>460</y>
        <width>181</width>
        <height>31</height>
       </rect>
@@ -118,7 +118,7 @@
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>490</y>
+       <y>500</y>
        <width>161</width>
        <height>31</height>
       </rect>
@@ -133,7 +133,7 @@
        <x>20</x>
        <y>50</y>
        <width>371</width>
-       <height>381</height>
+       <height>401</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="routeVerticalLayout"/>
@@ -162,9 +162,9 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>590</y>
+       <y>600</y>
        <width>401</width>
-       <height>181</height>
+       <height>171</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="transitInfoLayout"/>

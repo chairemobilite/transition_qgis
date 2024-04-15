@@ -3,10 +3,10 @@ FORMS = ../transition_qgis_dockwidget_base.ui \
 
 SOURCES = ../transition_qgis_dockwidget.py \
 ../transition_qgis.py \
-../create_route.py \
-../create_login.py \
-../create_accessibility.py \
-../create_settings.py \
-../create_info_panel.py
+../route_form.py \
+../login_dialog.py \
+../accessibility_form.py \
+../settings_dialog.py \
+../transit_info_panel.py
 
 TRANSLATIONS = transition_qgis_fr.ts

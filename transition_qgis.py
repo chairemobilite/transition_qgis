@@ -31,7 +31,7 @@ from qgis.gui import QgsProjectionSelectionDialog
 import os.path
 import geojson
 import requests
-from pyTransition.transition import Transition
+from pyTransition import Transition
 
 from .resources import *
 from .transition_qgis_dockwidget import TransitionDockWidget
@@ -425,6 +425,7 @@ class TransitionWidget:
 
     def onAccessibilityButtonClicked(self):
         try:
+            print(f"coords  = {[self.selectedCoords['accessibilityMapPoint'].x(), self.selectedCoords['accessibilityMapPoint'].y()]}")
             geojson_data = self.transition_instance.request_accessibility_map(
                 with_geojson=True,
                 departure_or_arrival_choice="Departure" if self.createAccessibilityForm.departureRadioButton.isChecked() else "Arrival",

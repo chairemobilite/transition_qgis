@@ -25,7 +25,7 @@ from qgis.PyQt.QtWidgets import QWidget, QFormLayout, QLineEdit, QSpinBox, QVBox
 from qgis.gui import QgsCheckableComboBox
 from PyQt5.QtCore import QTime
 
-from pyTransition.transition import Transition
+from pyTransition import Transition
 
 from .custom_label import CustomLabel
     

@@ -54,4 +54,5 @@ lrelease transition_qgis_fr.ts
 This command will generate a new `transition_qgis_fr` binary file with the new translations.
 
 #### Publishing the plugin
-In odrer to publish the plugin, the `plugin_upload.py` script is used. First, you need to create a zip file containing all the plugin source files, but without a link to the GitHub repo (without the `.git` file). Once the zip file is created, you can run the `plugin_upload.py` script using your OSGEO credentials.
+In order to publish the plugin, the `plugin_upload.py` script is used. You simply have to run the script. It will prompt you to enter your OSGEO credentials. The script will first zip the source code into a zip file, then attempt to publish it to QGIS,and lastly delete the zip file.\
+To upgrade the version number for the new release, you must change the `version` property in the `metadata.txt` file and document your changes in the `changelog` section of the same file.

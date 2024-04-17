@@ -109,8 +109,7 @@ class RouteForm(QWidget):
 
         self.scenarioLabel = CustomLabel(self.tr("Scenario"))
         self.scenarioChoice = QComboBox()
-        self.scenarios = scenarios
-        self.scenariosNames = [entry['name'] for entry in self.scenarios['collection']]
+        self.scenariosNames = scenarios
         self.scenarioChoice.addItems(self.scenariosNames)
 
         self.withAlternativeLabel = CustomLabel(self.tr("Calculate with alternatives"))

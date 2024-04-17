@@ -98,8 +98,7 @@ class AccessibilityForm(QWidget):
 
         self.scenarioLabel = CustomLabel(self.tr("Scenario"))
         self.scenarioChoice = QComboBox()
-        self.scenarios = scenarios
-        self.scenariosNames = [entry['name'] for entry in self.scenarios['collection']]
+        self.scenariosNames = scenarios
         self.scenarioChoice.addItems(self.scenariosNames)
 
         self.accessibilityMapNameLabel = CustomLabel(self.tr("Accessibility map name"))

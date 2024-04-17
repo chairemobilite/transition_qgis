@@ -22,9 +22,36 @@ PORT = '443'
 ENDPOINT = '/plugins/RPC2/'
 VERBOSE = False
 
+ZIP_FILE_NAME = 'plugin.zip'
 
-def main(parameters, arguments):
-    """Main entry point.
+
+def zip_dir():
+    """Zip plugin source code and place it inside a 'Transition-QGIS' folder"""
+    with zipfile.ZipFile(ZIP_FILE_NAME, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        for root, dirs, files in os.walk(".", topdown=True):
+            # Exclude certain directories from being zipped
+            dirs[:] = [d for d in dirs if d not in [".git", ".idea", "__pycache__"]]
+            for file in files:
+                if file != ZIP_FILE_NAME:
+                    # Calculate the relative path of the file to the root directory
+                    relative_path = os.path.relpath(os.path.join(root, file), start=".")
+                    # Construct the new path inside the 'Transition-QGIS' folder
+                    new_path = os.path.join("Transition-QGIS", relative_path)
+                    # Write the file to the zip with the new path
+                    zipf.write(os.path.join(root, file), arcname=new_path)
+
+
+def delete_zip():
+    """Deletes the created zip file"""
+    if os.path.exists(ZIP_FILE_NAME):
+        os.remove(ZIP_FILE_NAME)
+        print(f"{ZIP_FILE_NAME} has been deleted.")
+    else:
+        print(f"{ZIP_FILE_NAME} does not exist.")
+            
+
+def main(parameters):
+    """Uploads plugin to
 
     :param parameters: Command line parameters.
     :param arguments: Command line arguments.
@@ -39,9 +66,13 @@ def main(parameters, arguments):
     print("Connecting to: %s" % hide_password(address))
 
     server = xmlrpc.client.ServerProxy(address, verbose=VERBOSE)
+    
+    # Zip plugin source code
+    zip_dir()
 
     try:
-        with open(arguments[0], 'rb') as handle:
+        # Upload plugin to QGIS
+        with open(ZIP_FILE_NAME, 'rb') as handle:
             plugin_id, version_id = server.plugin.upload(
                 xmlrpc.client.Binary(handle.read()))
         print("Plugin ID: %s" % plugin_id)
@@ -56,6 +87,9 @@ def main(parameters, arguments):
         print("A fault occurred")
         print("Fault code: %d" % err.faultCode)
         print("Fault string: %s" % err.faultString)
+
+    # Delete zip file
+    delete_zip()
 
 
 def hide_password(url, start=6):
@@ -74,20 +108,8 @@ def hide_password(url, start=6):
         '*' * (end_position - start_position),
         url[end_position:])
 
-def zipdir():
-
-    zipf = zipfile.ZipFile('plugin.zip', 'w', zipfile.ZIP_DEFLATED)
-    for root, dirs, files in os.walk(".", topdown=True):
-        dirs[:] = [d for d in dirs if d not in [".git", ".idea", "__pycache__"]]
-        for file in files:
-            if file != "plugin.zip":
-                zipf.write(os.path.join(root, file))
-    zipf.close()
-            
-
 
 if __name__ == "__main__":
-    zipdir()
     parser = OptionParser(usage="%prog [options]")
     parser.add_option(
         "-w", "--password", dest="password",
@@ -101,8 +123,8 @@ if __name__ == "__main__":
     parser.add_option(
         "-s", "--server", dest="server",
         help="Specify server name", metavar="plugins.qgis.org")
-    options = parser.parse_args()
-    args = "plugin.zip"
+    options, args = parser.parse_args()
+
     if not options.server:
         options.server = SERVER
     if not options.port:
@@ -120,4 +142,4 @@ if __name__ == "__main__":
     if not options.password:
         # interactive mode
         options.password = getpass.getpass()
-    main(options, args)
+    main(options)

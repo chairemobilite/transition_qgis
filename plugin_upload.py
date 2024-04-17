@@ -9,6 +9,9 @@ import sys
 import getpass
 import xmlrpc.client
 from optparse import OptionParser
+from future import standard_library
+import os
+import zipfile
 
 standard_library.install_aliases()
 
@@ -71,9 +74,21 @@ def hide_password(url, start=6):
         '*' * (end_position - start_position),
         url[end_position:])
 
+def zipdir():
+
+    zipf = zipfile.ZipFile('plugin.zip', 'w', zipfile.ZIP_DEFLATED)
+    for root, dirs, files in os.walk(".", topdown=True):
+        dirs[:] = [d for d in dirs if d not in [".git", ".idea", "__pycache__"]]
+        for file in files:
+            if file != "plugin.zip":
+                zipf.write(os.path.join(root, file))
+    zipf.close()
+            
+
 
 if __name__ == "__main__":
-    parser = OptionParser(usage="%prog [options] plugin.zip")
+    zipdir()
+    parser = OptionParser(usage="%prog [options]")
     parser.add_option(
         "-w", "--password", dest="password",
         help="Password for plugin site", metavar="******")
@@ -86,11 +101,8 @@ if __name__ == "__main__":
     parser.add_option(
         "-s", "--server", dest="server",
         help="Specify server name", metavar="plugins.qgis.org")
-    options, args = parser.parse_args()
-    if len(args) != 1:
-        print("Please specify zip file.\n")
-        parser.print_help()
-        sys.exit(1)
+    options = parser.parse_args()
+    args = "plugin.zip"
     if not options.server:
         options.server = SERVER
     if not options.port:

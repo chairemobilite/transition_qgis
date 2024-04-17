@@ -464,7 +464,7 @@ class TransitionWidget:
                 max_first_waiting_time_minutes=self.createAccessibilityForm.maxFirstWaitTime.value() if self.createAccessibilityForm.maxFirstWaitTime.value() > -1 else None,
                 walking_speed_kmh=self.createAccessibilityForm.walkingSpeed.value(),
                 coordinates = [self.selectedCoords['accessibilityMapPoint'].x(), self.selectedCoords['accessibilityMapPoint'].y()]
-            )
+            )["result"]
             polygons_geojson = geojson.dumps(geojson_data['polygons'])
 
             if polygons_geojson:
@@ -488,7 +488,7 @@ class TransitionWidget:
                     group = root.addGroup(accessibilityMapName)
 
                     # Sort polygons from smallest to largest durations
-                    polygons_coords = sorted(geojson_data['polygons']["features"], key=lambda x: x['properties']['durationMinutes'])
+                    polygons_coords = sorted(geojson_data['polygons']["features"], key=lambda x: x['properties']['durationSeconds'])
                     for i, polygon in enumerate(polygons_coords):
                         layer = QgsVectorLayer(geojson.dumps(polygon), f"Polygon {i+1}", "ogr")
                         if not layer.isValid():

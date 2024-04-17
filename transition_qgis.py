@@ -389,7 +389,7 @@ class TransitionWidget:
                 max_first_waiting_time_minutes=self.createRouteForm.maxWaitTimeFisrstStopChoice.value(),
                 with_geojson=True,
                 with_alternatives=self.createRouteForm.withAlternativeChoice.isChecked()
-            )
+            )["result"]
             
             routeName = self.createRouteForm.routeName.text()
             routeName = routeName if routeName else "Routing results"

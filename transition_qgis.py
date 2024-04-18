@@ -312,6 +312,9 @@ class TransitionWidget:
             self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
 
+        except requests.exceptions.HTTPError as error:
+            if error.response.text == "DatabaseTokenExpired":
+                self.handleExpiredToken()
         except requests.exceptions.ConnectionError:
             QMessageBox.critical(None, self.tr("Unable to connect to server"), self.tr("Unable to connect to your Transition server.\nMake sure you provided the right server URL and that the server is up."))
             self.dockwidget = None
@@ -337,6 +340,9 @@ class TransitionWidget:
                     raise Exception("Layer failed to load!")
                 QgsProject.instance().addMapLayer(layer)
 
+        except requests.exceptions.HTTPError as error:
+            if error.response.text == "DatabaseTokenExpired":
+                self.handleExpiredToken()
         except Exception as error:
             self.iface.messageBar().pushCritical('Error', str(error))
 
@@ -360,6 +366,9 @@ class TransitionWidget:
                     raise Exception("Layer failed to load!")
                 QgsProject.instance().addMapLayer(layer)
 
+        except requests.exceptions.HTTPError as error:
+            if error.response.text == "DatabaseTokenExpired":
+                self.handleExpiredToken()
         except Exception as error:
             self.iface.messageBar().pushCritical('Error', str(error))
 
@@ -438,6 +447,9 @@ class TransitionWidget:
                         QgsProject.instance().addMapLayer(layer, False)
                         mode_group.addLayer(layer)
 
+        except requests.exceptions.HTTPError as error:
+            if error.response.text == "DatabaseTokenExpired":
+                self.handleExpiredToken()
         except Exception as error:
             self.iface.messageBar().pushCritical('Error', str(error))
 
@@ -506,6 +518,9 @@ class TransitionWidget:
                     QgsProject.instance().addMapLayer(layer)
                     self.setLayerOpacity(layer, 0.6)
             
+        except requests.exceptions.HTTPError as error:
+            if error.response.text == "DatabaseTokenExpired":
+                self.handleExpiredToken()
         except Exception as error:
             self.iface.messageBar().pushCritical('Error', str(error))
 
@@ -612,3 +627,14 @@ class TransitionWidget:
         symbol = single_symbol_renderer.symbol()
         symbol.setOpacity(opacity)
         layer.triggerRepaint()
+
+    def handleExpiredToken(self):
+        """Handles expired token error by closing the plugin and triggering the login dialog."""
+        if self.dockwidget:
+            self.dockwidget.close()
+            self.onClosePlugin()
+
+        QMessageBox.warning(None, self.tr("Session expired"), self.tr("Your session has expired. Please login again."))
+        self.loginPopup = LoginDialog(self.iface, self.settings)
+        self.loginPopup.finished.connect(self.onLoginFinished)
+        self.loginPopup.show()

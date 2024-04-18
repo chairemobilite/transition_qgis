@@ -2,7 +2,7 @@
 name=Transition-QGIS
 qgisMinimumVersion=3.30
 description=A plugin to integrate Transition functionalities into QGIS
-version=0.1
+version=0.1.0
 author=Transition City
 email=admin@transition.city
 

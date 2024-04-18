@@ -131,10 +131,10 @@ if __name__ == "__main__":
         help="Specify server name", metavar="plugins.qgis.org")
     parser.add_option(
         "--dry-run", dest="dry_run", action="store_true",
-        help="Perform a dry run without making any changes")
+        help="Perform a dry run without making a real upload")
     parser.add_option(
         "--keep-zip", dest="keep_zip", action="store_true",
-        help="Keep the zip file after the script finishes instead of deleteing it")
+        help="Keep the zip file after the script finishes instead of deleting it")
     
     options, args = parser.parse_args()
 

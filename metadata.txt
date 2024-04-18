@@ -1,0 +1,34 @@
+[general]
+name=Transition-QGIS
+qgisMinimumVersion=3.30
+description=A plugin to integrate Transition functionalities into QGIS
+version=0.1.0
+author=Transition City
+email=admin@transition.city
+
+about=A plugin to integrate Transition functionalities into QGIS
+
+tracker=https://github.com/chairemobilite/transition_qgis/issues
+repository=https://github.com/chairemobilite/transition_qgis
+
+# Recommended items:
+
+hasProcessingProvider=no
+changelog=Version 0.1 (initial)
+    - initial version
+
+tags=python, plugin, transition
+homepage=https://github.com/chairemobilite/transition_qgis
+category=Plugins
+icon=icon.png
+experimental=True
+deprecated=False
+
+# Since QGIS 3.8, a comma separated list of plugins to be installed
+# (or upgraded) can be specified.
+# Check the documentation for more information.
+# plugin_dependencies=
+
+# If the plugin can run on QGIS Server.
+server=False
+

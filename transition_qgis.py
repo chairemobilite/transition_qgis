@@ -248,7 +248,6 @@ class TransitionWidget:
     def onLoginFinished(self, result):
         """Handle the result of the login dialog."""
         if result == QDialog.Accepted:
-            print("Login successful")
             self.show_dockwidget()
 
             # dockwidget may not exist if:
@@ -447,7 +446,6 @@ class TransitionWidget:
             This method requests the accessibility map from the Transition server and displays it on the map.
         """
         try:
-            print(f"coords  = {[self.selectedCoords['accessibilityMapPoint'].x(), self.selectedCoords['accessibilityMapPoint'].y()]}")
             geojson_data = self.transition_instance.request_accessibility_map(
                 with_geojson=True,
                 departure_or_arrival_choice="Departure" if self.createAccessibilityForm.departureRadioButton.isChecked() else "Arrival",

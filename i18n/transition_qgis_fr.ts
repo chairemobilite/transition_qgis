@@ -59,52 +59,52 @@
         <translation>Scénario</translation>
     </message>
     <message>
-        <location filename="../accessibility_form.py" line="105"/>
+        <location filename="../accessibility_form.py" line="104"/>
         <source>Accessibility map name</source>
         <translation>Nom de la carte d&apos;accessibilité</translation>
     </message>
     <message>
-        <location filename="../accessibility_form.py" line="108"/>
+        <location filename="../accessibility_form.py" line="107"/>
         <source>Maximum total travel time including access and egress (minutes)</source>
         <translation>Temps de parcours maximal incluant les accès (minutes)</translation>
     </message>
     <message>
-        <location filename="../accessibility_form.py" line="112"/>
+        <location filename="../accessibility_form.py" line="111"/>
         <source>Minimum waiting time (minutes)</source>
         <translation>Temps minimum d&apos;attente (minutes)</translation>
     </message>
     <message>
-        <location filename="../accessibility_form.py" line="116"/>
+        <location filename="../accessibility_form.py" line="115"/>
         <source>To account for timetable uncertainty, this value should be greater or equal to 1 minute. Suggested value: 3 minutes</source>
         <translation>Pour tenir compte des incertitudes des horaires, cette valeur doit être de 1 minute ou plus. Valeur suggérée: 3 minutes</translation>
     </message>
     <message>
-        <location filename="../accessibility_form.py" line="118"/>
+        <location filename="../accessibility_form.py" line="117"/>
         <source>Maximum access and egress travel time (minutes)</source>
         <translation>Temps maximum d&apos;accès à l&apos;origine et à destination (minutes)</translation>
     </message>
     <message>
-        <location filename="../accessibility_form.py" line="128"/>
+        <location filename="../accessibility_form.py" line="127"/>
         <source>To avoid long calculation time, this value has a maximum of 20 minutes.</source>
         <translation>Pour éviter de longs temps de calcul, la valeur maximale est de 20 minutes.</translation>
     </message>
     <message>
-        <location filename="../accessibility_form.py" line="124"/>
+        <location filename="../accessibility_form.py" line="123"/>
         <source>Maximum access travel time when transferring (minutes)</source>
         <translation>Temps maximum d&apos;accès lors des transferts (minutes)</translation>
     </message>
     <message>
-        <location filename="../accessibility_form.py" line="130"/>
+        <location filename="../accessibility_form.py" line="129"/>
         <source>Maximum first waiting time (minutes)</source>
         <translation>Temps d&apos;attente maximal au premier arrêt (minutes)</translation>
     </message>
     <message>
-        <location filename="../accessibility_form.py" line="134"/>
+        <location filename="../accessibility_form.py" line="133"/>
         <source>If waiting time at first stop is greater than this value for a line, ignore the departure of this line at this stop. Use -1 to ignore this field and allow for indefinite waiting.</source>
         <translation>Si l&apos;attente au premier arrêt est plus grande que cette valeur pour une ligne, ignorer le départ de cette ligne à cet arrêt. Utilisez -1 pour ignorer ce champ et accepter l&apos;attente indéfinie.</translation>
     </message>
     <message>
-        <location filename="../accessibility_form.py" line="136"/>
+        <location filename="../accessibility_form.py" line="135"/>
         <source>Walking speed (km/h)</source>
         <translation>Vitesse de marche (km/h)</translation>
     </message>
@@ -140,12 +140,12 @@
 <context>
     <name>LoginDialog</name>
     <message>
-        <location filename="../login_dialog.py" line="66"/>
+        <location filename="../login_dialog.py" line="67"/>
         <source>Invalid loggin credentials</source>
         <translation>Identifiants de connexion invalides</translation>
     </message>
     <message>
-        <location filename="../login_dialog.py" line="66"/>
+        <location filename="../login_dialog.py" line="67"/>
         <source>Please enter your username and password.</source>
         <translation>Veuillez entrer votre nom d&apos;utilisateur ou votre courriel.</translation>
     </message>
@@ -235,12 +235,12 @@ Assurez-vous d&apos;avoir fourni la bonne URL du serveur et que le serveur est a
         <translation>Scénario</translation>
     </message>
     <message>
-        <location filename="../route_form.py" line="116"/>
+        <location filename="../route_form.py" line="115"/>
         <source>Calculate with alternatives</source>
         <translation>Calcul avec alternatives</translation>
     </message>
     <message>
-        <location filename="../route_form.py" line="120"/>
+        <location filename="../route_form.py" line="119"/>
         <source>Route name</source>
         <translation>Nom du chemin</translation>
     </message>
@@ -359,36 +359,46 @@ d&apos;accessibilité</translation>
 <context>
     <name>TransitionWidget</name>
     <message>
-        <location filename="../transition_qgis.py" line="216"/>
+        <location filename="../transition_qgis.py" line="217"/>
         <source>&amp;Transition-QGIS</source>
         <translation>&amp;Transition-QGIS</translation>
     </message>
     <message>
-        <location filename="../transition_qgis.py" line="193"/>
+        <location filename="../transition_qgis.py" line="194"/>
         <source>Transition-QGIS</source>
         <translation>Transition-QGIS</translation>
     </message>
     <message>
-        <location filename="../transition_qgis.py" line="370"/>
+        <location filename="../transition_qgis.py" line="383"/>
         <source>No modes selected</source>
         <translation>Aucun mode sélectionné</translation>
     </message>
     <message>
-        <location filename="../transition_qgis.py" line="370"/>
+        <location filename="../transition_qgis.py" line="383"/>
         <source>Please select at least one mode.</source>
         <translation>Veuillez sélectionner au moins un mode.</translation>
     </message>
     <message>
-        <location filename="../transition_qgis.py" line="311"/>
+        <location filename="../transition_qgis.py" line="318"/>
         <source>Unable to connect to server</source>
         <translation>Impossible de se connecter au serveur</translation>
     </message>
     <message>
-        <location filename="../transition_qgis.py" line="311"/>
+        <location filename="../transition_qgis.py" line="318"/>
         <source>Unable to connect to your Transition server.
 Make sure you provided the right server URL and that the server is up.</source>
         <translation>Impossible de se connecter à votre serveur Transition.
 Assurez-vous d&apos;avoir fourni la bonne URL du serveur et que le serveur est actif.</translation>
+    </message>
+    <message>
+        <location filename="../transition_qgis.py" line="624"/>
+        <source>Session expired</source>
+        <translation>Session expirée</translation>
+    </message>
+    <message>
+        <location filename="../transition_qgis.py" line="624"/>
+        <source>Your session has expired. Please login again.</source>
+        <translation>Votre session a expiré. Veuillez vous connecter à nouveau.</translation>
     </message>
 </context>
 </TS>

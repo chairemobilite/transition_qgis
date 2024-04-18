@@ -16,7 +16,7 @@ If you use Transition-QGIS and encounter a bug, first make sure a similar issue 
 
 ### Requesting features and ideas
 
-If there's something you would like to see in Transition, no matter how big or small a change it may seem, you may start a discussion in the issue tracker [here](https://github.com/chairemobilite/transition_qgis/issues). Members of the community can join in the discussion.
+If there's something you would like to see in Transition-QGIS, no matter how big or small a change it may seem, you may start a discussion in the issue tracker [here](https://github.com/chairemobilite/transition_qgis/issues). Members of the community can join in the discussion.
 
 ### Developing the platform
 

@@ -248,7 +248,6 @@ class TransitionWidget:
     def onLoginFinished(self, result):
         """Handle the result of the login dialog."""
         if result == QDialog.Accepted:
-            print("Login successful")
             self.show_dockwidget()
 
             # dockwidget may not exist if:
@@ -448,7 +447,6 @@ class TransitionWidget:
             This method requests the accessibility map from the Transition server and displays it on the map.
         """
         try:
-            print(f"coords  = {[self.selectedCoords['accessibilityMapPoint'].x(), self.selectedCoords['accessibilityMapPoint'].y()]}")
             geojson_data = self.transition_instance.request_accessibility_map(
                 with_geojson=True,
                 departure_or_arrival_choice="Departure" if self.createAccessibilityForm.departureRadioButton.isChecked() else "Arrival",
@@ -569,25 +567,14 @@ class TransitionWidget:
         """
             Handle the click event on the "Disconnect user" button.
 
-            This method disconnects the user from the Transition server, removes all layers and groups from the map canvas, and displays the login dialog.
+            This method disconnects the user from the Transition server and displays the login dialog.
         """
-        # Remove all layers
-        for layer in QgsProject.instance().mapLayers().values():
-            QgsProject.instance().removeMapLayer(layer)
-
-        # Remove all groups
-        root = QgsProject.instance().layerTreeRoot()
-        for group in root.children():
-            root.removeChildNode(group)
-
         # Remove user settings
         if self.settings.value("keepConnection") !=  Qt.CheckState.Checked:
             self.removeSettings()
         
         self.dockwidget.close()
 
-        # add a delay to allow the layers to be removed before the login popup is shown
-        QtTest.QTest.qWait(1000)
         self.loginPopup = LoginDialog(self.iface, self.settings)
         self.loginPopup.finished.connect(self.onLoginFinished)
         self.loginPopup.show()

@@ -2,7 +2,7 @@
 Transition-QGIS is a QGIS plugin designed to interact with the transit planning application Transition.\
 Before using this plugin, users need to install the PYTransition python library that this plugin depends on in order to interact with the application. To install it, use the following command :
 ```bash
-pip install pytransition
+pip install -r requirements.txt
 ```
 ## Usage (end user)
 Install `Transition-QGIS` through the QGIS plugin manager under Plugins > Manage and install plugins.

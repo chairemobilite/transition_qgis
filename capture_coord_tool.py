@@ -51,6 +51,9 @@ class CaptureCoordTool(QgsMapToolEmitPoint):
         for existing_layer in existing_layers:
             QgsProject.instance().removeMapLayer(existing_layer.id())
 
+    def onLayerDeleted(self):
+        self.layer = None
+
     def canvasPressEvent(self, e):
         """
             Capture the point on the map.
@@ -59,6 +62,7 @@ class CaptureCoordTool(QgsMapToolEmitPoint):
             if not self.layer:
                 # create a memory layer with one point
                 self.layer = QgsVectorLayer('Point', self.layerName , "memory")
+                self.layer.willBeDeleted.connect(self.onLayerDeleted)
                 self.layer.setCrs(self.mapCanvas.mapSettings().destinationCrs())
                 pr = self.layer.dataProvider()
                 pt = QgsFeature()

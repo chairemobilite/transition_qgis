@@ -409,7 +409,7 @@ class TransitionWidget:
             
             # Create a new layer group for the routing results
             root = QgsProject.instance().layerTreeRoot()
-            routing_result_group = root.addGroup(routeName)
+            routing_result_group = root.insertGroup(0, routeName)
             
             for mode, mode_data in result.items():  
                 geojson_paths = mode_data["pathsGeojson"]
@@ -495,7 +495,7 @@ class TransitionWidget:
                     
                     # Add all polygons as separate layer inside the group
                     root = QgsProject.instance().layerTreeRoot()
-                    group = root.addGroup(accessibilityMapName)
+                    group = root.insertGroup(0, accessibilityMapName)
 
                     # Sort polygons from smallest to largest durations
                     polygons_coords = sorted(geojson_data['polygons']["features"], key=lambda x: x['properties']['durationSeconds'])

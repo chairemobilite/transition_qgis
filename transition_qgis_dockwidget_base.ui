@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>464</width>
-    <height>903</height>
+    <width>450</width>
+    <height>520</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,11 +19,11 @@
      <x>20</x>
      <y>30</y>
      <width>421</width>
-     <height>811</height>
+     <height>481</height>
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -51,197 +51,139 @@
        <height>41</height>
       </rect>
      </property>
-     <property name="font">
-      <font>
-       <weight>50</weight>
-       <italic>false</italic>
-       <bold>false</bold>
-       <strikeout>false</strikeout>
-      </font>
-     </property>
      <property name="text">
       <string>Get Transition paths</string>
      </property>
     </widget>
    </widget>
-   <widget class="QWidget" name="tab_2">
+   <widget class="QWidget" name="tabRouting">
     <attribute name="title">
      <string>Routing</string>
     </attribute>
-    <widget class="QPushButton" name="routeButton">
-     <property name="geometry">
-      <rect>
-       <x>120</x>
-       <y>550</y>
-       <width>171</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Calculate new route</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="routeCaptureButtonFrom">
-     <property name="geometry">
-      <rect>
-       <x>30</x>
-       <y>460</y>
-       <width>161</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Select origin</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="userCrsEditTo">
-     <property name="geometry">
-      <rect>
-       <x>200</x>
-       <y>500</y>
-       <width>181</width>
-       <height>31</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="userCrsEditFrom">
-     <property name="geometry">
-      <rect>
-       <x>200</x>
-       <y>460</y>
-       <width>181</width>
-       <height>31</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="routeCaptureButtonTo">
-     <property name="geometry">
-      <rect>
-       <x>30</x>
-       <y>500</y>
-       <width>161</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Select destination</string>
-     </property>
-    </widget>
-    <widget class="QWidget" name="verticalLayoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>50</y>
-       <width>371</width>
-       <height>401</height>
-      </rect>
-     </property>
-     <layout class="QVBoxLayout" name="routeVerticalLayout"/>
-    </widget>
-    <widget class="QLabel" name="label_2">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>20</y>
-       <width>281</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>15</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Calculate new route</string>
-     </property>
-    </widget>
-    <widget class="QWidget" name="verticalLayoutWidget_4">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>600</y>
-       <width>401</width>
-       <height>171</height>
-      </rect>
-     </property>
-     <layout class="QVBoxLayout" name="transitInfoLayout"/>
-    </widget>
+    <layout class="QVBoxLayout" name="parentLayout">
+     <item>
+      <widget class="QLabel" name="lblRouteCalculation">
+       <property name="font">
+        <font>
+         <pointsize>15</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Calculate new route</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QScrollArea" name="routingScrollArea">
+       <property name="widgetResizable">
+        <bool>true</bool>
+       </property>
+       <widget class="QWidget" name="scrollAreaWidgetContents">
+        <layout class="QVBoxLayout" name="routeTabVerticalLayout">
+         <item>
+          <layout class="QVBoxLayout" name="routeVerticalLayout"/>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QPushButton" name="routeCaptureButtonFrom">
+             <property name="text">
+              <string>Select origin</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="userCrsEditFrom"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="accessHorizontalLayout">
+           <item>
+            <widget class="QPushButton" name="routeCaptureButtonTo">
+             <property name="text">
+              <string>Select destination</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="userCrsEditTo"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QPushButton" name="routeButton">
+           <property name="text">
+            <string>Calculate new route</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="transitInfoLayout"/>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </item>
+    </layout>
    </widget>
-   <widget class="QWidget" name="tab_3">
+   <widget class="QWidget" name="tabAccessibility">
     <attribute name="title">
      <string>Accessibility map</string>
     </attribute>
-    <widget class="QPushButton" name="accessibilityCaptureButton">
-     <property name="geometry">
-      <rect>
-       <x>30</x>
-       <y>570</y>
-       <width>161</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Select map origin</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="accessibilityButton">
-     <property name="geometry">
-      <rect>
-       <x>100</x>
-       <y>620</y>
-       <width>191</width>
-       <height>61</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Calculate new 
-accessibility map</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="userCrsEditAccessibility">
-     <property name="geometry">
-      <rect>
-       <x>200</x>
-       <y>570</y>
-       <width>181</width>
-       <height>31</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QWidget" name="verticalLayoutWidget_2">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>50</y>
-       <width>371</width>
-       <height>501</height>
-      </rect>
-     </property>
-     <layout class="QVBoxLayout" name="accessibilityVerticalLayout"/>
-    </widget>
-    <widget class="QLabel" name="label">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>20</y>
-       <width>371</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>15</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Calculate new accessibility map</string>
-     </property>
-    </widget>
+    <layout class="QVBoxLayout" name="accessibilityParentLayout">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="font">
+        <font>
+         <pointsize>15</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Calculate new accessibility map</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QScrollArea" name="routingScrollArea">
+       <property name="widgetResizable">
+        <bool>true</bool>
+       </property>
+       <widget class="QWidget" name="scrollAreaWidgetContents">
+        <layout class="QVBoxLayout" name="accessibilityTabVerticalLayout">
+         <item>
+          <layout class="QVBoxLayout" name="accessibilityVerticalLayout"/>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="accessibilityHorizontalLayout">
+           <item>
+            <widget class="QPushButton" name="accessibilityCaptureButton">
+             <property name="text">
+              <string>Select map origin</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="userCrsEditAccessibility"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QPushButton" name="accessibilityButton">
+           <property name="text">
+            <string>Calculate new accessibility map</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </item>
+    </layout>
    </widget>
    <widget class="QWidget" name="tab_4">
     <attribute name="title">

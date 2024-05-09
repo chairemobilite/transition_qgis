@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding=utf-8
 """This script uploads a plugin package to the plugin repository.
         Authors: A. Pasotti, V. Picavet
@@ -75,8 +75,8 @@ def main(parameters):
     
     try:
         # Upload plugin to QGIS
-        print("Uploading plugin to QGIS plugin server")
         if not options.dry_run:
+            print("Uploading plugin to QGIS plugin server")
             with open(ZIP_FILE_NAME, 'rb') as handle:
                 plugin_id, version_id = server.plugin.upload(
                     xmlrpc.client.Binary(handle.read()))

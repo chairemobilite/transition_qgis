@@ -1,12 +1,15 @@
 [general]
 name=Transition-QGIS
 qgisMinimumVersion=3.30
-description=A plugin to integrate Transition functionalities into QGIS
+description=Access a Transition transit planning server data and functionalities from QGIS
 version=0.1.0
 author=Transition City
 email=admin@transition.city
 
-about=A plugin to integrate Transition functionalities into QGIS
+about=A plugin to integrate the Transition transit planning application functionalities into QGIS
+      Access to a Transition server is a pre-requisite to use this plugin.
+
+      This plugin requires the "pyTransition" python library, which can be installed with `pip install pytransition`.
 
 tracker=https://github.com/chairemobilite/transition_qgis/issues
 repository=https://github.com/chairemobilite/transition_qgis

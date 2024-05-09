@@ -25,6 +25,8 @@ VERBOSE = False
 ZIP_FILE_NAME = 'plugin.zip'
 PLUGIN_NAME = "Transition-QGIS"
 
+EXCLUDED_DIRS = [".git", ".idea", "__pycache__", ".vscode"]
+EXCLUDED_FILES = [".gitignore", "plugin_upload.py", ZIP_FILE_NAME]
 
 def zip_dir():
     """Zip plugin source code and place it inside a 'Transition-QGIS' folder"""
@@ -32,9 +34,9 @@ def zip_dir():
     with zipfile.ZipFile(ZIP_FILE_NAME, 'w', zipfile.ZIP_DEFLATED) as zipf:
         for root, dirs, files in os.walk(".", topdown=True):
             # Exclude certain directories from being zipped
-            dirs[:] = [d for d in dirs if d not in [".git", ".idea", "__pycache__"]]
+            dirs[:] = [d for d in dirs if d not in EXCLUDED_DIRS]
             for file in files:
-                if file != ZIP_FILE_NAME:
+                if file not in EXCLUDED_FILES:
                     # Calculate the relative path of the file to the root directory
                     relative_path = os.path.relpath(os.path.join(root, file), start=".")
                     # Construct the new path inside the 'Transition-QGIS' folder

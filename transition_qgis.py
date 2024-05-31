@@ -240,9 +240,11 @@ class TransitionWidget:
         """Check if there is a login token in the settings"""
         token = self.settings.value("token")
         if token:
-            self.transition_instance = Transition(self.settings.value("url"), None, None, self.settings.value("token"))
-            return True
-        
+            transition_instance = Transition(self.settings.value("url"), None, None, token)
+            if transition_instance.is_token_valid():
+                self.transition_instance = transition_instance
+                return True
+
         return False
 
     def onLoginFinished(self, result):

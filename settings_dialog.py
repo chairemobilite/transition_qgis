@@ -24,6 +24,7 @@ from qgis.core import *
 from qgis.PyQt.QtWidgets import QWidget, QFormLayout, QLabel, QLineEdit, QVBoxLayout
 
 from pyTransition import Transition
+from .settings_constant import TOKEN_KEY, URL_KEY, USERNAME_KEY, KEEP_CONNECTION_KEY
 
 class SettingsDialog(QWidget):
     """
@@ -49,7 +50,7 @@ class SettingsDialog(QWidget):
         self.usernameOrEmailLabel = QLabel(self.tr("Username or email"))
         self.usernameOrEmailLabel.setMinimumSize(50,40)
 
-        self.username = self.settings.value("username")
+        self.username = self.settings.value(USERNAME_KEY)
         self.usernameField = QLineEdit()
         self.usernameField.setText(self.username)
         self.usernameField.setReadOnly(True)
@@ -58,7 +59,7 @@ class SettingsDialog(QWidget):
         self.urlLabel = QLabel(self.tr("Transition server URL"))
         self.urlLabel.setMinimumSize(50,40)
 
-        self.url = self.settings.value("url")
+        self.url = self.settings.value(URL_KEY)
         self.urlField = QLineEdit()
         self.urlField.setText(self.url)
         self.urlField.setReadOnly(True)

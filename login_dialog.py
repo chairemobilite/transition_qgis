@@ -28,6 +28,7 @@ from qgis.PyQt.QtWidgets import QDialog
 import os
 import requests
 from pyTransition import Transition
+from .settings_constant import TOKEN_KEY, URL_KEY, USERNAME_KEY, KEEP_CONNECTION_KEY
 
 class LoginDialog(QDialog):
     """
@@ -70,10 +71,10 @@ class LoginDialog(QDialog):
             transition_instance = Transition(self.urlEdit.text(), self.usernameEdit.text(), self.passwordEdit.text())
             self.transitionInstanceCreated.emit(transition_instance)
 
-            self.settings.setValue("username", self.usernameEdit.text())
-            self.settings.setValue("url", self.urlEdit.text())
-            self.settings.setValue("token", transition_instance.token)
-            self.settings.setValue("keepConnection", self.loginCheckbox.isChecked())
+            self.settings.setValue(USERNAME_KEY, self.usernameEdit.text())
+            self.settings.setValue(URL_KEY, self.urlEdit.text())
+            self.settings.setValue(TOKEN_KEY, transition_instance.token)
+            self.settings.setValue(KEEP_CONNECTION_KEY, self.loginCheckbox.isChecked())
             
             self.accept()
             

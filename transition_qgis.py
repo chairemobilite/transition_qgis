@@ -41,6 +41,7 @@ from .route_form import RouteForm
 from .accessibility_form import AccessibilityForm
 from .settings_dialog import SettingsDialog
 from .transit_info_panel import TransitInformationPanel
+from .settings_constant import TOKEN_KEY, URL_KEY, USERNAME_KEY, KEEP_CONNECTION_KEY
 
 class TransitionWidget:
     """QGIS Plugin Implementation."""
@@ -238,9 +239,9 @@ class TransitionWidget:
 
     def checkValidLogin(self):
         """Check if there is a login token in the settings"""
-        token = self.settings.value("token")
+        token = self.settings.value(TOKEN_KEY)
         if token:
-            transition_instance = Transition(self.settings.value("url"), None, None, token)
+            transition_instance = Transition(self.settings.value(URL_KEY), None, None, token)
             if transition_instance.is_token_valid():
                 self.transition_instance = transition_instance
                 return True
@@ -587,7 +588,7 @@ class TransitionWidget:
             This method disconnects the user from the Transition server and displays the login dialog.
         """
         # Remove user settings
-        if self.settings.value("keepConnection") !=  Qt.CheckState.Checked:
+        if self.settings.value(KEEP_CONNECTION_KEY) !=  Qt.CheckState.Checked:
             self.removeSettings()
         
         self.dockwidget.close()
@@ -600,10 +601,10 @@ class TransitionWidget:
         """
             Remove the user settings from the QGIS settings.
         """
-        self.settings.remove("token")
-        self.settings.remove("url")
-        self.settings.remove("username")
-        self.settings.remove("keepConnection")
+        self.settings.remove(TOKEN_KEY)
+        self.settings.remove(URL_KEY)
+        self.settings.remove(USERNAME_KEY)
+        self.settings.remove(KEEP_CONNECTION_KEY)
 
     def setLayerOpacity(self, layer, opacity):
         """

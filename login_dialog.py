@@ -51,7 +51,10 @@ class LoginDialog(QDialog):
         self.iface = iface
         self.show()
 
-        self.urlEdit.setText("http://localhost:8080")
+        self.usernameEdit.setText(self.settings.value(USERNAME_KEY, ""))
+        self.urlEdit.setText(self.settings.value(URL_KEY, "http://localhost:8080"))
+        # In the settings file, it seems to be 'true' as string, but during a session, it is a boolean
+        self.loginCheckbox.setChecked(self.settings.value(KEEP_CONNECTION_KEY, False, type=bool))
 
         self.buttonBox.accepted.connect(self.onConnectButtonClicked)
         self.buttonBox.rejected.connect(self.reject)

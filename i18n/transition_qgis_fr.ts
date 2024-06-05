@@ -60,8 +60,8 @@
     </message>
     <message>
         <location filename="../accessibility_form.py" line="104"/>
-        <source>Accessibility map name</source>
-        <translation>Nom de la carte d&apos;accessibilité</translation>
+        <source>Output layer name</source>
+        <translation>Nom de la couche de résultats</translation>
     </message>
     <message>
         <location filename="../accessibility_form.py" line="107"/>

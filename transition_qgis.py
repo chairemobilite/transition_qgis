@@ -481,15 +481,15 @@ class TransitionWidget:
             polygons_geojson = geojson.dumps(geojson_data['polygons'])
 
             if polygons_geojson:
-                accessibilityMapName = self.createAccessibilityForm.accessibilityMapName.text()
-                accessibilityMapName = accessibilityMapName if accessibilityMapName else "Accessibility map results"
+                outputLayerName = self.createAccessibilityForm.outputLayerName.text()
+                outputLayerName = outputLayerName if outputLayerName else "Accessibility map results"
 
                 # Remove pre-existing layer or group with the same name
-                existing_group = QgsProject.instance().layerTreeRoot().findGroup(accessibilityMapName)
+                existing_group = QgsProject.instance().layerTreeRoot().findGroup(outputLayerName)
                 if existing_group:
                         QgsProject.instance().layerTreeRoot().removeChildNode(existing_group)
 
-                existing_layers = QgsProject.instance().mapLayersByName(accessibilityMapName)
+                existing_layers = QgsProject.instance().mapLayersByName(outputLayerName)
                 if existing_layers:
                     QgsProject.instance().removeMapLayer(existing_layers[0].id())
 
@@ -498,7 +498,7 @@ class TransitionWidget:
                     
                     # Add all polygons as separate layer inside the group
                     root = QgsProject.instance().layerTreeRoot()
-                    group = root.insertGroup(0, accessibilityMapName)
+                    group = root.insertGroup(0, outputLayerName)
 
                     # Sort polygons from smallest to largest durations
                     polygons_coords = sorted(geojson_data['polygons']["features"], key=lambda x: x['properties']['durationSeconds'])
@@ -513,7 +513,7 @@ class TransitionWidget:
                 # Else display all polygons in one single layer
                 else:
                     # Add the new layer
-                    layer = QgsVectorLayer(polygons_geojson, accessibilityMapName, "ogr")
+                    layer = QgsVectorLayer(polygons_geojson, outputLayerName, "ogr")
                     if not layer.isValid():
                         raise Exception("Layer failed to load!")
                     QgsProject.instance().addMapLayer(layer)

@@ -44,13 +44,13 @@ class AccessibilityForm(QWidget):
             - Delta (minutes)
             - Delta interval (minutes)
             - Scenario
-            - Accessibility map name
             - Maximum total travel time including access and egress (minutes)
             - Minimum waiting time (minutes)
             - Maximum access and egress travel time (minutes)
             - Maximum access travel time when transferring (minutes)
             - Maximum first waiting time (minutes)
             - Walking speed (km/h)
+            - Output layer name
         """
         super(AccessibilityForm, self).__init__(parent)
 
@@ -101,8 +101,8 @@ class AccessibilityForm(QWidget):
         self.scenariosNames = scenarios
         self.scenarioChoice.addItems(self.scenariosNames)
 
-        self.accessibilityMapNameLabel = CustomLabel(self.tr("Accessibility map name"))
-        self.accessibilityMapName = QLineEdit()
+        self.outputLayerNameLabel = CustomLabel(self.tr("Output layer name"))
+        self.outputLayerName = QLineEdit()
 
         self.maxTotalTravelTimeLabel = CustomLabel(self.tr("Maximum total travel time including access and egress (minutes)"))
         self.maxTotalTravelTime = QSpinBox()
@@ -138,8 +138,8 @@ class AccessibilityForm(QWidget):
         self.walkingSpeed.setValue(5)
 
         # Add fields to form display
-        for label, field in zip([self.departureOrArrivalLabel, self.departureOrArrivalTimeLabel, self.nPolygonsLabel, self.distinctPolygonLayersLabel, self.deltaLabel, self.deltaIntervalLabel, self.scenarioLabel, self.accessibilityMapNameLabel, self.maxTotalTravelTimeLabel, self.minWaitTimeLabel, self.maxAccessTimeOrigDestLabel, self.maxTransferWaitTimeLabel, self.maxFirstWaitTimeLabel, self.walkingSpeedLabel], 
-                                [self.radioButtonsWidget, self.departureOrArrivalTime, self.nPolygons, self.distinctPolygonLayers, self.delta, self.deltaInterval, self.scenarioChoice, self.accessibilityMapName, self.maxTotalTravelTime, self.minWaitTime, self.maxAccessTimeOrigDest, self.maxTransferWaitTime, self.maxFirstWaitTime, self.walkingSpeed]):
+        for label, field in zip([self.departureOrArrivalLabel, self.departureOrArrivalTimeLabel, self.nPolygonsLabel, self.distinctPolygonLayersLabel, self.deltaLabel, self.deltaIntervalLabel, self.scenarioLabel, self.maxTotalTravelTimeLabel, self.minWaitTimeLabel, self.maxAccessTimeOrigDestLabel, self.maxTransferWaitTimeLabel, self.maxFirstWaitTimeLabel, self.walkingSpeedLabel, self.outputLayerNameLabel],
+                                [self.radioButtonsWidget, self.departureOrArrivalTime, self.nPolygons, self.distinctPolygonLayers, self.delta, self.deltaInterval, self.scenarioChoice, self.maxTotalTravelTime, self.minWaitTime, self.maxAccessTimeOrigDest, self.maxTransferWaitTime, self.maxFirstWaitTime, self.walkingSpeed, self.outputLayerName]):
             label.setWordWrap(True)
             row_layout = QHBoxLayout()
             row_layout.addWidget(label, stretch=4)  # 66% of the space

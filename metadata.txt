@@ -2,7 +2,7 @@
 name=Transition-QGIS
 qgisMinimumVersion=3.30
 description=Access a Transition transit planning server data and functionalities from QGIS
-version=0.1.0
+version=0.1.1
 author=Transition City
 email=admin@transition.city
 
@@ -17,7 +17,16 @@ repository=https://github.com/chairemobilite/transition_qgis
 # Recommended items:
 
 hasProcessingProvider=no
-changelog=Version 0.1 (initial)
+changelog=
+    Version 0.1.1
+    - fix: Verify if the token is valid when opening form
+    - fix: Save the settings in a sub group named transition_qgis
+    - fix: Tab order of login dialog is correct
+    - fix: Rename accessibility map name to output layer name
+    - fix: Make sure settings are kept when disconnecting/closing
+    - fix: Capture new transition object when reconnecting to correctly refresh data from new server
+    - doc: Add more details for the installation of the plugin
+    Version 0.1 (initial)
     - initial version
 
 tags=python, plugin, transition

@@ -24,7 +24,7 @@ from qgis.core import *
 from qgis.PyQt.QtWidgets import QWidget, QFormLayout, QLabel, QLineEdit, QVBoxLayout
 
 from pyTransition import Transition
-from .settings_constant import TOKEN_KEY, URL_KEY, USERNAME_KEY, KEEP_CONNECTION_KEY
+from .settings_constant import URL_KEY, USERNAME_KEY
 
 class SettingsDialog(QWidget):
     """

@@ -201,7 +201,7 @@ class TransitionWidget:
     def onClosePlugin(self):
         """Cleanup necessary items here when plugin dockwidget is closed"""
         # Remove user settings
-        if not self.settings.value('keepConnection'):
+        if not self.settings.value(KEEP_CONNECTION_KEY, False, type=bool):
             self.removeSettings()
 
         # Disconnect
@@ -588,7 +588,7 @@ class TransitionWidget:
             This method disconnects the user from the Transition server and displays the login dialog.
         """
         # Remove user settings
-        if self.settings.value(KEEP_CONNECTION_KEY) !=  Qt.CheckState.Checked:
+        if not self.settings.value(KEEP_CONNECTION_KEY, False, type=bool):
             self.removeSettings()
         
         self.dockwidget.close()

@@ -232,10 +232,7 @@ class TransitionWidget:
                 self.show_dockwidget()
 
             else:
-                self.loginPopup = LoginDialog(self.iface, self.settings)
-                self.loginPopup.finished.connect(self.onLoginFinished)
-                self.loginPopup.closeWidget.connect(self.onClosePlugin)
-                self.loginPopup.transitionInstanceCreated.connect(lambda transition_instance: setattr(self, 'transition_instance', transition_instance))
+                self.showLoginPopup()
 
     def checkValidLogin(self):
         """Check if there is a login token in the settings"""
@@ -593,9 +590,7 @@ class TransitionWidget:
         
         self.dockwidget.close()
 
-        self.loginPopup = LoginDialog(self.iface, self.settings)
-        self.loginPopup.finished.connect(self.onLoginFinished)
-        self.loginPopup.show()
+        self.showLoginPopup()
 
     def removeSettings(self):
         """
@@ -625,6 +620,10 @@ class TransitionWidget:
             self.onClosePlugin()
 
         QMessageBox.warning(None, self.tr("Session expired"), self.tr("Your session has expired. Please login again."))
+        self.showLoginPopup()
+
+    def showLoginPopup(self):
         self.loginPopup = LoginDialog(self.iface, self.settings)
         self.loginPopup.finished.connect(self.onLoginFinished)
-        self.loginPopup.show()
+        self.loginPopup.closeWidget.connect(self.onClosePlugin)
+        self.loginPopup.transitionInstanceCreated.connect(lambda transition_instance: setattr(self, 'transition_instance', transition_instance))

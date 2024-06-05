@@ -52,7 +52,7 @@ For transit, if the ***Calculate with alternatives*** option is checked, multipl
 ![alt text](docs/screenshots/accessibility_map_page.png)
 
 The accessibility map page allows users to send a calculation request to the Transition application in order to receive an accessibility map. Users can choose the origin point as well as different parameters such as the departure and waiting time.\
-Users can also specify an accessibility map name to differenciate multiple accessibility maps. By default, if the ***Accessibility map name*** field is empty, the route name will be **Accessibility map results**. If a new accessibility is requested with the same name, it will replace the existing one.\
+Users can also specify an output layer name to differenciate multiple accessibility maps calculations. By default, if the ***Output layer name*** field is empty, the layer name will be **Accessibility map results**. If a new accessibility map is requested with the same name, it will replace the existing one.\
 If the **Separate polygons into different layers** option is checked, the result will be a group layer containing a separate layer for each polygon. Otherwise, the result will just be one layer containing all the polygons.
 
 ### Settings page

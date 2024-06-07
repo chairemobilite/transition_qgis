@@ -101,11 +101,11 @@ class RouteForm(QWidget):
         self.maxTransferWaitTimeChoice.setMaximum(20)
         self.maxTransferWaitTimeChoice.setToolTip(self.tr("To avoid long calculation time, this value has a maximum of 20 minutes."))
 
-        self.maxWaitTimeFisrstStopLabel = CustomLabel(self.tr("Maximum first waiting time (minutes)"))
-        self.maxWaitTimeFisrstStopChoice = QSpinBox()
-        self.maxWaitTimeFisrstStopChoice.setMinimum(-1)
-        self.maxWaitTimeFisrstStopChoice.setValue(-1)
-        self.maxWaitTimeFisrstStopChoice.setToolTip(self.tr("If waiting time at first stop is greater than this value for a line, ignore the departure of this line at this stop. Use -1 to ignore this field and allow for indefinite waiting."))
+        self.maxWaitTimeFirstStopLabel = CustomLabel(self.tr("Maximum first waiting time (minutes)"))
+        self.maxWaitTimeFirstStopChoice = QSpinBox()
+        self.maxWaitTimeFirstStopChoice.setMinimum(-1)
+        self.maxWaitTimeFirstStopChoice.setValue(-1)
+        self.maxWaitTimeFirstStopChoice.setToolTip(self.tr("If waiting time at first stop is greater than this value for a line, ignore the departure of this line at this stop. Use -1 to ignore this field and allow for indefinite waiting."))
 
         self.scenarioLabel = CustomLabel(self.tr("Scenario"))
         self.scenarioChoice = QComboBox()
@@ -120,8 +120,8 @@ class RouteForm(QWidget):
         self.routeName = QLineEdit()
 
         # Add fields to form display
-        for label, field in zip([self.modeLabel, self.departureOrArrivalLabel,self.departureOrArrivalTimeLabel,self.routeNameLabel, self.maxParcoursTimeLabel, self.minWaitTimeLabel, self.maxAccessTimeOrigDestLabel, self.maxTransferWaitTimeLabel, self.maxWaitTimeFisrstStopLabel, self.scenarioLabel, self.withAlternativeLabel], 
-                                [self.modeChoice, self.radioButtonsWidget, self.departureOrArrivalTime, self.routeName, self.maxParcoursTimeChoice, self.minWaitTimeChoice, self.maxAccessTimeOrigDestChoice, self.maxTransferWaitTimeChoice, self.maxWaitTimeFisrstStopChoice, self.scenarioChoice, self.withAlternativeChoice]):
+        for label, field in zip([self.modeLabel, self.departureOrArrivalLabel,self.departureOrArrivalTimeLabel,self.routeNameLabel, self.maxParcoursTimeLabel, self.minWaitTimeLabel, self.maxAccessTimeOrigDestLabel, self.maxTransferWaitTimeLabel, self.maxWaitTimeFirstStopLabel, self.scenarioLabel, self.withAlternativeLabel], 
+                                [self.modeChoice, self.radioButtonsWidget, self.departureOrArrivalTime, self.routeName, self.maxParcoursTimeChoice, self.minWaitTimeChoice, self.maxAccessTimeOrigDestChoice, self.maxTransferWaitTimeChoice, self.maxWaitTimeFirstStopChoice, self.scenarioChoice, self.withAlternativeChoice]):
             label.setWordWrap(True)
             row_layout = QHBoxLayout()
             row_layout.addWidget(label, stretch=4)  # 66% of the space

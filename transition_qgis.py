@@ -383,6 +383,7 @@ class TransitionWidget:
                 QMessageBox.warning(self.dockwidget, self.tr("No modes selected"), self.tr("Please select at least one mode."))
                 return
  
+            maxFirstWaitingTime = self.createRouteForm.maxWaitTimeFirstStopChoice.value()
             result = self.transition_instance.request_routing_result(
                 modes=modes, 
                 origin=[self.selectedCoords['routeOriginPoint'].x(), self.selectedCoords['routeOriginPoint'].y()], 
@@ -394,7 +395,8 @@ class TransitionWidget:
                 max_access_time_minutes=self.createRouteForm.maxAccessTimeOrigDestChoice.value(), 
                 departure_or_arrival_time=self.createRouteForm.departureOrArrivalTime.time().toPyTime(), 
                 departure_or_arrival_choice="Departure" if self.createRouteForm.departureRadioButton.isChecked() else "Arrival", 
-                max_first_waiting_time_minutes=self.createRouteForm.maxWaitTimeFisrstStopChoice.value(),
+                # If the user didn't specify a maximum first waiting time, set it to a high value (10000 minutes) to wait indefinitely
+                max_first_waiting_time_minutes=maxFirstWaitingTime if maxFirstWaitingTime >= 0 else 10000,
                 with_geojson=True,
                 with_alternatives=self.createRouteForm.withAlternativeChoice.isChecked()
             )["result"]

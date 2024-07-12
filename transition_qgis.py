@@ -31,7 +31,15 @@ from qgis.gui import QgsProjectionSelectionDialog
 import os.path
 import geojson
 import requests
-from pyTransition import Transition
+try: # First try loading pyTransition from the installed python packages
+    from pyTransition import Transition
+except ImportError: # If it's not available, try to load it from the wheel file
+    import sys
+    import os
+    file_dir = os.path.dirname(os.path.realpath(__file__))
+    path = os.path.join(file_dir, 'libraries/pyTransition-0.1.2-py3-none-any.whl')
+    sys.path.append(path)
+    from pyTransition import Transition
 
 from .resources import *
 from .transition_qgis_dockwidget import TransitionDockWidget
